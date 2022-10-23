@@ -1,3 +1,6 @@
+/**
+ * @package
+ */
 export const CustomTheme = {
   colors: {
     background: '#000',
@@ -11,6 +14,9 @@ export const CustomTheme = {
   dark: false,
 };
 
+/**
+ * @package
+ */
 export const CustomDarkTheme = {
   colors: {
     background: '#000',

@@ -15,7 +15,12 @@
     "baseUrl": "./src",
     "paths": {
       "~/*": ["*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "eslint-plugin-import-access"
+      }
+    ]
   },
   "exclude": [
     "node_modules",

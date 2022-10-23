@@ -3,7 +3,13 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   extends: [
+    'eslint:recommended',
     'plugin:react/recommended',
     'standard-with-typescript',
     'plugin:react-hooks/recommended',
@@ -15,6 +21,9 @@ module.exports = {
     project: ['./tsconfig.json'],
     ecmaVersion: 'latest',
     sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
   plugins: [
     'react',
@@ -22,11 +31,14 @@ module.exports = {
     'sort-keys-custom-order',
     'simple-import-sort',
     'import',
+    'import-access',
     'unused-imports',
   ],
   rules: {
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/jsx-uses-react': 'error',
+    'react/jsx-uses-vars': 'error',
     '@typescript-eslint/consistent-type-definitions': 'off',
     // For JS objects sorting
     'sort-keys-custom-order/object-keys': [
@@ -50,5 +62,7 @@ module.exports = {
     'import/no-duplicates': 'error',
     // NOTE:unused-imports
     'unused-imports/no-unused-imports': 'error',
+    // NOTE:eslint-plugin-import-access
+    'import-access/jsdoc': ['error'],
   },
 };

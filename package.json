@@ -7,9 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "test": "jest --watchAll",
     "lint": "eslint . --ext .js,jsx,.ts,.tsx",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css,scss}'",
-    "test": "jest --watchAll",
     "prepare": "husky install"
   },
   "jest": {

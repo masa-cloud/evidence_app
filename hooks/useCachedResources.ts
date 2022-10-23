@@ -3,14 +3,14 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
-export default function useCachedResources() {
+export default function useCachedResources(): boolean {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
   // Load any resources or data that we need prior to rendering the app
   useEffect(() => {
-    async function loadResourcesAndDataAsync() {
+    async function loadResourcesAndDataAsync(): Promise<void> {
       try {
-        SplashScreen.preventAutoHideAsync();
+        void SplashScreen.preventAutoHideAsync();
 
         // Load fonts
         await Font.loadAsync({
@@ -22,11 +22,11 @@ export default function useCachedResources() {
         console.warn(e);
       } finally {
         setLoadingComplete(true);
-        SplashScreen.hideAsync();
+        void SplashScreen.hideAsync();
       }
     }
 
-    loadResourcesAndDataAsync();
+    void loadResourcesAndDataAsync();
   }, []);
 
   return isLoadingComplete;

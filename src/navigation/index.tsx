@@ -10,17 +10,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
-import { CustomDarkTheme, CustomTheme } from '../constants/Colors';
-import HistoryScreen from '../screens/HistoryScreen';
-import HomeScreen from '../screens/HomeScreen';
-import ModalScreen from '../screens/ModalScreen';
-import MyPageScreen from '../screens/MyPageScreen';
-import NotFoundScreen from '../screens/NotFoundScreen';
 import {
   RootStackParamList,
   RootTabParamList,
   RootTabScreenProps,
-} from '../types';
+} from '../../types';
+import { CustomDarkTheme, CustomTheme } from '../lib/constants';
+import HistoryScreen from '../pages/HistoryScreen';
+import HomeScreen from '../pages/HomeScreen';
+import ModalScreen from '../pages/ModalScreen';
+import MyPageScreen from '../pages/MyPageScreen';
+import NotFoundScreen from '../pages/NotFoundScreen';
 import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({

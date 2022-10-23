@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { Text, View } from 'react-native';
 import { useTailwind } from 'tailwind-rn/dist';
 
-import { useFontColor } from '../hooks/useColorStyle';
+import { useFontColor } from '../lib/useColorStyle';
 
 export default function HistoryScreen(): JSX.Element {
   const tailwind = useTailwind();

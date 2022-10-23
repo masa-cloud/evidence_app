@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "lint": "eslint . --ext .js,jsx,.ts,.tsx",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css,scss}'",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "prepare": "husky install"
   },
   "jest": {
     "preset": "jest-expo"
@@ -52,11 +53,17 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.0",
     "jest": "^26.6.3",
     "jest-expo": "~44.0.1",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "react-test-renderer": "18.0.0",
     "typescript": "*"
+  },
+  "lint-staged": {
+    ".{js,jsx,.ts,.tsx}": "yarn lint",
+    "./**/*.{js,jsx,ts,tsx,json,css,scss}": "yarn format"
   },
   "private": true
 }

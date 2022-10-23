@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { TailwindProvider } from 'tailwind-rn';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { TailwindProvider } from 'tailwind-rn';
 import utilities from './tailwind.json';
 
 export default function App(): JSX.Element | null {
@@ -15,12 +15,12 @@ export default function App(): JSX.Element | null {
     return null;
   } else {
     return (
-      <TailwindProvider utilities={utilities}>
-        <SafeAreaProvider>
+      <SafeAreaProvider>
+        <TailwindProvider utilities={utilities}>
           <Navigation colorScheme={colorScheme} />
           <StatusBar />
-        </SafeAreaProvider>
-      </TailwindProvider>
+        </TailwindProvider>
+      </SafeAreaProvider>
     );
   }
 }

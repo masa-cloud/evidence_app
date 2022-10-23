@@ -11,17 +11,17 @@ import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
 import { CustomDarkTheme, CustomTheme } from '../constants/Colors';
-import ModalScreen from '../screens/ModalScreen';
-import NotFoundScreen from '../screens/NotFoundScreen';
+import HistoryScreen from '../screens/HistoryScreen';
 import HomeScreen from '../screens/HomeScreen';
+import ModalScreen from '../screens/ModalScreen';
 import MyPageScreen from '../screens/MyPageScreen';
+import NotFoundScreen from '../screens/NotFoundScreen';
 import {
   RootStackParamList,
   RootTabParamList,
   RootTabScreenProps,
 } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import HistoryScreen from '../screens/HistoryScreen';
 
 export default function Navigation({
   colorScheme,
@@ -85,7 +85,6 @@ function BottomTabNavigator(): JSX.Element {
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate('Modal')}
@@ -101,6 +100,7 @@ function BottomTabNavigator(): JSX.Element {
               />
             </Pressable>
           ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         })}
       />
       <BottomTab.Screen

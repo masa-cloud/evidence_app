@@ -27,20 +27,9 @@
       "flexBasis": "0%"
     }
   },
-  "content-center": {
-    "style": {
-      "alignContent": "center"
-    }
-  },
   "justify-center": {
     "style": {
       "justifyContent": "center"
-    }
-  },
-  "bg-white": {
-    "style": {
-      "--tw-bg-opacity": 1,
-      "backgroundColor": "rgb(255 255 255 / var(--tw-bg-opacity))"
     }
   },
   "text-xl": {
@@ -52,12 +41,6 @@
   "font-bold": {
     "style": {
       "fontWeight": "700"
-    }
-  },
-  "text-white": {
-    "style": {
-      "--tw-text-opacity": 1,
-      "color": "rgb(255 255 255 / var(--tw-text-opacity))"
     }
   }
 }

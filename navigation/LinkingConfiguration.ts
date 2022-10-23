@@ -10,19 +10,20 @@ import * as Linking from 'expo-linking';
 import { RootStackParamList } from '../types';
 
 const linking: LinkingOptions<RootStackParamList> = {
-  prefixes: [Linking.createURL('/')],
   config: {
     screens: {
+      Modal: 'modal',
+      NotFound: '*',
       Root: {
         screens: {
-          Home: {
-            screens: {
-              HomeScreen: 'home',
-            },
-          },
           History: {
             screens: {
               HistoryScreen: 'history',
+            },
+          },
+          Home: {
+            screens: {
+              HomeScreen: 'home',
             },
           },
           MyPage: {
@@ -32,10 +33,9 @@ const linking: LinkingOptions<RootStackParamList> = {
           },
         },
       },
-      Modal: 'modal',
-      NotFound: '*',
     },
   },
+  prefixes: [Linking.createURL('/')],
 };
 
 export default linking;

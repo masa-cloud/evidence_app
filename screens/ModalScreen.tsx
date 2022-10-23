@@ -14,18 +14,18 @@ export default function ModalScreen(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
   },
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
   separator: {
-    marginVertical: 30,
     height: 1,
+    marginVertical: 30,
     width: '80%',
   },
 });

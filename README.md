@@ -44,4 +44,5 @@ https://reactnative.dev/docs/environment-setup
 下記を導入したらスターターキットとして、やる
 TODO:storybook導入
 TODO:nativebase導入
+TODO:rootからimportできるやつ
 TODO:できればテスト導入

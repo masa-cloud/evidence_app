@@ -16,11 +16,11 @@ import {
   RootTabScreenProps,
 } from '../../types';
 import { CustomDarkTheme, CustomTheme } from '../lib/constants';
-import HistoryScreen from '../pages/HistoryScreen';
-import HomeScreen from '../pages/HomeScreen';
-import ModalScreen from '../pages/ModalScreen';
-import MyPageScreen from '../pages/MyPageScreen';
-import NotFoundScreen from '../pages/NotFoundScreen';
+import HistoryScreen from '../screens/HistoryScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ModalScreen from '../screens/ModalScreen';
+import MyPageScreen from '../screens/MyPageScreen';
+import NotFoundScreen from '../screens/NotFoundScreen';
 import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({

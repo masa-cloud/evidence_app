@@ -18,14 +18,14 @@ https://reactnative.dev/docs/environment-setup
 
 ## ディレクトリ構成
 [component]共有コンポーネントは<例>container
-[pages-component]ページ固有のコンポーネント(分割するだけのコンポーネントは同一ファイル内)
-[pages]ページ
+[screens-component]ページ固有のコンポーネント(分割するだけのコンポーネントは同一ファイル内)
+[screens]ページ
 ディレクトリルール内
 ・テストやstorybookは同一階層内
 　→下記名前で同一階層に配置
 　　○○.spec.tsx
 　　○○.stories.tsx
-・pagesとpages_componentはディレクトリ構成は一緒
+・screensとscreens_componentはディレクトリ構成は一緒
 
 ## ESLintで下記ルール自動化
 ・ファイル名、オブジェクト名、プロパティ名は、降順

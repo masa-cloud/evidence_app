@@ -2,10 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TailwindProvider } from 'tailwind-rn';
 
-import utilities from './tailwind.json';
 import useCachedResources from './src/lib/useCachedResources';
 import useColorScheme from './src/lib/useColorScheme';
 import Navigation from './src/navigation';
+import utilities from './tailwind.json';
 
 export default function App(): JSX.Element | null {
   const isLoadingComplete = useCachedResources();

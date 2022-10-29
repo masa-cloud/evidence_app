@@ -1,10 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
+import { NativeBaseProvider } from 'native-base';
+import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
 import { TailwindProvider } from 'tailwind-rn';
+
+import Navigation from '~/navigation/RootNavigator';
 
 import useCachedResources from './src/lib/useCachedResources';
 import useColorScheme from './src/lib/useColorScheme';
-import Navigation from './src/navigation';
+import { store } from './src/store';
 import utilities from './tailwind.json';
 
 export default function App(): JSX.Element | null {
@@ -15,12 +20,16 @@ export default function App(): JSX.Element | null {
     return null;
   } else {
     return (
-      <SafeAreaProvider>
-        <TailwindProvider utilities={utilities}>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </TailwindProvider>
-      </SafeAreaProvider>
+      <Provider store={store}>
+        <NativeBaseProvider>
+          <SafeAreaProvider>
+            <TailwindProvider utilities={utilities}>
+              <Navigation colorScheme={colorScheme} />
+              <StatusBar />
+            </TailwindProvider>
+          </SafeAreaProvider>
+        </NativeBaseProvider>
+      </Provider>
     );
   }
 }

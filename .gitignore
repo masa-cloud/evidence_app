@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 yarn-error.log
 .husky/
+.env
 
 # macOS
 .DS_Store

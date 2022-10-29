@@ -7,26 +7,26 @@
 import { LinkingOptions } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 
-import { RootStackParamList } from '../../types';
+import { RootStackParamList } from './rootStackParamList';
 
 const linking: LinkingOptions<RootStackParamList> = {
   config: {
     screens: {
       Modal: 'modal',
-      NotFound: '*',
+      NotFoundScreen: '*',
       Root: {
         screens: {
-          History: {
+          HistoryScreen: {
             screens: {
               HistoryScreen: 'history',
             },
           },
-          Home: {
+          HomeScreen: {
             screens: {
               HomeScreen: 'home',
             },
           },
-          MyPage: {
+          MyPageScreen: {
             screens: {
               MyPageScreen: 'myPage',
             },

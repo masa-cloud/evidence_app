@@ -42,7 +42,7 @@ https://reactnative.dev/docs/environment-setup
 ・Color以外は、全てTailWindCssを使用
 
 下記を導入したらスターターキットとして、やる
+TODO:i18n対応　Zenn？の記事参照
 TODO:storybook導入
 TODO:nativebase導入
-TODO:rootからimportできるやつ
 TODO:できればテスト導入

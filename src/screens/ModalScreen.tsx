@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
-export default function ModalScreen(): JSX.Element {
+export const ModalScreen = (): JSX.Element => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Modal</Text>
@@ -11,7 +11,7 @@ export default function ModalScreen(): JSX.Element {
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   title: {

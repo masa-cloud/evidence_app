@@ -1,10 +1,18 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { RootStackScreenProps } from '../../types';
+import { RootStackParamList } from '~/navigation/rootStackParamList';
 
-export default function NotFoundScreen({
-  navigation,
-}: RootStackScreenProps<'NotFound'>): JSX.Element {
+type NotFoundScreenNavigationProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'NotFoundScreen'
+>;
+
+type Props = {
+  navigation: NotFoundScreenNavigationProps;
+};
+
+export default function NotFoundScreen({ navigation }: Props): JSX.Element {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>This screen doesn&apos;t exist.</Text>

@@ -5,10 +5,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { TailwindProvider } from 'tailwind-rn';
 
-import Navigation from '~/navigation/RootNavigator';
-
 import useCachedResources from './src/lib/useCachedResources';
 import useColorScheme from './src/lib/useColorScheme';
+import Navigation from './src/navigation/RootNavigator';
 import { store } from './src/store';
 import utilities from './tailwind.json';
 

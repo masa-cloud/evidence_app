@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text, View } from 'react-native';
 import { useTailwind as tw } from 'tailwind-rn/dist';
 
+import { i18n } from '~/locale/i18n';
 import { BottomTabParamList } from '~/navigation/rootStackParamList';
 
 type HistoryScreenNavigationProps = NativeStackNavigationProp<
@@ -19,7 +20,7 @@ export const HistoryScreen = ({ navigation }: Props): JSX.Element => {
 
   return (
     <View style={tw()('flex-1 justify-center')}>
-      <Text style={{ color: colors.text }}>History</Text>
+      <Text style={{ color: colors.text }}>{i18n.t('placeholder')}</Text>
     </View>
   );
 };

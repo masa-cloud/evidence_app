@@ -1,25 +1,26 @@
+import './header.css';
+
 import React from 'react';
 
-import { Button } from './Button';
-import './header.css';
+import { Button } from '../Button/Button';
 
 type User = {
   name: string;
 };
 
 interface HeaderProps {
-  user?: User;
+  onCreateAccount: () => void;
   onLogin: () => void;
   onLogout: () => void;
-  onCreateAccount: () => void;
+  user?: User;
 }
 
 export const Header = ({
-  user,
+  onCreateAccount,
   onLogin,
   onLogout,
-  onCreateAccount,
-}: HeaderProps) => (
+  user,
+}: HeaderProps): JSX.Element => (
   <header>
     <div className="wrapper">
       <div>
@@ -47,7 +48,7 @@ export const Header = ({
         <h1>Acme</h1>
       </div>
       <div>
-        {user ? (
+        {user != null ? (
           <>
             <span className="welcome">
               Welcome, <b>{user.name}</b>!

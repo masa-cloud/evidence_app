@@ -46,6 +46,6 @@ https://reactnative.dev/docs/environment-setup
 
 https://docs.expo.dev/versions/latest/sdk/localization/
 
-TODO:storybook導入
+## storybook導入
 TODO:nativebase導入
 TODO:できればテスト導入

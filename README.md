@@ -2,8 +2,6 @@
 
 # Require
 
-- TODO:
-
 # Build Project in simulator with iOS:
 
 ## Prepare
@@ -47,5 +45,6 @@ https://reactnative.dev/docs/environment-setup
 https://docs.expo.dev/versions/latest/sdk/localization/
 
 ## storybook導入
-TODO:nativebase導入
+
+##UIコンポーネント：NativeBase導入
 TODO:できればテスト導入

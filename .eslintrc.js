@@ -14,6 +14,8 @@ module.exports = {
     'standard-with-typescript',
     'plugin:react-hooks/recommended',
     'prettier',
+    'plugin:storybook/recommended',
+    'plugin:storybook/recommended',
   ],
   overrides: [],
   ignorePatterns: ['.eslintrc.*'],

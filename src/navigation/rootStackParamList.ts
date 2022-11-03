@@ -35,8 +35,14 @@ export type RootTabParamList = {
   MyPageScreen: undefined;
 };
 
+export type HomeTabParamList = {
+  HomeScreen: undefined;
+  TestDetailScreen: undefined;
+};
+
 export enum RouteName {
   HistoryScreen = 'HistoryScreen',
+  TestDetailScreen = 'TestDetailScreen',
   HomeScreen = 'HomeScreen',
   Modal = 'Modal',
   MyPageScreen = 'MyPageScreen',
@@ -44,8 +50,14 @@ export enum RouteName {
   Root = 'Root',
 }
 
-export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, Screen>;
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
+
+export type HomeTabScreenProps<T extends keyof HomeTabParamList> =
+  CompositeScreenProps<
+    BottomTabScreenProps<HomeTabParamList, T>,
+    RootStackScreenProps<keyof RootStackParamList>
+  >;
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   CompositeScreenProps<

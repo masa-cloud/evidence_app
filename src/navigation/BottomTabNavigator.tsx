@@ -3,10 +3,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 
-import { HistoryScreen } from '~/screens/HistoryScreen';
-import { HomeScreen } from '~/screens/HomeScreen';
-import { MyPageScreen } from '~/screens/MyPageScreen';
-
+import { HistoryStackScreen } from './HistoryStackNavigator';
+import { HomeStackScreen } from './HomeStackNavigator';
+import { MyPageStackScreen } from './MyPageStackNavigator';
 import { RouteName } from './rootStackParamList';
 
 const BottomTab = createBottomTabNavigator();
@@ -25,12 +24,13 @@ export const BottomTabNavigator = (): JSX.Element => {
     <BottomTab.Navigator
       initialRouteName={RouteName.HomeScreen}
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: colors.primary,
       }}
     >
       <BottomTab.Screen
-        name={RouteName.HomeScreen}
-        component={HomeScreen}
+        name={RouteName.HomeScreen + 'Stack'}
+        component={HomeStackScreen}
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
@@ -38,7 +38,7 @@ export const BottomTabNavigator = (): JSX.Element => {
       />
       <BottomTab.Screen
         name={RouteName.HistoryScreen + 'Stack'}
-        component={HistoryScreen}
+        component={HistoryStackScreen}
         options={{
           title: 'History',
           tabBarIcon: ({ color }) => (
@@ -48,7 +48,7 @@ export const BottomTabNavigator = (): JSX.Element => {
       />
       <BottomTab.Screen
         name={RouteName.MyPageScreen + 'Stack'}
-        component={MyPageScreen}
+        component={MyPageStackScreen}
         options={{
           title: 'MyPage',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,

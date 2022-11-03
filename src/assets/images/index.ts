@@ -1,5 +1,5 @@
 export const Images = {
-  adaptive: require('./adaptive.png'),
+  doctors: require('./undraw_Doctors_re_jjho.png'),
   favicon: require('./favicon.png'),
   icon: require('./icon.png'),
   splash: require('./splash.png'),

@@ -5,7 +5,7 @@ import { MyPageScreen } from '~/screens/MyPageScreen';
 import { RouteName } from './rootStackParamList';
 
 const MyPageStack = createNativeStackNavigator();
-export const HistoryStackScreen = (): JSX.Element => {
+export const MyPageStackScreen = (): JSX.Element => {
   return (
     <MyPageStack.Navigator>
       <MyPageStack.Screen

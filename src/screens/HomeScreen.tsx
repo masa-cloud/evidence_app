@@ -65,8 +65,8 @@ export const HomeScreen = ({ navigation }: Props): JSX.Element => {
     },
   ];
   return (
-    <Box>
-      <Heading color={colors.text} fontSize="2xl" pl="2" pt="3" pb="1">
+    <Box pt="4" px="4">
+      <Heading color={colors.text} fontSize="2xl" pb="1">
         今週のTOP5
       </Heading>
       <FlatList
@@ -75,7 +75,7 @@ export const HomeScreen = ({ navigation }: Props): JSX.Element => {
           <TouchableOpacity
             onPress={() => navigation.navigate(RouteName.TestDetailScreen)}
           >
-            <Box pl="4" pr="4" py="3">
+            <Box py="3">
               <HStack space="4" justifyContent="space-between">
                 <Image
                   borderRadius={10}

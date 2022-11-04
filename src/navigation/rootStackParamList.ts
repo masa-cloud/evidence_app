@@ -37,12 +37,14 @@ export type RootTabParamList = {
 
 export type HomeTabParamList = {
   HomeScreen: undefined;
+  TestActionScreen: undefined;
   TestDetailScreen: undefined;
 };
 
 export enum RouteName {
   HistoryScreen = 'HistoryScreen',
   TestDetailScreen = 'TestDetailScreen',
+  TestActionScreen = 'TestActionScreen',
   HomeScreen = 'HomeScreen',
   Modal = 'Modal',
   MyPageScreen = 'MyPageScreen',

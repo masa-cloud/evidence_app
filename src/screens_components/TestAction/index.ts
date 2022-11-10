@@ -1,0 +1,1 @@
+export { TestAction } from './page';

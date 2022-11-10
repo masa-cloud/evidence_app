@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '~/screens/HomeScreen';
 import { TestActionScreen } from '~/screens/TestActionScreen';
 import { TestDetailScreen } from '~/screens/TestDetailScreen';
+import { TestResultScreen } from '~/screens/TestResultScreen';
 
 import { RouteName } from './rootStackParamList';
 
@@ -14,6 +15,10 @@ export const HomeStackScreen = (): JSX.Element => {
       <HomeStack.Screen
         name={RouteName.TestActionScreen}
         component={TestActionScreen}
+      />
+      <HomeStack.Screen
+        name={RouteName.TestResultScreen}
+        component={TestResultScreen}
       />
       <HomeStack.Screen
         name={RouteName.TestDetailScreen}

@@ -1,10 +1,7 @@
-import { useTheme } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Text, View } from 'react-native';
-import { useTailwind as tw } from 'tailwind-rn/dist';
 
-import { i18n } from '~/locale/i18n';
 import { BottomTabParamList } from '~/navigation/rootStackParamList';
+import { History } from '~/screens_components/History';
 
 type HistoryScreenNavigationProps = NativeStackNavigationProp<
   BottomTabParamList,
@@ -15,12 +12,6 @@ type Props = {
   navigation: HistoryScreenNavigationProps;
 };
 
-export const HistoryScreen = ({ navigation }: Props): JSX.Element => {
-  const { colors } = useTheme();
-
-  return (
-    <View style={tw()('flex-1 justify-center')}>
-      <Text style={{ color: colors.text }}>{i18n.t('placeholder')}</Text>
-    </View>
-  );
+export const HistoryScreen = (props: Props): JSX.Element => {
+  return <History {...props} />;
 };

@@ -32,9 +32,7 @@ https://reactnative.dev/docs/environment-setup
 ## ESLintで下記ルール強制
 ・基本index.tsからしかimportしない
 　→exportさせないファイルには、下記を記述
-/**
- * @package
- */
+/** @package */
 ##　スタイルルール
 ・ColorはuseColorStyleで指定<例>テキスト、背景
 ・Color以外は、全てTailWindCssを使用

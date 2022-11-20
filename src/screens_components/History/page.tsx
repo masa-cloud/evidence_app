@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FC } from 'react';
 import { Text, View } from 'react-native';
 import { useTailwind as tw } from 'tailwind-rn/dist';
 
@@ -16,7 +17,7 @@ type Props = {
 };
 
 /** @package */
-export const History = ({ navigation }: Props): JSX.Element => {
+export const History: FC<Props> = (props) => {
   const { colors } = useTheme();
 
   return (

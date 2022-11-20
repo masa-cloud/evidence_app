@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { FC } from 'react';
 
 import { Images } from '~/assets/images';
 import { PageContainer } from '~/components/PageContainer';
@@ -18,7 +18,7 @@ type Props = {
 };
 
 /** @package */
-export const Home = ({ navigation }: Props): JSX.Element => {
+export const Home: FC<Props> = (props) => {
   const data = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -59,7 +59,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
   return (
     <PageContainer>
       <Title title="今週のTOP5" />
-      <ItemFlatList data={data} navigation={navigation} />
+      <ItemFlatList data={data} navigation={props.navigation} />
     </PageContainer>
   );
 };

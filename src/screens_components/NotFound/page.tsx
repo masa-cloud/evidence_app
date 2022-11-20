@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { FC } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import { PageContainer } from '~/components/PageContainer';
@@ -15,19 +15,19 @@ type Props = {
 };
 
 /** @package */
-export function NotFound({ navigation }: Props): JSX.Element {
+export const NotFound: FC<Props> = (props) => {
   return (
     <PageContainer>
       <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
       <TouchableOpacity
-        onPress={() => navigation.replace('Root')}
+        onPress={() => props.navigation.replace('Root')}
         style={styles.link}
       >
         <Text style={styles.linkText}>Go to home screen!</Text>
       </TouchableOpacity>
     </PageContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
   title: {

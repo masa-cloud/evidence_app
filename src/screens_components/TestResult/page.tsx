@@ -1,7 +1,7 @@
-import { useTheme } from '@react-navigation/native';
+import { RouteProp, useTheme } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Image, Text } from 'native-base';
-import React from 'react';
+import React, { FC, useEffect } from 'react';
 
 import { Images } from '~/assets/images';
 import { LeftIconButton } from '~/components/Button';
@@ -16,19 +16,31 @@ type TestResultScreenNavigationProps = NativeStackNavigationProp<
 
 type Props = {
   navigation: TestResultScreenNavigationProps;
+  route: RouteProp<HomeTabParamList, 'TestResultScreen'>;
 };
 
 /** @package */
-export const TestResult = ({ navigation }: Props): JSX.Element => {
+export const TestResult: FC<Props> = (props) => {
   const { colors } = useTheme();
+
+  useEffect(() => {
+    console.error(props.route.params.answers);
+  }, []);
+
   const result = {
-    title: 'VIA強みテストの結果',
+    title: 'ショートビッグファイブテストの結果',
     detail:
       'あなたの強みを○○大学の研究を元に診断します。分かると、○○なメリットがあります。',
     testCount: '16',
     testTime: '2',
   };
+  // 質問１＋６＝外向性
+  // 質問２＋７＝協調性
+  // 質問３＋８＝誠実性
+  // 質問４＋９＝神経症傾向
+  // 質問５＋１０＝開放性
   // 全16問 (平均解答時間 2分)
+
   return (
     <PageContainer>
       <Title title={result.title} pl="2" />

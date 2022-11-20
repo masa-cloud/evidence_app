@@ -1,121 +1,55 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import { Box, Flex, Icon, Radio, Text } from 'native-base';
-import React from 'react';
+import { Box, Radio, Text } from 'native-base';
+import React, { FC } from 'react';
 
-export const RadioGroup = (): JSX.Element => {
+import { RadioGroupChildren } from './RadioGroupChildren';
+
+type Props = {
+  answers: Array<string | undefined>;
+  index: number;
+  questionText: string;
+  setAnswers: React.Dispatch<React.SetStateAction<Array<string | undefined>>>;
+};
+
+export const RadioGroup: FC<Props> = (props) => {
   const { colors } = useTheme();
-
   return (
     <Box mb={6}>
-      <Text color={colors.text} ml={3} mb="1" fontSize="3xl" bold>
-        Q1
+      <Text color={colors.text} ml={3} mb="1" fontSize="xl" bold>
+        {`【Q${props.index + 1}】${props.questionText}`}
       </Text>
-      <Radio.Group
-        w="100%"
-        size="lg"
-        name="exampleGroup"
-        accessibilityLabel="pick a choice"
-      >
-        <Box
-          backgroundColor={colors.border}
-          w="91%"
-          left="4.5%"
-          position="absolute"
-          top="5"
-          py="1"
-          px="4"
-        />
-        <Flex
-          direction="row"
-          w="94%"
-          margin="auto"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Radio
-            colorScheme={'blue'}
-            borderRadius="6"
-            size="9"
-            value="1"
-            icon={
-              <Icon
-                as={<MaterialCommunityIcons name="checkbox-marked" />}
-                size="43px"
-              />
-            }
-            my={1}
-          />
-          <Radio
-            colorScheme={'blue'}
-            borderRadius="6"
-            size="9"
-            value="2"
-            icon={
-              <Icon
-                as={<MaterialCommunityIcons name="checkbox-marked" />}
-                size="43px"
-              />
-            }
-            my={1}
-          />
-          <Radio
-            colorScheme={'blue'}
-            borderRadius="6"
-            size="9"
-            value="3"
-            icon={
-              <Icon
-                as={<MaterialCommunityIcons name="checkbox-marked" />}
-                size="43px"
-              />
-            }
-            my={1}
-          />
-          <Radio
-            colorScheme={'blue'}
-            borderRadius="6"
-            size="9"
-            value="4"
-            icon={
-              <Icon
-                as={<MaterialCommunityIcons name="checkbox-marked" />}
-                size="43px"
-              />
-            }
-            my={1}
-          />
-          <Radio
-            colorScheme={'blue'}
-            borderRadius="6"
-            size="9"
-            value="5"
-            icon={
-              <Icon
-                as={<MaterialCommunityIcons name="checkbox-marked" />}
-                size="43px"
-              />
-            }
-            my={1}
-          />
-        </Flex>
-        <Flex
-          direction="row"
+      {props.answers[props.index] !== undefined ? (
+        <Radio.Group
           w="100%"
-          alignItems="center"
-          justifyContent="space-between"
+          size="lg"
+          name="exampleGroup"
+          accessibilityLabel="pick a choice"
+          value={props.answers[props.index] as string}
+          onChange={(nextAnswers) => {
+            const newAnswers = props.answers.map((answer, i) =>
+              i === props.index ? nextAnswers : answer,
+            );
+            props.setAnswers(newAnswers);
+          }}
         >
-          <Text color={colors.text} fontSize="md" textAlign="center">
-            全く{'\n'}思わない
-          </Text>
-          <Text color={colors.text} fontSize="md" textAlign="center">
-            どちらとも{'\n'}いえない
-          </Text>
-          <Text color={colors.text} fontSize="md" textAlign="center">
-            とても{'\n'}そう思う
-          </Text>
-        </Flex>
-      </Radio.Group>
+          <RadioGroupChildren />
+        </Radio.Group>
+      ) : (
+        <Radio.Group
+          w="100%"
+          size="lg"
+          name="exampleGroup"
+          accessibilityLabel="pick a choice"
+          onChange={(nextAnswers) => {
+            const newAnswers = props.answers.map((answer, i) =>
+              i === props.index ? nextAnswers : answer,
+            );
+            props.setAnswers(newAnswers);
+          }}
+        >
+          <RadioGroupChildren />
+        </Radio.Group>
+      )}
     </Box>
   );
 };

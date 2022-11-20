@@ -1,22 +1,22 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { Button, Icon, Text } from 'native-base';
-import React from 'react';
+import React, { FC } from 'react';
 import { GestureResponderEvent } from 'react-native';
 
 type Props = {
   iconName: string;
+  mb?: string;
   onPress: ((event: GestureResponderEvent) => void) | null | undefined;
   text: string;
 };
 
 // TODO:Icon変更できるように
 /** @package */
-export const LeftIconButton = (props: Props): JSX.Element => {
+export const LeftIconButton: FC<Props> = (props) => {
   const { colors } = useTheme();
   return (
     <Button
-      onPress={props.onPress}
       leftIcon={
         <Icon
           as={FontAwesome}
@@ -26,6 +26,9 @@ export const LeftIconButton = (props: Props): JSX.Element => {
         />
       }
       bgColor={colors.primary}
+      {...{
+        ...props,
+      }}
     >
       <Text color={colors.text} fontSize="lg">
         {props.text}

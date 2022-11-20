@@ -2,7 +2,6 @@
 export const CustomTheme = {
   colors: {
     background: '#000',
-    bo: '',
     border: '#CBD5E1',
     card: '#1E293B',
     notification: 'rgb(255, 69, 58)',

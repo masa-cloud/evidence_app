@@ -39,7 +39,7 @@ export type HomeTabParamList = {
   HomeScreen: undefined;
   TestActionScreen: undefined;
   TestDetailScreen: undefined;
-  TestResultScreen: undefined;
+  TestResultScreen: { answers: string[] };
 };
 
 export enum RouteName {

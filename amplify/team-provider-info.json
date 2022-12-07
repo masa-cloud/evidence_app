@@ -10,6 +10,11 @@
       "StackName": "amplify-evidenceapp-dev-171407",
       "StackId": "arn:aws:cloudformation:ap-northeast-1:259354216014:stack/amplify-evidenceapp-dev-171407/b23b7f90-3fce-11ed-9ce8-0a51b2035e57",
       "AmplifyAppId": "d2tr3ntw9nm0mr"
+    },
+    "categories": {
+      "auth": {
+        "evidenceapp0944010c": {}
+      }
     }
   }
 }

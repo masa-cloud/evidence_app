@@ -1,10 +1,12 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Box, Text } from 'native-base';
 import React, { FC } from 'react';
+import { TouchableOpacity } from 'react-native';
 
 import { Images } from '~/assets/images';
 import { PageContainer } from '~/components/PageContainer';
 import { Title } from '~/components/Title';
-import { HomeTabParamList } from '~/navigation/rootStackParamList';
+import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
 
 import { ItemFlatList } from './ItemFlatList';
 
@@ -60,6 +62,20 @@ export const Home: FC<Props> = (props) => {
     <PageContainer>
       <Title title="今週のTOP5" />
       <ItemFlatList data={data} navigation={props.navigation} />
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate(RouteName.SignUpScreen)}
+      >
+        <Box py="3">
+          <Text color="white">SignUp</Text>
+        </Box>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate(RouteName.LoginScreen)}
+      >
+        <Box py="3">
+          <Text color="white">SignIn</Text>
+        </Box>
+      </TouchableOpacity>
     </PageContainer>
   );
 };

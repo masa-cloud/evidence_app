@@ -1,8 +1,9 @@
+/* eslint-disable no-void */
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTheme } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
 import { Button, Text } from 'native-base';
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
   Control,
   FieldValues,
@@ -17,7 +18,8 @@ import { CognitoError, ValidationTextInput } from '~/components/Auth';
 import { PageContainer } from '~/components/PageContainer';
 import { RouteName } from '~/navigation/rootStackParamList';
 import { loginSchema } from '~/schema/schema';
-import { login } from '~/slices/userSlice';
+import { login, logout } from '~/slices/userSlice';
+import { AppDispatch } from '~/store';
 
 import { LoginScreenNavigationProps } from './page';
 
@@ -38,7 +40,10 @@ export const LoginDialog: FC<Props> = (props) => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | React.ReactNode>('');
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
+  const cognitoLogout = useCallback(() => {
+    return dispatch(logout());
+  }, [dispatch]);
   const onError: SubmitErrorHandler<LoginInput> = (errors: any, e: any) =>
     console.log(errors, e);
   const handleLogin: SubmitHandler<LoginInput> = async ({
@@ -48,7 +53,6 @@ export const LoginDialog: FC<Props> = (props) => {
     setIsLoading(true);
     try {
       dispatch(login(await Auth.signIn({ password, username: email })));
-      console.log(1);
       setError('');
       props.navigation.navigate(RouteName.HomeScreen);
       // TODO:ログイン完了したらHOMEに遷移
@@ -78,9 +82,12 @@ export const LoginDialog: FC<Props> = (props) => {
         secureTextEntry
       />
       {error}
-      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <Button
-        onPress={async () => await handleSubmit(handleLogin, onError)()}
+        onPress={() =>
+          void (async () => {
+            await handleSubmit(handleLogin, onError)();
+          })()
+        }
         isLoading={isLoading}
         // TODO:style簡潔に書く
         _text={{
@@ -100,6 +107,25 @@ export const LoginDialog: FC<Props> = (props) => {
       <Text color={colors.text} fontSize="18">
         パスワード:12345678
       </Text>
+      <Button
+        onPress={() =>
+          void (async () => {
+            await cognitoLogout();
+          })()
+        }
+        isLoading={isLoading}
+        // TODO:style簡潔に書く
+        _text={{
+          color: colors.text,
+          fontSize: 16,
+          fontWeight: 'bold',
+          letterSpacing: 0.25,
+          lineHeight: 21,
+        }}
+        style={styles.button}
+      >
+        <Text>ログアウト</Text>
+      </Button>
     </PageContainer>
   );
 };

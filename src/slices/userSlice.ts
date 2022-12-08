@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CognitoUser } from 'amazon-cognito-identity-js';
+import { Auth } from 'aws-amplify';
 
 import type { RootState } from '../store';
 
@@ -15,8 +16,22 @@ const initialState: userStatus = Object.freeze({
   user: undefined,
 });
 
+export const logout = createAsyncThunk('user/logout', async () => {
+  try {
+    await Auth.signOut();
+  } catch (error: any) {
+    console.log({ error });
+  }
+});
+
 export const userSlice = createSlice({
   name: 'user',
+  extraReducers: (builder) => {
+    builder.addCase(logout.fulfilled, (state) => {
+      console.warn('ログアウト成功');
+      state = initialState;
+    });
+  },
   initialState,
   reducers: {
     login: (state, action: PayloadAction<CognitoUser>) => {
@@ -29,14 +44,11 @@ export const userSlice = createSlice({
       const typeCheckUserPayload = userPayload as { [key: string]: any };
       const email = typeCheckUserPayload.email as string;
       state = { email, isLogin: true, user };
-      console.log('login', { state });
-    },
-    logout: (state) => {
-      state.user = initialState.user;
+      console.warn('ログイン成功');
     },
   },
 });
-export const { login, logout } = userSlice.actions;
+export const { login } = userSlice.actions;
 
 export const selectUser = (state: RootState): userStatus => state.user;
 export default userSlice.reducer;

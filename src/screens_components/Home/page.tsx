@@ -66,14 +66,14 @@ export const Home: FC<Props> = (props) => {
         onPress={() => props.navigation.navigate(RouteName.SignUpScreen)}
       >
         <Box py="3">
-          <Text color="white">SignUp</Text>
+          <Text color="white">会員登録</Text>
         </Box>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => props.navigation.navigate(RouteName.LoginScreen)}
       >
         <Box py="3">
-          <Text color="white">SignIn</Text>
+          <Text color="white">ログイン / ログアウト</Text>
         </Box>
       </TouchableOpacity>
     </PageContainer>

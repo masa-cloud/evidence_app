@@ -1,8 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Text } from 'native-base';
 import React, { FC } from 'react';
-import { Text } from 'react-native';
-import { useTailwind as tw } from 'tailwind-rn/dist';
 
 import { PageContainer } from '~/components/PageContainer';
 import { BottomTabParamList } from '~/navigation/rootStackParamList';
@@ -22,7 +21,7 @@ export const MyPage: FC<Props> = (props) => {
 
   return (
     <PageContainer>
-      <Text style={[tw()('text-xl font-bold'), { color: colors.text }]}>
+      <Text fontSize="xl" fontWeight="bold" color={colors.text}>
         MyPage
       </Text>
     </PageContainer>

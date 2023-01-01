@@ -1,1 +1,0 @@
-export { TestResult } from './page';

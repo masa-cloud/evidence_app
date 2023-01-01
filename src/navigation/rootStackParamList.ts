@@ -36,9 +36,12 @@ export type RootTabParamList = {
 };
 
 export type HomeTabParamList = {
+  EmailChangeScreen: undefined;
   HomeScreen: undefined;
   LoginScreen: undefined;
   LogoutScreen: undefined;
+  PasswordChangeScreen: undefined;
+  PasswordResetScreen: undefined;
   SignUpScreen: undefined;
   TestActionScreen: undefined;
   TestDetailScreen: undefined;
@@ -50,9 +53,12 @@ export enum RouteName {
   LoginScreen = 'LoginScreen',
   LogoutScreen = 'LogoutScreen',
   SignUpScreen = 'SignUpScreen',
+  PasswordResetScreen = 'PasswordResetScreen',
+  EmailChangeScreen = 'EmailChangeScreen',
   TestDetailScreen = 'TestDetailScreen',
   TestActionScreen = 'TestActionScreen',
   TestResultScreen = 'TestResultScreen',
+  PasswordChangeScreen = 'PasswordChangeScreen',
   HomeScreen = 'HomeScreen',
   Modal = 'Modal',
   MyPageScreen = 'MyPageScreen',

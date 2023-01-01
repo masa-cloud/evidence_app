@@ -1,5 +1,6 @@
+import { useTheme } from '@react-navigation/native';
+import { Text } from 'native-base';
 import React, { FC, ReactNode } from 'react';
-import { StyleSheet, Text } from 'react-native';
 
 type Props = {
   children: ReactNode;
@@ -7,11 +8,10 @@ type Props = {
 
 /** @package */
 export const ErrorText: FC<Props> = (props) => {
-  return <Text style={styles.text}>{props.children}</Text>;
+  const { colors } = useTheme();
+  return (
+    <Text mt="2" color={colors.error}>
+      {props.children}
+    </Text>
+  );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    color: 'red',
-  },
-});

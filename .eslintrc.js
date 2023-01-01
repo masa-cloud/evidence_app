@@ -41,6 +41,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/jsx-uses-react': 'error',
     'react/jsx-uses-vars': 'error',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
     // For JS objects sorting
     'sort-keys-custom-order/object-keys': [

@@ -1,12 +1,14 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Box, Text } from 'native-base';
+import { Text } from 'native-base';
 import React, { FC } from 'react';
 import { TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import { Images } from '~/assets/images';
 import { PageContainer } from '~/components/PageContainer';
 import { Title } from '~/components/Title';
 import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
+import { selectUser } from '~/slices/userSlice';
 
 import { ItemFlatList } from './ItemFlatList';
 
@@ -21,40 +23,15 @@ type Props = {
 
 /** @package */
 export const Home: FC<Props> = (props) => {
+  const {
+    user: { email },
+  } = useSelector(selectUser);
   const data = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       avatarUrl: Images.doctors,
       fullName: 'テスト',
-      recentText: 'コーネル大学',
-      timeStamp: '12:47 PM',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      avatarUrl: Images.doctors,
-      fullName: 'テスト',
-      recentText: 'コーネル大学',
-      timeStamp: '11:11 PM',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      avatarUrl: Images.doctors,
-      fullName: 'テスト',
-      recentText: 'コーネル大学',
-      timeStamp: '6:22 PM',
-    },
-    {
-      id: '68694a0f-3da1-431f-bd56-142371e29d72',
-      avatarUrl: Images.doctors,
-      fullName: 'テスト',
-      recentText: 'コーネル大学',
-      timeStamp: '8:56 PM',
-    },
-    {
-      id: '28694a0f-3da1-471f-bd96-142456e29d72',
-      avatarUrl: Images.doctors,
-      fullName: 'テスト',
-      recentText: 'コーネル大学',
+      recentText: 'テスト',
       timeStamp: '12:47 PM',
     },
   ];
@@ -62,19 +39,43 @@ export const Home: FC<Props> = (props) => {
     <PageContainer>
       <Title title="今週のTOP5" />
       <ItemFlatList data={data} navigation={props.navigation} />
+      <Text color="white">{email}</Text>
       <TouchableOpacity
         onPress={() => props.navigation.navigate(RouteName.SignUpScreen)}
       >
-        <Box py="3">
-          <Text color="white">会員登録</Text>
-        </Box>
+        <Text py="3" color="white">
+          会員登録
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => props.navigation.navigate(RouteName.LoginScreen)}
       >
-        <Box py="3">
-          <Text color="white">ログイン / ログアウト</Text>
-        </Box>
+        <Text py="3" color="white">
+          ログイン
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate(RouteName.LogoutScreen)}
+      >
+        <Text py="3" color="white">
+          ログアウト
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          props.navigation.navigate(RouteName.PasswordChangeScreen)
+        }
+      >
+        <Text py="3" color="white">
+          パスワード変更
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate(RouteName.EmailChangeScreen)}
+      >
+        <Text py="3" color="white">
+          メールアドレス変更
+        </Text>
       </TouchableOpacity>
     </PageContainer>
   );

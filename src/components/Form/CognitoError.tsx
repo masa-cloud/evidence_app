@@ -12,7 +12,7 @@ export const CognitoError = ({
 }): JSX.Element => {
   switch (err.code) {
     // TODO:エラーメッセージ整理
-    case 'UserNotFountException':
+    case 'UserNotFoundException':
     case 'NotAuthorizedException':
       return (
         <ErrorText>
@@ -26,6 +26,5 @@ export const CognitoError = ({
         </ErrorText>
       );
   }
-  console.log(err);
   return <ErrorText>予期せぬエラーが発生しました。</ErrorText>;
 };

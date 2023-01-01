@@ -1,3 +1,5 @@
+import { useTheme } from '@react-navigation/native';
+import { Text, View } from 'native-base';
 import React from 'react';
 import {
   Control,
@@ -9,49 +11,53 @@ import {
 import {
   StyleProp,
   StyleSheet,
-  Text,
   TextInput,
   TextInputProps,
   TextStyle,
-  View,
 } from 'react-native';
-import { ErrorText } from '../Text';
+
+import { ErrorText } from '~/components/Text';
 
 interface Props extends TextInputProps {
-  areaName: string;
-  autoCompleteType: string;
   control: Control<any>;
   defaultValue?: any;
-  label: string;
   style?: StyleProp<TextStyle>;
+  type: 'email' | 'certificationCode' | 'newEmail';
 }
 
 /** @package */
-export const ValidationTextInput: React.FC<Props> = ({
-  areaName,
-  control,
-  defaultValue,
-  style,
-  ...props
-}) => {
+export const ValidationTextInput: React.FC<Props> = (props) => {
+  const labelNameBox = {
+    certificationCode: 'コードを入力してください',
+    email: 'メールアドレス',
+    newEmail: 'メールアドレス',
+  };
+  const placeholderBox = {
+    certificationCode: '123456',
+    email: 'example@example.com',
+    newEmail: 'example@example.com',
+  };
+  const { colors } = useTheme();
   return (
     <Controller
-      control={control}
-      name={areaName}
-      defaultValue={defaultValue}
+      control={props.control}
+      name={props.type}
+      defaultValue={props.defaultValue}
       render={({
         field: { name, onBlur, onChange, value },
         formState: { errors },
       }) => (
-        <View>
+        <View mt="4">
+          <Text fontWeight="bold" color={colors.text}>
+            {labelNameBox[props.type]} <Text color={colors.error}>必須</Text>
+          </Text>
           <TextInput
-            // このpropsにautoCompleteTypeなど諸々乗っかってくる
-            {...props}
-            style={[styles.input, style]}
-            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+            placeholder={placeholderBox[props.type]}
+            style={[styles.input, props.style]}
             value={value || ''}
             onBlur={onBlur}
             onChangeText={onChange}
+            autoCapitalize="none"
           />
           {/* バリエーションエラー表示 */}
           {errors[name] != null && (
@@ -70,7 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     elevation: 2,
-    marginTop: 30,
+    marginTop: 8,
     paddingHorizontal: 20,
     paddingVertical: 20,
     shadowOffset: {

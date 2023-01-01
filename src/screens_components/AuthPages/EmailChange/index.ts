@@ -1,0 +1,1 @@
+export { EmailChangePage } from './page';

@@ -1,7 +1,7 @@
 import { RouteProp, useTheme } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Box, ScrollView, Text } from 'native-base';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   VictoryArea,
   VictoryChart,
@@ -68,10 +68,6 @@ export const TestResult: FC<Props> = (props) => {
   const { colors } = useTheme();
   const [data, setDate] = useState(processData(characterData));
   const [maxima, setMaxima] = useState(getMaxima(characterData));
-
-  useEffect(() => {
-    console.error(props.route.params.answers);
-  }, []);
 
   const result = {
     title: '『ショートBIG5』テストの結果',

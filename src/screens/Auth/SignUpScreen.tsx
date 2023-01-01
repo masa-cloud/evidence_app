@@ -2,9 +2,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 
 import { HomeTabParamList } from '~/navigation/rootStackParamList';
-import { SignUpPage } from '~/screens_components/SignUp';
+import { SignUpPage } from '~/screens_components/AuthPages/SignUp';
 
-type SignUpScreenNavigationProps = NativeStackNavigationProp<
+export type SignUpScreenNavigationProps = NativeStackNavigationProp<
   HomeTabParamList,
   'SignUpScreen'
 >;

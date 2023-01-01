@@ -1,14 +1,8 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { FC } from 'react';
 
-import { HomeTabParamList } from '~/navigation/rootStackParamList';
+import { LoginScreenNavigationProps } from '~/screens/Auth/LoginScreen';
 
 import { LoginDialog } from './LoginDialog';
-
-export type LoginScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'LoginScreen'
->;
 
 type Props = {
   navigation: LoginScreenNavigationProps;

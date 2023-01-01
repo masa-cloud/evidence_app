@@ -2,7 +2,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
+import { selectUser } from '~/slices/userSlice';
+
+import { AuthStackScreen } from './AuthStackNavigator';
 import { HistoryStackScreen } from './HistoryStackNavigator';
 import { HomeStackScreen } from './HomeStackNavigator';
 import { MyPageStackScreen } from './MyPageStackNavigator';
@@ -19,6 +23,9 @@ function TabBarIcon(props: {
 
 export const BottomTabNavigator = (): JSX.Element => {
   const { colors } = useTheme();
+  const {
+    user: { isLogin },
+  } = useSelector(selectUser);
 
   return (
     <BottomTab.Navigator
@@ -28,14 +35,25 @@ export const BottomTabNavigator = (): JSX.Element => {
         tabBarActiveTintColor: colors.primary,
       }}
     >
-      <BottomTab.Screen
-        name={RouteName.HomeScreen + 'Stack'}
-        component={HomeStackScreen}
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        }}
-      />
+      {isLogin ? (
+        <BottomTab.Screen
+          name={RouteName.HomeScreen + 'Stack'}
+          component={HomeStackScreen}
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          }}
+        />
+      ) : (
+        <BottomTab.Screen
+          name={RouteName.LoginScreen + 'Stack'}
+          component={AuthStackScreen}
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          }}
+        />
+      )}
       <BottomTab.Screen
         name={RouteName.HistoryScreen + 'Stack'}
         component={HistoryStackScreen}

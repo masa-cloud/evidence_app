@@ -4,19 +4,28 @@ import { Auth } from 'aws-amplify';
 
 import type { RootState } from '../store';
 
+type State = {
+  user: userStatus;
+};
 type userStatus = {
   email: string;
   isLogin: boolean;
-  user: CognitoUser | undefined;
+  // user: CognitoUser | undefined;
 };
 
-const initialState: userStatus = Object.freeze({
-  email: '',
-  isLogin: false,
-  user: undefined,
-});
+const initialState: State = {
+  user: { email: '', isLogin: false },
+  // user: undefined,
+};
 
-export const logout = createAsyncThunk('user/logout', async () => {
+const logout = createAsyncThunk<
+  Promise<void>,
+  undefined,
+  {
+    rejectValue: string;
+    state: { user: State };
+  }
+>('user/logout', async () => {
   try {
     await Auth.signOut();
   } catch (error: any) {
@@ -28,27 +37,28 @@ export const userSlice = createSlice({
   name: 'user',
   extraReducers: (builder) => {
     builder.addCase(logout.fulfilled, (state) => {
-      console.warn('ログアウト成功');
-      state = initialState;
+      state.user = initialState.user;
     });
   },
   initialState,
   reducers: {
+    emailChange: (state, action: PayloadAction<Pick<userStatus, 'email'>>) => {
+      state.user = { ...state.user, email: action.payload.email };
+    },
     login: (state, action: PayloadAction<CognitoUser>) => {
       const user = action.payload;
       const userPayload = user.getSignInUserSession()?.getIdToken().payload;
-      if (userPayload !== undefined && userPayload.email === state.email) {
-        // state = initialState
+      if (userPayload !== undefined && userPayload.email === state.user.email) {
         return;
       }
       const typeCheckUserPayload = userPayload as { [key: string]: any };
       const email = typeCheckUserPayload.email as string;
-      state = { email, isLogin: true, user };
-      console.warn('ログイン成功');
+      state.user = { email, isLogin: true };
     },
   },
 });
-export const { login } = userSlice.actions;
+const { emailChange, login } = userSlice.actions;
+const selectUser = (state: RootState): State => state.user;
 
-export const selectUser = (state: RootState): userStatus => state.user;
+export { emailChange, login, logout, selectUser };
 export default userSlice.reducer;

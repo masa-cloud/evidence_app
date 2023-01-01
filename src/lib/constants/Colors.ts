@@ -1,12 +1,15 @@
+import '@react-navigation/native';
+
 /** @package */
 export const CustomTheme = {
   colors: {
     background: '#000',
     border: '#CBD5E1',
     card: '#1E293B',
-    notification: 'rgb(255, 69, 58)',
+    error: '#ef4444',
+    link: '#93C5FD',
     primary: '#1D4ED8',
-    text: '#FFFFFF',
+    text: '#fafafa',
   },
   dark: false,
 };
@@ -17,9 +20,26 @@ export const CustomDarkTheme = {
     background: '#000',
     border: '#CBD5E1',
     card: '#1E293B',
-    notification: 'rgb(255, 69, 58)',
+    error: '#ef4444',
+    link: '#93C5FD',
     primary: '#1D4ED8',
-    text: '#FFF',
+    text: '#fafafa',
   },
   dark: true,
 };
+
+declare module '@react-navigation/native' {
+  export type ExtendedTheme = {
+    colors: {
+      background: string;
+      border: string;
+      card: string;
+      error: string;
+      link: string;
+      primary: string;
+      text: string;
+    };
+    dark: boolean;
+  };
+  export function useTheme(): ExtendedTheme;
+}

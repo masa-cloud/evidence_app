@@ -8,7 +8,7 @@ export const CustomTheme = {
     card: '#1E293B',
     error: '#ef4444',
     link: '#93C5FD',
-    primary: '#1D4ED8',
+    primary: '#3F3F46',
     text: '#fafafa',
   },
   dark: false,

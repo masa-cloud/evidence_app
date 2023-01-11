@@ -36,7 +36,6 @@ export const ConfirmSignUp: FC<Props> = (props) => {
     certificationCode,
   }) => {
     try {
-      console.log(props.userName);
       await Auth.confirmSignUp(props.userName, certificationCode);
       setError('');
       // props.navigation.navigate(RouteName.HomeScreen);

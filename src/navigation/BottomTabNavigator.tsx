@@ -7,9 +7,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '~/slices/userSlice';
 
 import { AuthStackScreen } from './AuthStackNavigator';
-import { HistoryStackScreen } from './HistoryStackNavigator';
 import { HomeStackScreen } from './HomeStackNavigator';
-import { MyPageStackScreen } from './MyPageStackNavigator';
 import { RouteName } from './rootStackParamList';
 
 const BottomTab = createBottomTabNavigator();
@@ -33,6 +31,7 @@ export const BottomTabNavigator = (): JSX.Element => {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
+        tabBarStyle: { display: isLogin ? 'none' : 'flex' },
       }}
     >
       {isLogin ? (
@@ -54,24 +53,6 @@ export const BottomTabNavigator = (): JSX.Element => {
           }}
         />
       )}
-      <BottomTab.Screen
-        name={RouteName.HistoryScreen + 'Stack'}
-        component={HistoryStackScreen}
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="list-ul" color={color} />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name={RouteName.MyPageScreen + 'Stack'}
-        component={MyPageStackScreen}
-        options={{
-          title: 'MyPage',
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        }}
-      />
     </BottomTab.Navigator>
   );
 };

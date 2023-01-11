@@ -1,16 +1,21 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Text } from 'native-base';
+import { Box } from 'native-base';
 import React, { FC } from 'react';
-import { TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Images } from '~/assets/images';
-import { PageContainer } from '~/components/PageContainer';
-import { Title } from '~/components/Title';
 import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
-import { selectUser } from '~/slices/userSlice';
+import { selectNote, updateOrder } from '~/slices/noteSlice';
+import { AppDispatch } from '~/store';
+import { Notes } from '~/types/types';
 
-import { ItemFlatList } from './ItemFlatList';
+import { HomeHeader } from './HomeHeader';
+import { NoteCard } from './NoteCard';
 
 type HomeScreenNavigationProps = NativeStackNavigationProp<
   HomeTabParamList,
@@ -23,60 +28,54 @@ type Props = {
 
 /** @package */
 export const Home: FC<Props> = (props) => {
-  const {
-    user: { email },
-  } = useSelector(selectUser);
-  const data = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      avatarUrl: Images.doctors,
-      fullName: 'テスト',
-      recentText: 'テスト',
-      timeStamp: '12:47 PM',
-    },
-  ];
+  const dispatch: AppDispatch = useDispatch();
+  const { notes } = useSelector(selectNote);
+  // const [stateNotes, setStateNotes] = useState(notes)
+
+  const renderItem = ({
+    drag,
+    isActive,
+    item,
+  }: RenderItemParams<Notes>): JSX.Element => {
+    return (
+      <ScaleDecorator>
+        <TouchableOpacity onLongPress={drag} disabled={isActive}>
+          <NoteCard note={item} ids={[item.id]} />
+        </TouchableOpacity>
+      </ScaleDecorator>
+    );
+  };
+
   return (
-    <PageContainer>
-      <Title title="今週のTOP5" />
-      <ItemFlatList data={data} navigation={props.navigation} />
-      <Text color="white">{email}</Text>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate(RouteName.SignUpScreen)}
+    <SafeAreaView>
+      <ImageBackground
+        source={Images.background}
+        resizeMode="cover"
+        style={{ height: '100%', width: '100%' }}
       >
-        <Text py="3" color="white">
-          会員登録
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate(RouteName.LoginScreen)}
-      >
-        <Text py="3" color="white">
-          ログイン
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate(RouteName.LogoutScreen)}
-      >
-        <Text py="3" color="white">
-          ログアウト
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() =>
-          props.navigation.navigate(RouteName.PasswordChangeScreen)
+        <HomeHeader />
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
+        ></TouchableOpacity>
+        <Box h="2" />
+        {
+          // TODO:key一位なkeyになるように修正
+          // return <NoteCard key={index} note={note} ids={[note.id]}/>
+          <DraggableFlatList
+            data={notes}
+            activationDistance={10}
+            onDragEnd={({ data, from, to }) => {
+              // setStateNotes(data)
+              const id = data[to]?.id;
+              if (id !== undefined) {
+                dispatch(updateOrder({ from, ids: [id], to }));
+              }
+            }}
+            keyExtractor={(item) => `item-${item.id}`}
+            renderItem={renderItem}
+          />
         }
-      >
-        <Text py="3" color="white">
-          パスワード変更
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate(RouteName.EmailChangeScreen)}
-      >
-        <Text py="3" color="white">
-          メールアドレス変更
-        </Text>
-      </TouchableOpacity>
-    </PageContainer>
+      </ImageBackground>
+    </SafeAreaView>
   );
 };

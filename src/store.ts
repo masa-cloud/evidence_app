@@ -3,9 +3,11 @@ import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
 
+import noteReducer from './slices/noteSlice';
 import userReducer from './slices/userSlice';
 
 export const rootReducer = combineReducers({
+  notes: noteReducer,
   user: userReducer,
 });
 
@@ -13,6 +15,7 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   version: 1,
+  // whitelist: ['user', 'notes'], // blacklisting a store attribute name, will not persist that store attribute.
   whitelist: ['user'], // blacklisting a store attribute name, will not persist that store attribute.
 };
 

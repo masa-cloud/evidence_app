@@ -1,29 +1,91 @@
-import { useTheme } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Text } from 'native-base';
-import React, { FC } from 'react';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 
-import { PageContainer } from '~/components/PageContainer';
-import { BottomTabParamList } from '~/navigation/rootStackParamList';
+const NUM_ITEMS = 10;
+function getColor(i: number): string {
+  const multiplier = 255 / (NUM_ITEMS - 1);
+  const colorVal = i * multiplier;
+  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
+}
 
-type MyPageScreenNavigationProps = NativeStackNavigationProp<
-  BottomTabParamList,
-  'MyPageScreen'
->;
-
-type Props = {
-  navigation: MyPageScreenNavigationProps;
+type Item = {
+  backgroundColor: string;
+  child?: Item[];
+  height: number;
+  key: string;
+  label: string;
+  width: number;
 };
 
-/** @package */
-export const MyPage: FC<Props> = (props) => {
-  const { colors } = useTheme();
+const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
+  const backgroundColor = getColor(index);
+  return {
+    backgroundColor,
+    child: [
+      {
+        backgroundColor,
+        height: 100,
+        key: `item-${index}`,
+        label: String(index) + '',
+        width: 60 + Math.random() * 40,
+      },
+    ],
+    height: 100,
+    key: `item-${index}`,
+    label: String(index) + '',
+    width: 60 + Math.random() * 40,
+  };
+});
+
+export function MyPage(): JSX.Element {
+  const [data, setData] = useState(initialData);
+
+  const renderItem = ({
+    drag,
+    isActive,
+    item,
+  }: RenderItemParams<Item>): JSX.Element => {
+    return (
+      <ScaleDecorator>
+        <TouchableOpacity
+          onLongPress={drag}
+          disabled={isActive}
+          style={[
+            styles.rowItem,
+            { backgroundColor: isActive ? 'red' : item.backgroundColor },
+          ]}
+        >
+          <Text style={styles.text}>{item.label}</Text>
+        </TouchableOpacity>
+      </ScaleDecorator>
+    );
+  };
 
   return (
-    <PageContainer>
-      <Text fontSize="xl" fontWeight="bold" color={colors.text}>
-        MyPage
-      </Text>
-    </PageContainer>
+    <DraggableFlatList
+      data={data}
+      onDragEnd={({ data }) => setData(data)}
+      keyExtractor={(item) => item.key}
+      renderItem={renderItem}
+    />
   );
-};
+}
+
+const styles = StyleSheet.create({
+  rowItem: {
+    alignItems: 'center',
+    height: 100,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  text: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});

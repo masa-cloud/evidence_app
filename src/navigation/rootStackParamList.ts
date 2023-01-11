@@ -40,6 +40,7 @@ export type HomeTabParamList = {
   HomeScreen: undefined;
   LoginScreen: undefined;
   LogoutScreen: undefined;
+  MyPageScreen: undefined;
   PasswordChangeScreen: undefined;
   PasswordResetScreen: undefined;
   SignUpScreen: undefined;

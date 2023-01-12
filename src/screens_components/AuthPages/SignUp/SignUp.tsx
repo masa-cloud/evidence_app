@@ -1,8 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Auth } from 'aws-amplify';
-import { Button } from 'native-base';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
+import { Button, Spinner } from 'tamagui';
 
 import {
   CognitoError,
@@ -75,7 +75,7 @@ export const SignUp: FC<Props> = (props) => {
             await handleSubmit(handleSignUp, onError)();
           })();
         }}
-        isLoading={isSubmitting}
+        icon={isSubmitting ? <Spinner size="large" color="$green10" /> : <></>}
       >
         会員登録する
       </Button>

@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTheme } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
-import { Text } from 'native-base';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+import { Text } from 'tamagui';
 
 import { Button } from '~/components/Button';
 import { CognitoError, ValidationTextInput } from '~/components/Form';

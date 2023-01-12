@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
-import { Heading } from 'native-base';
 import React, { FC } from 'react';
+import { H1 } from 'tamagui';
 
 type Props = {
   title: string;
@@ -11,8 +11,8 @@ type Props = {
 export const Title: FC<Props> = (props) => {
   const { colors } = useTheme();
   return (
-    <Heading color={colors.text} fontSize="2xl" pl={props.pl ?? null} pb="4">
+    <H1 color={colors.text} fontSize="2xl" pl={props.pl ?? null} pb={16}>
       {props.title}
-    </Heading>
+    </H1>
   );
 };

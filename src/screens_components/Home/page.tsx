@@ -1,5 +1,4 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Box } from 'native-base';
 import React, { FC } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
@@ -7,6 +6,7 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
+import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
 import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
@@ -57,7 +57,7 @@ export const Home: FC<Props> = (props) => {
         <TouchableOpacity
           onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
         ></TouchableOpacity>
-        <Box h="2" />
+        <Stack h={2} />
         {
           // TODO:key一位なkeyになるように修正
           // return <NoteCard key={index} note={note} ids={[note.id]}/>

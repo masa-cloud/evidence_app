@@ -1,6 +1,6 @@
-import { Text } from 'native-base';
 import React, { FC } from 'react';
 import { StyleSheet } from 'react-native';
+import { Text } from 'tamagui';
 
 import { Button } from '~/components/Button';
 import { PageContainer } from '~/components/PageContainer';

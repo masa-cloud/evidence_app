@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
-import { Button as BaseButton } from 'native-base';
 import React, { FC } from 'react';
+import { Button as BaseButton, SizableText } from 'tamagui';
 
 type Props = {
   children: string;
@@ -15,14 +15,6 @@ export const Button: FC<Props> = (props) => {
   const { colors } = useTheme();
   return (
     <BaseButton
-      // TODO:style簡潔に書く
-      _text={{
-        color: props.isWhite ? colors.primary : colors.text,
-        fontSize: 16,
-        fontWeight: 'bold',
-        letterSpacing: 0.25,
-        lineHeight: 21,
-      }}
       color={colors.text}
       backgroundColor={props.isWhite ? colors.text : colors.primary}
       py="4"
@@ -30,7 +22,18 @@ export const Button: FC<Props> = (props) => {
       borderRadius="8"
       onPress={props.onPress}
     >
-      {props.children}
+      {/* // style={{
+        // fontSize: 16,
+      // }} */}
+      <SizableText
+        lineHeight="21"
+        letterSpacing="0.5"
+        fontWeight="bold"
+        color={props.isWhite ? colors.primary : colors.text}
+        size="$4"
+      >
+        {props.children}
+      </SizableText>
     </BaseButton>
   );
 };

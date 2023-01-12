@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
-import { Box, Text } from 'native-base';
 import React, { FC } from 'react';
 import { GestureResponderEvent } from 'react-native';
+import { Stack, Text } from 'tamagui';
 
 type Props = {
   children: string;
@@ -12,17 +12,18 @@ type Props = {
 export const LinkText: FC<Props> = (props) => {
   const { colors } = useTheme();
   return (
-    <Box alignItems="center">
+    <Stack alignItems="center">
       <Text
         onPress={props.onPress}
         fontWeight="bold"
         fontSize="16"
-        underline={true}
-        mt="6"
+        bbw={2}
+        bbc={colors.link}
+        mt={24}
         color={colors.link}
       >
         {props.children}
       </Text>
-    </Box>
+    </Stack>
   );
 };

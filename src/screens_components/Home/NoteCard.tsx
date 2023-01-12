@@ -1,6 +1,5 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import { HStack, Text, View } from 'native-base';
 import React, {
   useCallback,
   useEffect,
@@ -8,12 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  Animated,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
@@ -21,6 +15,7 @@ import DraggableFlatList, {
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
+import { Stack, Text, TextArea, XStack } from 'tamagui';
 
 import {
   selectNote,
@@ -63,6 +58,9 @@ export const NoteCard = ({
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
   const duration = useMemo(() => 200 - 50 * note.level, [note.level]);
+  // ここを親で定義すると？
+  // Animatedのリファクタ
+  // useCallbackでComponent化 関心の分離
   const {
     focusNote: { focusId, focusInputType },
   } = useSelector(selectNote);
@@ -202,34 +200,34 @@ export const NoteCard = ({
 
   // TODO:なんかスクロールしづらそう。。。
   return (
-    <View
+    <Stack
       // TODO:入れ子のスクロールできたけど、交換するのはどうする？
       onTouchStart={() =>
         dispatch(updateFucusId({ focusId: note.id, ids, level: note.level }))
       }
-      mt="0"
-      mb="2"
-      ml="2"
-      mr="0.5"
+      mt={0}
+      mb={8}
+      ml={8}
+      mr={2}
       borderWidth={2}
       borderColor={colors.primary}
       borderRadius={8}
     >
-      <HStack
+      <XStack
         position="relative"
         alignItems="center"
         justifyContent="space-between"
         backgroundColor={colors.primary}
-        px="2"
-        py="1"
+        px={8}
+        py={4}
       >
-        <HStack alignItems="center" flex="1">
-          <View
-            h="7"
-            w="7"
-            borderRadius="4"
+        <XStack alignItems="center" f={1}>
+          <Stack
+            h={28}
+            w={28}
+            borderRadius={4}
             backgroundColor={isFocusInputEmoji ? '#c1d4f0' : colors.text}
-            mr="2"
+            mr={8}
           >
             {note.emoji ? (
               <Text
@@ -263,12 +261,16 @@ export const NoteCard = ({
                 style={{ lineHeight: 26, textAlign: 'center' }}
               />
             )}
-          </View>
-          <TextInput
+          </Stack>
+          <TextArea
             style={[
               isFocusInputTitle && styles.focusBorderStyle,
               styles.titleTextInputStyle,
             ]}
+            bg={colors.primary}
+            py={2}
+            px={4}
+            bw={0}
             value={note.title ?? ''}
             multiline={true}
             onChangeText={(title) => dispatch(updateTitle({ title, ids }))}
@@ -279,8 +281,8 @@ export const NoteCard = ({
               )
             }
           />
-        </HStack>
-        <View style={isFocusInputExpanded && styles.focusBorderStyle}>
+        </XStack>
+        <Stack style={isFocusInputExpanded && styles.focusBorderStyle}>
           {expanded ? (
             <SimpleLineIcons
               onPress={() => {
@@ -314,16 +316,21 @@ export const NoteCard = ({
               style={styles.expanded}
             />
           )}
-        </View>
-      </HStack>
+        </Stack>
+      </XStack>
       <Animated.View
         style={[styles.animatedExpandedView, { height: animatedValue }]}
       >
-        <TextInput
+        {/* TODO:Focusするとdescritionのborderの色が薄くなる */}
+        <TextArea
           style={[
             isFocusInputDescription && styles.focusBorderStyle,
             styles.descriptionInput,
           ]}
+          bg={'transparent'}
+          py={2}
+          px={4}
+          boc={colors.primary}
           value={note.description ?? ''}
           multiline={true}
           onContentSizeChange={(event) => {
@@ -340,7 +347,7 @@ export const NoteCard = ({
             // setDescription(description)
             dispatch(updateDescription({ description, ids }));
           }}
-          autoCapitalize="none"
+          // autoCapitalize="none"
         />
       </Animated.View>
       <NoteChildCard />
@@ -354,6 +361,6 @@ export const NoteCard = ({
         open={isOpen}
         onClose={() => setIsOpen(false)}
       />
-    </View>
+    </Stack>
   );
 };

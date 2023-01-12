@@ -1,6 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import { Icon, Text } from 'native-base';
+import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
 import {
   Control,
@@ -12,11 +11,11 @@ import {
 import {
   StyleProp,
   StyleSheet,
-  TextInput,
   TextInputProps,
   TextStyle,
   View,
 } from 'react-native';
+import { Button, Input, Text } from 'tamagui';
 
 import { ErrorText } from '~/components/Text';
 
@@ -52,7 +51,7 @@ export const ValidationPasswordInput: React.FC<Props> = (props) => {
           </Text>
           <View style={styles.container}>
             <View style={styles.sectionStyle}>
-              <TextInput
+              <Input
                 placeholder="入力してください"
                 secureTextEntry={secureTextEntry}
                 style={[styles.input, props.style]}
@@ -60,13 +59,18 @@ export const ValidationPasswordInput: React.FC<Props> = (props) => {
                 onBlur={onBlur}
                 onChangeText={onChange}
               />
-              <Icon
+              <Button
+                onPress={() => setSecureTextEntry((prev) => !prev)}
+                size={8}
+                icon={secureTextEntry ? <Eye /> : <EyeOff />}
+              />
+              {/* <Icon
                 onPress={() => setSecureTextEntry((prev) => !prev)}
                 as={Ionicons}
                 name={secureTextEntry ? 'eye' : 'eye-off'}
                 size="8"
                 style={styles.imageStyle}
-              />
+              /> */}
               {/* バリエーションエラー表示 */}
             </View>
           </View>

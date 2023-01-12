@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTheme } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
-import { Box, Text } from 'native-base';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { Stack, Text } from 'tamagui';
 
 import { Button } from '~/components/Button';
 import {
@@ -79,7 +79,7 @@ export const LoginDialog: FC<Props> = (props) => {
       >
         ログイン
       </Button>
-      <Box py="1" />
+      <Stack py={4} />
       <Button
         onPress={() => props.navigation.navigate(RouteName.SignUpScreen)}
         isWhite={true}

@@ -1,5 +1,4 @@
 import { useTheme } from '@react-navigation/native';
-import { Text, View } from 'native-base';
 import React from 'react';
 import {
   Control,
@@ -15,6 +14,7 @@ import {
   TextInputProps,
   TextStyle,
 } from 'react-native';
+import { Stack, Text } from 'tamagui';
 
 import { ErrorText } from '~/components/Text';
 
@@ -47,7 +47,7 @@ export const ValidationTextInput: React.FC<Props> = (props) => {
         field: { name, onBlur, onChange, value },
         formState: { errors },
       }) => (
-        <View mt="4">
+        <Stack mt={16}>
           <Text fontWeight="bold" color={colors.text}>
             {labelNameBox[props.type]} <Text color={colors.error}>必須</Text>
           </Text>
@@ -65,7 +65,7 @@ export const ValidationTextInput: React.FC<Props> = (props) => {
               {(errors[name] as DeepMap<FieldValues, FieldError>)?.message}
             </ErrorText>
           )}
-        </View>
+        </Stack>
       )}
     />
   );

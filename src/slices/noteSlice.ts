@@ -354,11 +354,12 @@ export const noteSlice = createSlice({
         if (loopCount === 0) {
           notes.title = title;
         }
+        const minusLoopCount = loopCount - 1;
         if (notes.children) {
           const childNotes = notes.children.find(
-            (note) => note.id === ids[loopCount - 1],
+            (note) => note.id === ids[minusLoopCount],
           );
-          childNotes && noteTitleUpdate(childNotes, loopCount - 1);
+          childNotes && noteTitleUpdate(childNotes, minusLoopCount);
         }
       };
       notes && noteTitleUpdate(notes, loopCount);

@@ -1,9 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Auth } from 'aws-amplify';
-import { Text } from 'native-base';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
+import { Text } from 'tamagui';
 
 import { Button } from '~/components/Button';
 import {

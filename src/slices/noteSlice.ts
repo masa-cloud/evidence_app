@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
-import { FocusInputType } from '~/screens_components/Home/NoteCard';
 import { Notes } from '~/types/types';
 
 import type { RootState } from '../store';
@@ -15,7 +14,6 @@ type State = {
 const initialState: State = {
   focusNote: {
     focusId: 0,
-    focusInputType: FocusInputType.None,
     ids: [],
     level: 0,
     levelStock: 0,
@@ -146,7 +144,6 @@ type targetIds = {
 
 type focusNote = {
   focusId: number;
-  focusInputType: FocusInputType;
   ids: number[];
   level: number;
   levelStock: number;
@@ -291,7 +288,7 @@ export const noteSlice = createSlice({
     },
     updateFucusId: (
       state,
-      action: PayloadAction<Omit<focusNote, 'levelStock' | 'focusInputType'>>,
+      action: PayloadAction<Omit<focusNote, 'levelStock'>>,
     ) => {
       if (state.focusNote.levelStock === 0) {
         state.focusNote.focusId = action.payload.focusId;
@@ -301,12 +298,6 @@ export const noteSlice = createSlice({
       } else {
         state.focusNote.levelStock--;
       }
-    },
-    updateFucusInputType: (
-      state,
-      action: PayloadAction<Pick<focusNote, 'focusInputType'>>,
-    ) => {
-      state.focusNote.focusInputType = action.payload.focusInputType;
     },
     updateOrder: (state, action: PayloadAction<Required<orderIds>>) => {
       const loopCount = action.payload.ids.length - 1;
@@ -373,7 +364,6 @@ const {
   updateDescription,
   updateEmoji,
   updateFucusId,
-  updateFucusInputType,
   updateOrder,
   updateTitle,
 } = noteSlice.actions;
@@ -387,7 +377,6 @@ export {
   updateDescription,
   updateEmoji,
   updateFucusId,
-  updateFucusInputType,
   updateOrder,
   updateTitle,
 };

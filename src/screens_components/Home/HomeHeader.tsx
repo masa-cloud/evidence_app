@@ -3,7 +3,7 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { Image, Stack, YStack } from 'tamagui';
+import { Image, Stack, XStack } from 'tamagui';
 
 import { Images } from '~/assets/images';
 import { addBrotherNote, addChildNote } from '~/slices/noteSlice';
@@ -14,20 +14,20 @@ export const HomeHeader = (): JSX.Element => {
   const { colors } = useTheme();
   const dispatch: AppDispatch = useDispatch();
   return (
-    <YStack
+    <XStack
       // pos="fixed"
-      top="0"
+      top={0}
       opacity={0.5}
-      left="0"
-      px="3"
-      py="3"
+      left={0}
+      px={12}
+      py={12}
       alignItems="center"
-      width="full"
+      w={'100%'}
       backgroundColor={colors.background}
       justifyContent="space-between"
     >
       <Ionicons name="ios-menu-sharp" size={30} color={colors.text} />
-      <YStack alignItems="center" justifyContent="space-between">
+      <XStack alignItems="center" justifyContent="space-between">
         <Ionicons
           name="search-sharp"
           style={{ marginHorizontal: 8 }}
@@ -50,7 +50,7 @@ export const HomeHeader = (): JSX.Element => {
             <Image height={24} width={24} src={Images.plusChild} />
           </Stack>
         </TouchableOpacity>
-      </YStack>
-    </YStack>
+      </XStack>
+    </XStack>
   );
 };

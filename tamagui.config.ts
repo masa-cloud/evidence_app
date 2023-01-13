@@ -25,7 +25,7 @@ const headingFont = createInterFont({
     9: -2,
   },
   size: {
-    sm: 10,
+    6: 15,
   },
   transform: {
     6: 'uppercase',

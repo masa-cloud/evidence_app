@@ -30,7 +30,6 @@ export type NoteCardProps = {
 };
 
 // NOTE:icloudに保存はできるのか？
-// TODO:アニメーションをtamaguiにする
 // TODO:サイドメニュー作成 storeは別にした方が良いかも
 // TODO:styleSheetの引数に色渡せて外だしできるように
 // TODO:パフォーマンス測るもの入れときたい
@@ -60,39 +59,6 @@ export const NoteCard = ({
     ids,
     level: note.level,
   });
-
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        animatedExpandedView: {
-          overflow: 'scroll',
-          paddingHorizontal: 6,
-          paddingVertical: 2,
-        },
-        focusDescriptionStyle: {
-          borderColor: colors.primary,
-          borderRadius: 4,
-          borderStyle: 'dashed',
-          borderWidth: 2,
-        },
-        focusTitleStyle: {
-          borderColor: colors.text,
-          borderRadius: 4,
-          borderStyle: 'dashed',
-          borderWidth: 2,
-          paddingVertical: 0,
-        },
-        titleTextInputStyle: {
-          alignItems: 'center',
-          color: colors.text,
-          flex: 1,
-          fontSize: 18,
-          fontWeight: 'bold',
-          paddingVertical: 4,
-        },
-      }),
-    [],
-  );
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
@@ -212,8 +178,8 @@ export const NoteCard = ({
         <XStack alignItems="center" f={1}>
           <Emoji />
           <TextArea
-            style={styles.titleTextInputStyle}
-            focusStyle={styles.focusTitleStyle}
+            style={[styles.titleTextInputStyle, { color: colors.text }]}
+            focusStyle={{ ...styles.focusTitleStyle, borderColor: colors.text }}
             bg={colors.primary}
             py={2}
             px={4}
@@ -262,7 +228,10 @@ export const NoteCard = ({
           color={colors.primary}
           fontSize={14}
           bw={0}
-          focusStyle={styles.focusDescriptionStyle}
+          focusStyle={{
+            ...styles.focusDescriptionStyle,
+            borderColor: colors.primary,
+          }}
           boc={colors.primary}
           value={description ?? ''}
           multiline={true}
@@ -285,3 +254,29 @@ export const NoteCard = ({
     </Stack>
   );
 };
+
+const styles = StyleSheet.create({
+  animatedExpandedView: {
+    overflow: 'scroll',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  focusDescriptionStyle: {
+    borderRadius: 4,
+    borderStyle: 'dashed',
+    borderWidth: 2,
+  },
+  focusTitleStyle: {
+    borderRadius: 4,
+    borderStyle: 'dashed',
+    borderWidth: 2,
+    paddingVertical: 0,
+  },
+  titleTextInputStyle: {
+    alignItems: 'center',
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingVertical: 4,
+  },
+});

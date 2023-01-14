@@ -47,6 +47,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.descriptionHeight]);
+
   return (
     <Animated.View
       style={[styles.animatedExpandedView, { height: animatedValue }]}

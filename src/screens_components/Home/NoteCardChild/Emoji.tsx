@@ -18,7 +18,6 @@ type EmojiProps = {
 export const Emoji: FC<EmojiProps> = (props) => {
   const { colors } = useTheme();
   const dispatch: AppDispatch = useDispatch();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handlePick = useCallback(
     (emojiObject: EmojiType): void => {

@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useRef } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -31,6 +31,11 @@ type Props = {
 export const Home: FC<Props> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
+  const flatListRef = useRef<any>(undefined);
+
+  const onPress = (height: number): void => {
+    flatListRef.current.scrollToOffset({ animated: true, offset: height });
+  };
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
@@ -52,13 +57,14 @@ export const Home: FC<Props> = (props) => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%' }}
       >
-        <SideTree notes={notes} />
+        <SideTree notes={notes} onNoteNavigate={onPress} />
         <TouchableOpacity
           onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
         ></TouchableOpacity>
         <Stack h={2} />
         <DraggableFlatList
           data={notes}
+          ref={flatListRef}
           activationDistance={10}
           onDragEnd={({ data, from, to }) => {
             // setStateNotes(data)
@@ -67,6 +73,7 @@ export const Home: FC<Props> = (props) => {
               dispatch(updateOrder({ from, ids: [id], to }));
             }
           }}
+          extraData={flatListRef}
           keyExtractor={(item) => `item-${item.id}`}
           renderItem={renderItem}
         />

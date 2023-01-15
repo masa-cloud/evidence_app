@@ -22,7 +22,7 @@ const initialState: State = {
   notes: [
     {
       id: 1,
-      title: 'メモ1aaa',
+      title: '1',
       children: [
         {
           id: 2,
@@ -67,7 +67,7 @@ const initialState: State = {
     },
     {
       id: 5,
-      title: 'カスタムヘッダーメモメモメモメモメモメモメモメモメモメモ',
+      title: '5',
       children: [
         {
           id: 6,
@@ -102,7 +102,7 @@ const initialState: State = {
     },
     {
       id: 15,
-      title: 'カスタムヘッダーメモメモメモメモメモメモメモメモメモメモ',
+      title: '15',
       children: [
         {
           id: 16,

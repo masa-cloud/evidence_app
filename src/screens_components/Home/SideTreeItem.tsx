@@ -6,11 +6,12 @@ import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Circle, Stack, Text, XStack } from 'tamagui';
 
 import { width } from '~/lib/constants';
-import { updateExpanded, updateFucusId, updateOrder } from '~/slices/noteSlice';
+import { selectNoteHeight } from '~/slices/noteHeightSlice';
+import { updateExpanded, updateOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Notes } from '~/types/types';
 
@@ -19,6 +20,7 @@ import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 export type SieTreeItemProps = {
   ids: number[];
   note: Notes;
+  onNoteNavigate: (height: number) => void;
   parentExpanded?: boolean;
 };
 
@@ -26,12 +28,14 @@ export type SieTreeItemProps = {
 export const SideTreeItem = ({
   ids,
   note,
+  onNoteNavigate,
   parentExpanded = true,
 }: SieTreeItemProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useTheme();
   // customHook
   const { position } = useAnimeExpandedRotate(note.expanded);
+  const { noteHeights } = useSelector(selectNoteHeight);
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
@@ -40,6 +44,7 @@ export const SideTreeItem = ({
           <TouchableOpacity onLongPress={drag} disabled={isActive}>
             <SideTreeItem
               note={item}
+              onNoteNavigate={onNoteNavigate}
               ids={[item.id, ...ids]}
               parentExpanded={note.expanded}
             />
@@ -104,9 +109,6 @@ export const SideTreeItem = ({
 
   return (
     <Stack
-      onTouchStart={() =>
-        dispatch(updateFucusId({ focusId: note.id, ids, level: note.level }))
-      }
       w={(width / 4) * 3 - note.level * 10}
       pl={note.level ? 24 : 8}
       pr={2}
@@ -120,6 +122,13 @@ export const SideTreeItem = ({
         justifyContent="space-between"
         backgroundColor={colors.primary}
         py={2}
+        onPress={() =>
+          onNoteNavigate(
+            noteHeights.find((noteHeight) => noteHeight.id === note.id)
+              ?.height ?? 0,
+          )
+        }
+        pressStyle={{ opacity: 0.7 }}
       >
         <XStack alignItems="center" f={1}>
           <Emoji />

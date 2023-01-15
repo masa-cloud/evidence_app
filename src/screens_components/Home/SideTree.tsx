@@ -18,7 +18,13 @@ import { useSideTree } from './hook/useSideTree';
 import { SideTreeItem } from './SideTreeItem';
 
 /** @package */
-export const SideTree = ({ notes }: { notes: Notes[] }): JSX.Element => {
+export const SideTree = ({
+  notes,
+  onNoteNavigate,
+}: {
+  notes: Notes[];
+  onNoteNavigate: (height: number) => void;
+}): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useTheme();
   const { position } = useSelector(selectSideTree);
@@ -29,7 +35,11 @@ export const SideTree = ({ notes }: { notes: Notes[] }): JSX.Element => {
       return (
         <ScaleDecorator>
           <TouchableOpacity onLongPress={drag} disabled={isActive}>
-            <SideTreeItem note={item} ids={[item.id]} />
+            <SideTreeItem
+              onNoteNavigate={onNoteNavigate}
+              note={item}
+              ids={[item.id]}
+            />
           </TouchableOpacity>
         </ScaleDecorator>
       );

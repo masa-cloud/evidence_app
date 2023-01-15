@@ -11,6 +11,7 @@ import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
+import { updateHeight } from '~/slices/noteHeightSlice';
 import {
   updateDescription,
   updateEmoji,
@@ -33,6 +34,7 @@ export type NoteCardProps = {
 
 // NOTE:icloudに保存はできるのか？
 // TODO:FontFamilyのエラー解消
+// TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
 // TODO:デバッガーに繋いで変な処理ないか見てみる
 // TODO:サイドメニューでリンク化？
@@ -111,7 +113,7 @@ export const NoteCard = ({
             <Text
               onPress={() => setIsOpen(true)}
               textAlign="center"
-              fontSize="lg"
+              fos={22}
               lineHeight="28"
             >
               {note.emoji}
@@ -164,6 +166,11 @@ export const NoteCard = ({
   // TODO:なんかスクロールしづらそう。。。
   return (
     <Stack
+      onLayout={({
+        nativeEvent: {
+          layout: { height },
+        },
+      }) => dispatch(updateHeight({ id: note.id, height }))}
       // focusStyle={styles.focusStyle}
       // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
       onTouchStart={() =>
@@ -192,6 +199,7 @@ export const NoteCard = ({
             focusStyle={{ ...styles.focusTitleStyle, borderColor: colors.text }}
             bg={colors.primary}
             py={2}
+            lineHeight={20}
             px={4}
             bw={0}
             value={title ?? ''}
@@ -233,6 +241,7 @@ export const NoteCard = ({
           }}
           boc={colors.primary}
           value={description ?? ''}
+          lineHeight={16}
           multiline={true}
           onContentSizeChange={(event) => {
             setDescriptionHeight(event.nativeEvent.contentSize.height);

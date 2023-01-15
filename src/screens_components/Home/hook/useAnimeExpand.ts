@@ -13,6 +13,7 @@ type useAnimeExpandReturn = {
   fadeIn: () => void;
   fadeOut: () => void;
 };
+
 export const useAnimeExpand = (props: Props): useAnimeExpandReturn => {
   // useRef
   const animatedValue = useRef(new Animated.Value(0)).current;

@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -16,6 +16,7 @@ import { Notes } from '~/types/types';
 
 import { HomeHeader } from './HomeHeader';
 import { NoteCard } from './NoteCard';
+import { SideTree } from './NoteCardChild';
 
 type HomeScreenNavigationProps = NativeStackNavigationProp<
   HomeTabParamList,
@@ -30,21 +31,19 @@ type Props = {
 export const Home: FC<Props> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
-  // const [stateNotes, setStateNotes] = useState(notes)
 
-  const renderItem = ({
-    drag,
-    isActive,
-    item,
-  }: RenderItemParams<Notes>): JSX.Element => {
-    return (
-      <ScaleDecorator>
-        <TouchableOpacity onLongPress={drag} disabled={isActive}>
-          <NoteCard note={item} ids={[item.id]} />
-        </TouchableOpacity>
-      </ScaleDecorator>
-    );
-  };
+  const renderItem = useCallback(
+    ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
+      return (
+        <ScaleDecorator>
+          <TouchableOpacity onLongPress={drag} disabled={isActive}>
+            <NoteCard note={item} ids={[item.id]} />
+          </TouchableOpacity>
+        </ScaleDecorator>
+      );
+    },
+    [],
+  );
 
   return (
     <SafeAreaView>
@@ -54,27 +53,24 @@ export const Home: FC<Props> = (props) => {
         style={{ height: '100%', width: '100%' }}
       >
         <HomeHeader />
+        <SideTree notes={notes} />
         <TouchableOpacity
           onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
         ></TouchableOpacity>
         <Stack h={2} />
-        {
-          // TODO:key一位なkeyになるように修正
-          // return <NoteCard key={index} note={note} ids={[note.id]}/>
-          <DraggableFlatList
-            data={notes}
-            activationDistance={10}
-            onDragEnd={({ data, from, to }) => {
-              // setStateNotes(data)
-              const id = data[to]?.id;
-              if (id !== undefined) {
-                dispatch(updateOrder({ from, ids: [id], to }));
-              }
-            }}
-            keyExtractor={(item) => `item-${item.id}`}
-            renderItem={renderItem}
-          />
-        }
+        <DraggableFlatList
+          data={notes}
+          activationDistance={10}
+          onDragEnd={({ data, from, to }) => {
+            // setStateNotes(data)
+            const id = data[to]?.id;
+            if (id !== undefined) {
+              dispatch(updateOrder({ from, ids: [id], to }));
+            }
+          }}
+          keyExtractor={(item) => `item-${item.id}`}
+          renderItem={renderItem}
+        />
       </ImageBackground>
     </SafeAreaView>
   );

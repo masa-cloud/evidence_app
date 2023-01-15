@@ -259,7 +259,6 @@ export const noteSlice = createSlice({
           childNotes && noteDescriptionUpdate(childNotes, loopCount - 1);
         }
       };
-      console.log({ ids });
       notes && noteDescriptionUpdate(notes, loopCount);
     },
     updateEmoji: (
@@ -285,6 +284,30 @@ export const noteSlice = createSlice({
         }
       };
       notes && noteEmojiUpdate(notes, loopCount);
+    },
+    updateExpanded: (
+      state,
+      action: PayloadAction<Required<Pick<Notes, 'expanded'>> & targetIds>,
+    ) => {
+      const loopCount = action.payload.ids.length - 1;
+      const ids = action.payload.ids;
+      const expanded = action.payload.expanded;
+      const notes = state.notes.find((note) => note.id === ids[loopCount]);
+      const noteExpandedUpdate = (
+        notes: WritableDraft<Notes>,
+        loopCount: number,
+      ): void => {
+        if (loopCount === 0) {
+          notes.expanded = expanded;
+        }
+        if (notes.children) {
+          const childNotes = notes.children.find(
+            (note) => note.id === ids[loopCount - 1],
+          );
+          childNotes && noteExpandedUpdate(childNotes, loopCount - 1);
+        }
+      };
+      notes && noteExpandedUpdate(notes, loopCount);
     },
     updateFucusId: (
       state,
@@ -363,6 +386,7 @@ const {
   addChildNote,
   updateDescription,
   updateEmoji,
+  updateExpanded,
   updateFucusId,
   updateOrder,
   updateTitle,
@@ -376,6 +400,7 @@ export {
   selectNote,
   updateDescription,
   updateEmoji,
+  updateExpanded,
   updateFucusId,
   updateOrder,
   updateTitle,

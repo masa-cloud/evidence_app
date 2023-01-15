@@ -1,4 +1,4 @@
 export { DescriptionInput } from './DescriptionInput';
-export { Emoji } from './Emoji';
 // export { Expanded } from './Expanded';
+export { SideTree } from '../SideTree';
 export { TitleInput } from './TitleInput';

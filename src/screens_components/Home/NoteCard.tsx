@@ -1,6 +1,6 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -14,6 +14,7 @@ import { Stack, Text, TextArea, XStack } from 'tamagui';
 import {
   updateDescription,
   updateEmoji,
+  updateExpanded,
   updateFucusId,
   updateOrder,
   updateTitle,
@@ -21,7 +22,8 @@ import {
 import { AppDispatch } from '~/store';
 import { Notes } from '~/types/types';
 
-import { useAnimeExpand } from './useAnimeExpand';
+import { useAnimeExpand } from './hook/useAnimeExpand';
+import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 
 export type NoteCardProps = {
   ids: number[];
@@ -31,13 +33,20 @@ export type NoteCardProps = {
 
 // NOTE:icloudに保存はできるのか？
 // TODO:サイドメニュー作成 storeは別にした方が良いかも
-// TODO:styleSheetの引数に色渡せて外だしできるように
 // TODO:パフォーマンス測るもの入れときたい
+// TODO:FontFamilyのエラー解消
+// TODO:デバッガーに繋いで変な処理ないか見てみる
+// TODO:updateテーマで色変えるのから、サブスクもあり(赤青黃以外はサブスクみたいな)
 // ↓リリース後
+// TODO:広めるためのシェア活動とかも必要
+// TODO:背景画像変えれるように
+// TODO:皆のテンプレ動画導入 本日、1日前、2日前、週間(サブスク)、月間(サブスク)
 // TODO:ログインできるように
 // TODO:GraphQL使用
+// TODO:パスワードの強さ
 // TODO:検索できるように
 // TODO:文字を書けるように
+// TODO:サブスク導入
 // TODO:画像を使えるようにする
 /** @package */
 export const NoteCard = ({
@@ -48,7 +57,6 @@ export const NoteCard = ({
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useTheme();
   // useState
-  const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
   const [description, setDescription] = useState<string>(note.description);
   const [title, setTitle] = useState<string>(note.title);
@@ -59,6 +67,7 @@ export const NoteCard = ({
     ids,
     level: note.level,
   });
+  const { position } = useAnimeExpandedRotate(note.expanded);
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
@@ -68,13 +77,13 @@ export const NoteCard = ({
             <NoteCard
               note={item}
               ids={[item.id, ...ids]}
-              parentExpanded={expanded}
+              parentExpanded={note.expanded}
             />
           </TouchableOpacity>
         </ScaleDecorator>
       );
     },
-    [expanded],
+    [note.expanded],
   );
 
   const Emoji = (): JSX.Element => {
@@ -145,7 +154,7 @@ export const NoteCard = ({
     } else {
       return <></>;
     }
-  }, [note.children, expanded]);
+  }, [note.children, note.expanded]);
 
   if (!parentExpanded) {
     return <></>;
@@ -193,29 +202,18 @@ export const NoteCard = ({
         </XStack>
         {/* TODO:Expandedはアニメーション終わったあとにコンポーネント化 */}
         <Stack boc={colors.primary}>
-          {expanded ? (
+          <Stack animation={'bouncy'} {...position}>
             <SimpleLineIcons
               onPress={() => {
-                setExpanded((prevExpanded) => !prevExpanded);
-                fadeIn();
+                dispatch(updateExpanded({ expanded: !note.expanded, ids }));
+                note.expanded ? fadeIn() : fadeOut();
               }}
               name="arrow-up"
               size={20}
               color={colors.text}
               px={12 - 4 * (note.level + 1)}
             />
-          ) : (
-            <SimpleLineIcons
-              onPress={() => {
-                setExpanded((prevExpanded) => !prevExpanded);
-                fadeOut();
-              }}
-              name="arrow-down"
-              size={20}
-              color={colors.text}
-              px={12 - 4 * (note.level + 1)}
-            />
-          )}
+          </Stack>
         </Stack>
       </XStack>
       <Animated.View

@@ -9,10 +9,14 @@ import { Images } from '~/assets/images';
 import { addBrotherNote, addChildNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
+import { useSideTree } from './hook/useSideTree';
+
 /** @package */
 export const HomeHeader = (): JSX.Element => {
   const { colors } = useTheme();
   const dispatch: AppDispatch = useDispatch();
+  const { onPress } = useSideTree();
+
   return (
     <XStack
       // pos="fixed"
@@ -36,6 +40,7 @@ export const HomeHeader = (): JSX.Element => {
         />
         <MaterialIcons
           name="menu-book"
+          onPress={onPress}
           style={{ marginHorizontal: 8 }}
           size={30}
           color={colors.text}

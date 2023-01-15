@@ -70,7 +70,7 @@ export const SideTree = ({
           br="$4"
           pt={30}
           btrr={0}
-          w={(width / 4) * 3}
+          w={width}
         >
           <DraggableFlatList
             data={notes}

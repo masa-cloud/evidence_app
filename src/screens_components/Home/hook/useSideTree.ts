@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useControllableState } from 'tamagui';
 
@@ -34,9 +34,13 @@ export const useSideTree = (): useSideTreeReturn => {
   });
   const position = useMemo(() => positions[positionI], [positionI]);
   const onPress = (): void => {
-    dispatch(updatePosition({ position: positions[positionI === 1 ? 0 : 1] }));
-    setPositionI((prevState) => (prevState === 1 ? 0 : 1));
+    setPositionI(Number(!positionI));
   };
+
+  useEffect(() => {
+    // console.log({})
+    dispatch(updatePosition({ position }));
+  }, [position]);
 
   return {
     onPress,

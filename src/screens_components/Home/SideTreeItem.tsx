@@ -121,7 +121,6 @@ export const SideTreeItem = ({
       }
     };
     const sum = sumHeight(notes, totalLoopCount, 0);
-    console.log({ notes, sum });
     return sum;
   };
 

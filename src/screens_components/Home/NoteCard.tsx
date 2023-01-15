@@ -6,12 +6,15 @@ import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
-import { updateContentsHeight, updateHeight } from '~/slices/noteHeightSlice';
+import {
+  selectNoteHeight,
+  updateContentsHeight,
+} from '~/slices/noteHeightSlice';
 import {
   updateDescription,
   updateEmoji,
@@ -33,11 +36,13 @@ export type NoteCardProps = {
 };
 
 // NOTE:icloudに保存はできるのか？
+// TODO:dispatch(updateHeight)をcontentsHeightのところに移動 height = contentsHeight + ???px
 // TODO:何回も起きる高さupdateのdispatchをレンダリングを1回にする
 // TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
 // TODO:関心の分離化
 // TODO:Storageの設定(保存方法と最大容量など)考えないといけないのでは？
+// TODO:ローカルでflashListの更新とかいけるのか？？？
 // ↓リリース後
 // TODO:updateテーマで色変えるのから、サブスクもあり(赤青黃以外はサブスクみたいな)
 // TODO:広めるためのシェア活動とかも必要
@@ -62,6 +67,10 @@ export const NoteCard = ({
   const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
   const [description, setDescription] = useState<string>(note.description);
   const [title, setTitle] = useState<string>(note.title);
+  const { noteHeights } = useSelector(selectNoteHeight);
+  const noteHeight = noteHeights.find(
+    (noteHeight) => noteHeight.id === note.id,
+  );
   // customHook
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
     descriptionHeight,
@@ -164,12 +173,13 @@ export const NoteCard = ({
   // TODO:なんかスクロールしづらそう。。。
   return (
     <Stack
-      onLayout={({
-        nativeEvent: {
-          layout: { height },
-        },
-      }) => dispatch(updateHeight({ id: note.id, height }))}
-      // focusStyle={styles.focusStyle}
+      // onLayout={({
+      //   nativeEvent: {
+      //     layout: { height },
+      //   },
+      // TODO:↓の行移動
+      // }) => dispatch(updateHeight({ id: note.id, height }))
+      // }
       // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
       onTouchStart={() =>
         dispatch(updateFucusId({ focusId: note.id, ids, level: note.level }))
@@ -243,16 +253,27 @@ export const NoteCard = ({
           multiline={true}
           onContentSizeChange={(event) => {
             setDescriptionHeight(event.nativeEvent.contentSize.height);
-            note.id === 15 &&
-              console.log(event.nativeEvent.contentSize.height, note.title);
-            note.id === 5 &&
-              console.log(event.nativeEvent.contentSize.height, note.title);
-            dispatch(
-              updateContentsHeight({
-                id: note.id,
-                contentsHeight: event.nativeEvent.contentSize.height + 50,
-              }),
-            );
+            // level0 2回ずつ
+            // level1 ?回ずつ
+            if (
+              event.nativeEvent.contentSize.height !== 16 &&
+              event.nativeEvent.contentSize.height !==
+                noteHeight?.contentsHeight
+            ) {
+              console.log(note.id, event.nativeEvent.contentSize.height);
+              dispatch(
+                updateContentsHeight({
+                  id: note.id,
+                  contentsHeight: event.nativeEvent.contentSize.height + 50,
+                }),
+              );
+            }
+            // note.id === 16 &&
+            //   console.log(event.nativeEvent.contentSize.height, note.id, note.title);
+            // note.id === 6 &&
+            //   console.log(event.nativeEvent.contentSize.height, note.id, note.title);
+            // note.id === 2 &&
+            //   console.log(event.nativeEvent.contentSize.height, note.id, note.title);
           }}
           onChangeText={(description) => {
             setDescription(description);

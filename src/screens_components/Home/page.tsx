@@ -74,7 +74,7 @@ export const Home: FC<Props> = (props) => {
             }
           }}
           extraData={flatListRef}
-          keyExtractor={(item) => `item-${item.id}`}
+          keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />
         <HomeHeader />

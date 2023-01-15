@@ -11,7 +11,7 @@ import { Circle, Stack, Text, XStack } from 'tamagui';
 
 import { width } from '~/lib/constants';
 import { selectNoteHeight } from '~/slices/noteHeightSlice';
-import { updateExpanded, updateOrder } from '~/slices/noteSlice';
+import { selectNote, updateExpanded, updateOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Notes } from '~/types/types';
 
@@ -36,6 +36,7 @@ export const SideTreeItem = ({
   // customHook
   const { position } = useAnimeExpandedRotate(note.expanded);
   const { noteHeights } = useSelector(selectNoteHeight);
+  const { notes } = useSelector(selectNote);
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
@@ -55,6 +56,75 @@ export const SideTreeItem = ({
     [note.expanded],
   );
 
+  const getHeight = (): number => {
+    // levelと何番目の要素か取得
+    // looopが何回必要か0番目の要素かどうか判定する
+    const totalLoopCount = ids.length - 1;
+    const sumHeight = (
+      notes: Notes[],
+      loopCount: number,
+      targetHeight: number,
+      prevTargetNoteHeight?: number,
+    ): number => {
+      const targetIndex = notes.findIndex((storeNote) => {
+        return storeNote.id === ids[loopCount];
+      });
+      if (loopCount === 0) {
+        if (targetIndex === 0 && prevTargetNoteHeight) {
+          return targetHeight + prevTargetNoteHeight;
+        }
+        const prevNotes = notes.filter(
+          (storeNote, index) => index < targetIndex,
+        );
+        const sumPrevHeight = prevNotes.reduce(function (sum, prevNote) {
+          const prevNoteHeight =
+            noteHeights.find((NoteHeight) => NoteHeight.id === prevNote.id)
+              ?.height ?? 0;
+          return sum + prevNoteHeight + 8;
+        }, 0);
+        return targetHeight + sumPrevHeight + (prevTargetNoteHeight ?? 0);
+      } else {
+        const targetNote = notes.find((note) => note.id === ids[loopCount]);
+        const targetNoteHeight =
+          loopCount === 1
+            ? 8 * targetIndex +
+              (noteHeights.find(
+                (targetHeight) => targetHeight.id === targetNote?.id,
+              )?.contentsHeight ?? 0)
+            : 0;
+        if (targetIndex === 0 && targetNote?.children?.length) {
+          return sumHeight(
+            targetNote.children,
+            loopCount - 1,
+            targetHeight,
+            targetNoteHeight,
+          );
+        }
+        const prevNotes = notes.filter(
+          (storeNote, index) => index < targetIndex,
+        );
+        const sumPrevHeight = prevNotes.reduce(function (sum, prevNote) {
+          const prevNoteHeight =
+            noteHeights.find((noteHeight) => noteHeight.id === prevNote.id)
+              ?.height ?? 0;
+          return sum + prevNoteHeight;
+        }, 0);
+        if (targetNote?.children?.length) {
+          return sumHeight(
+            targetNote.children,
+            loopCount - 1,
+            targetHeight + sumPrevHeight,
+            targetNoteHeight,
+          );
+        }
+        return targetHeight + sumPrevHeight;
+      }
+    };
+    const sum = sumHeight(notes, totalLoopCount, 0);
+    console.log({ notes, sum });
+    return sum;
+  };
+
   const SideTreeChildItem = useCallback((): JSX.Element => {
     if (note.children !== undefined) {
       const NoteChild = note.children;
@@ -68,7 +138,7 @@ export const SideTreeItem = ({
               dispatch(updateOrder({ from, ids: [id, ...ids], to }));
             }
           }}
-          keyExtractor={(item) => `item-${item.id}`}
+          keyExtractor={(item, index) => `side-tree-item-${item.id}-${index}`}
           renderItem={renderItem}
         />
       );
@@ -122,13 +192,9 @@ export const SideTreeItem = ({
         justifyContent="space-between"
         backgroundColor={colors.primary}
         py={2}
-        onPress={() =>
-          onNoteNavigate(
-            noteHeights.find((noteHeight) => noteHeight.id === note.id)
-              ?.height ?? 0,
-          )
-        }
-        pressStyle={{ opacity: 0.7 }}
+        onPress={() => onNoteNavigate(getHeight())}
+        pressStyle={{ opacity: 0.7, scale: 0.9 }}
+        animation="bouncy"
       >
         <XStack alignItems="center" f={1}>
           <Emoji />

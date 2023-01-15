@@ -11,7 +11,7 @@ import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
-import { updateHeight } from '~/slices/noteHeightSlice';
+import { updateContentsHeight, updateHeight } from '~/slices/noteHeightSlice';
 import {
   updateDescription,
   updateEmoji,
@@ -33,14 +33,13 @@ export type NoteCardProps = {
 };
 
 // NOTE:icloudに保存はできるのか？
-// TODO:FontFamilyのエラー解消
+// TODO:何回も起きる高さupdateのdispatchをレンダリングを1回にする
 // TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
-// TODO:デバッガーに繋いで変な処理ないか見てみる
-// TODO:サイドメニューでリンク化？
 // TODO:関心の分離化
-// TODO:updateテーマで色変えるのから、サブスクもあり(赤青黃以外はサブスクみたいな)
+// TODO:Storageの設定(保存方法と最大容量など)考えないといけないのでは？
 // ↓リリース後
+// TODO:updateテーマで色変えるのから、サブスクもあり(赤青黃以外はサブスクみたいな)
 // TODO:広めるためのシェア活動とかも必要
 // TODO:背景画像変えれるように
 // TODO:皆のテンプレ動画導入 本日、1日前、2日前、週間(サブスク)、月間(サブスク)
@@ -150,7 +149,7 @@ export const NoteCard = ({
               dispatch(updateOrder({ from, ids: [id, ...ids], to }));
             }
           }}
-          keyExtractor={(item) => `item-${item.id}`}
+          keyExtractor={(item, index) => `child-item-${item.id}-${index}`}
           renderItem={renderItem}
         />
       );
@@ -162,7 +161,6 @@ export const NoteCard = ({
   if (!parentExpanded) {
     return <></>;
   }
-
   // TODO:なんかスクロールしづらそう。。。
   return (
     <Stack
@@ -245,6 +243,16 @@ export const NoteCard = ({
           multiline={true}
           onContentSizeChange={(event) => {
             setDescriptionHeight(event.nativeEvent.contentSize.height);
+            note.id === 15 &&
+              console.log(event.nativeEvent.contentSize.height, note.title);
+            note.id === 5 &&
+              console.log(event.nativeEvent.contentSize.height, note.title);
+            dispatch(
+              updateContentsHeight({
+                id: note.id,
+                contentsHeight: event.nativeEvent.contentSize.height + 50,
+              }),
+            );
           }}
           onChangeText={(description) => {
             setDescription(description);
@@ -254,11 +262,6 @@ export const NoteCard = ({
         />
       </Animated.View>
       <NoteChildCard />
-      {/* { */}
-      {/* // TODO:key一位なkeyになるように修正
-        //   return <NoteCard key={index} note={note} parentExpanded={expanded} ids={[note.id, ...ids]} />
-        // })
-      // } */}
     </Stack>
   );
 };

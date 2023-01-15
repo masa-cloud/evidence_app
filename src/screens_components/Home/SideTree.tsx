@@ -81,7 +81,7 @@ export const SideTree = ({
                 dispatch(updateOrder({ from, ids: [id], to }));
               }
             }}
-            keyExtractor={(item) => `item-${item.id}`}
+            keyExtractor={(item, index) => `side-tree-${item.id}-${index}`}
             renderItem={renderItem}
           />
         </Stack>

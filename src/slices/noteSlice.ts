@@ -194,7 +194,6 @@ export const noteSlice = createSlice({
           );
           childNotes && noteDescriptionUpdate(childNotes, loopCount - 1);
         }
-        // state.notes.reduceRight
       };
       notes && noteDescriptionUpdate(notes, loopCount);
     },
@@ -336,7 +335,6 @@ export const noteSlice = createSlice({
             (state) => state.id !== ids[0],
           );
           const insertNote = targetNotes.find((state) => state.id === ids[0]);
-          console.log({ insertNote });
           if (insertNote !== undefined) {
             deleteNotes.splice(action.payload.to, 0, insertNote);
             if (parentNote) {

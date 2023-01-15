@@ -16,7 +16,7 @@ import { Notes } from '~/types/types';
 
 import { HomeHeader } from './HomeHeader';
 import { NoteCard } from './NoteCard';
-import { SideTree } from './NoteCardChild';
+import { SideTree } from './SideTree';
 
 type HomeScreenNavigationProps = NativeStackNavigationProp<
   HomeTabParamList,
@@ -52,7 +52,6 @@ export const Home: FC<Props> = (props) => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%' }}
       >
-        <HomeHeader />
         <SideTree notes={notes} />
         <TouchableOpacity
           onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
@@ -71,6 +70,7 @@ export const Home: FC<Props> = (props) => {
           keyExtractor={(item) => `item-${item.id}`}
           renderItem={renderItem}
         />
+        <HomeHeader />
       </ImageBackground>
     </SafeAreaView>
   );

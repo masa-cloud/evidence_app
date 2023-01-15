@@ -6,7 +6,7 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner, Stack } from 'tamagui';
+import { Spinner, Stack, XStack } from 'tamagui';
 
 import { height, width } from '~/lib/constants';
 import { updateOrder } from '~/slices/noteSlice';
@@ -14,6 +14,7 @@ import { selectSideTree } from '~/slices/sideTreeSlice';
 import { AppDispatch } from '~/store';
 import { Notes } from '~/types/types';
 
+import { useSideTree } from './hook/useSideTree';
 import { SideTreeItem } from './SideTreeItem';
 
 /** @package */
@@ -21,6 +22,7 @@ export const SideTree = ({ notes }: { notes: Notes[] }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useTheme();
   const { position } = useSelector(selectSideTree);
+  const { onPress } = useSideTree();
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
@@ -37,15 +39,29 @@ export const SideTree = ({ notes }: { notes: Notes[] }): JSX.Element => {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <Stack
+      <XStack
         animation={'bouncy'}
         h={height}
+        w={width}
         pos={'absolute'}
-        t={55}
         zIndex={1}
         {...position}
       >
-        <Stack bc={colors.primary} h={height - 55} br="$10" pt={30} w={width}>
+        <Stack
+          h={height}
+          br="$4"
+          pt={30}
+          w={(width / 4) * 1}
+          onPress={onPress}
+        />
+        <Stack
+          bc={colors.primary}
+          h={height}
+          br="$4"
+          pt={30}
+          btrr={0}
+          w={(width / 4) * 3}
+        >
           <DraggableFlatList
             data={notes}
             activationDistance={10}
@@ -59,7 +75,7 @@ export const SideTree = ({ notes }: { notes: Notes[] }): JSX.Element => {
             renderItem={renderItem}
           />
         </Stack>
-      </Stack>
+      </XStack>
     </Suspense>
   );
 };

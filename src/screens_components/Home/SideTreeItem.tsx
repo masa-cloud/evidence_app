@@ -102,16 +102,13 @@ export const SideTreeItem = ({
     return <></>;
   }
 
-  // TODO:なんかスクロールしづらそう。。。
   return (
     <Stack
-      // focusStyle={styles.focusStyle}
-      // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
       onTouchStart={() =>
         dispatch(updateFucusId({ focusId: note.id, ids, level: note.level }))
       }
       w={(width / 4) * 3 - note.level * 10}
-      pl={8}
+      pl={note.level ? 24 : 8}
       pr={2}
       borderWidth={2}
       borderColor={colors.primary}
@@ -136,7 +133,6 @@ export const SideTreeItem = ({
             {note.title}
           </Text>
         </XStack>
-        {/* TODO:Expandedはアニメーション終わったあとにコンポーネント化 */}
         <Stack boc={colors.primary}>
           {!!note.children?.length && (
             <Stack animation={'bouncy'} {...position}>

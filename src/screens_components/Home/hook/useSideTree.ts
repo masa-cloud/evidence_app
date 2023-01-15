@@ -48,7 +48,7 @@ export const useSideTree = (): useSideTreeReturn => {
 
 const positions = [
   {
-    x: width / 4,
+    x: 0,
     y: 0,
   },
   {

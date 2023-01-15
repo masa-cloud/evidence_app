@@ -19,8 +19,8 @@ export const HomeHeader = (): JSX.Element => {
 
   return (
     <XStack
-      // pos="fixed"
-      top={0}
+      pos="absolute"
+      bottom={0}
       opacity={0.5}
       left={0}
       px={12}

@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "evidenceappb153651a": {}
+      },
+      "api": {
+        "evidenceapp": {}
       }
     }
   }

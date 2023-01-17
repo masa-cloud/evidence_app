@@ -31,15 +31,14 @@ export type NoteCardProps = {
   parentExpanded?: boolean;
 };
 
-// NOTE:icloudに保存はできるのか？
+// NOTE:icloudに保存はできるのか？ 一旦断念
 
-// TODO:sideTreeはDragFlatList使って、NoteはFlatList使う！ただExpo対応していなかったらどうしよう。。。
-// TODO:↑に追加できるが、おかしく見せない動きはできるのか？？？ 追加されたらその分スクロールするとか？FlatList ↑に要素追加とかで調べてみるのも良いかも？
 // TODO:グラフQL導入グラフQL導入
 // TODO:Googleの広告をつっこむ
 // TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
 // TODO:関心の分離化
+// TODO:なんかサイドツリー２回押さないと動作しない
 // TODO:会員登録は必須にする
 // TODO:Storageの設定(保存方法と最大容量など)考えないといけないのでは？
 // TODO:dispatch(updateHeight)をcontentsHeightのところに移動 height = contentsHeight + ???px

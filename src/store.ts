@@ -19,8 +19,8 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   version: 1,
-  whitelist: ['user', 'notes', 'noteHeights'], // blacklisting a store attribute name, will not persist that store attribute.
-  // whitelist: ['user'], // blacklisting a store attribute name, will not persist that store attribute.
+  // whitelist: ['user', 'notes', 'noteHeights'], // blacklisting a store attribute name, will not persist that store attribute.
+  whitelist: ['user'], // blacklisting a store attribute name, will not persist that store attribute.
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

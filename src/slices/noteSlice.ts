@@ -158,6 +158,7 @@ export const noteSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
+    // TODO:そもそも選択している要素の↓に入ってくれない
     addBrotherNote: (state) => {
       const loopCount = state.focusNote.ids.length - 1;
       const ids = state.focusNote.ids;

@@ -1,17 +1,13 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FlatList } from '@stream-io/flat-list-mvcp';
 import React, { FC, useCallback, useRef } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator,
-} from 'react-native-draggable-flatlist';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
 import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
-import { selectNote, updateOrder } from '~/slices/noteSlice';
-import { AppDispatch } from '~/store';
+import { selectNote } from '~/slices/noteSlice';
 import { Notes } from '~/types/types';
 
 import { HomeHeader } from './HomeHeader';
@@ -29,7 +25,7 @@ type Props = {
 
 /** @package */
 export const Home: FC<Props> = (props) => {
-  const dispatch: AppDispatch = useDispatch();
+  // const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
 
@@ -37,18 +33,9 @@ export const Home: FC<Props> = (props) => {
     flatListRef.current.scrollToOffset({ animated: true, offset: height });
   };
 
-  const renderItem = useCallback(
-    ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
-      return (
-        <ScaleDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={isActive}>
-            <NoteCard note={item} ids={[item.id]} />
-          </TouchableOpacity>
-        </ScaleDecorator>
-      );
-    },
-    [],
-  );
+  const renderItem = useCallback(({ item }: { item: Notes }): JSX.Element => {
+    return <NoteCard note={item} ids={[item.id]} />;
+  }, []);
 
   return (
     <SafeAreaView>
@@ -62,17 +49,9 @@ export const Home: FC<Props> = (props) => {
           onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
         ></TouchableOpacity>
         <Stack h={2} />
-        <DraggableFlatList
+        <FlatList
           data={notes}
           ref={flatListRef}
-          activationDistance={10}
-          onDragEnd={({ data, from, to }) => {
-            // setStateNotes(data)
-            const id = data[to]?.id;
-            if (id !== undefined) {
-              dispatch(updateOrder({ from, ids: [id], to }));
-            }
-          }}
           extraData={flatListRef}
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}

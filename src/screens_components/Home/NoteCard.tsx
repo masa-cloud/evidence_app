@@ -1,11 +1,8 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
+import { FlatList } from '@stream-io/flat-list-mvcp';
 import React, { useCallback, useState } from 'react';
-import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator,
-} from 'react-native-draggable-flatlist';
+import { Animated, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
@@ -20,7 +17,6 @@ import {
   updateEmoji,
   updateExpanded,
   updateFucusId,
-  updateOrder,
   updateTitle,
 } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
@@ -36,16 +32,21 @@ export type NoteCardProps = {
 };
 
 // NOTE:icloudに保存はできるのか？
-// TODO:dispatch(updateHeight)をcontentsHeightのところに移動 height = contentsHeight + ???px
-// TODO:何回も起きる高さupdateのdispatchをレンダリングを1回にする
+
+// TODO:sideTreeはDragFlatList使って、NoteはFlatList使う！ただExpo対応していなかったらどうしよう。。。
+// TODO:↑に追加できるが、おかしく見せない動きはできるのか？？？ 追加されたらその分スクロールするとか？FlatList ↑に要素追加とかで調べてみるのも良いかも？
+// TODO:グラフQL導入グラフQL導入
+// TODO:Googleの広告をつっこむ
 // TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
 // TODO:関心の分離化
+// TODO:会員登録は必須にする
 // TODO:Storageの設定(保存方法と最大容量など)考えないといけないのでは？
-// TODO:ローカルでflashListの更新とかいけるのか？？？
+// TODO:dispatch(updateHeight)をcontentsHeightのところに移動 height = contentsHeight + ???px
+// TODO:何回も起きる高さupdateのdispatchをレンダリングを1回にする
 // ↓リリース後
 // TODO:updateテーマで色変えるのから、サブスクもあり(赤青黃以外はサブスクみたいな)
-// TODO:広めるためのシェア活動とかも必要
+// TODO:広めるためのシェア活動とかも必要 twitterにシェアで1週間広告非表示とか
 // TODO:背景画像変えれるように
 // TODO:皆のテンプレ動画導入 本日、1日前、2日前、週間(サブスク)、月間(サブスク)
 // TODO:ログインできるように
@@ -81,17 +82,13 @@ export const NoteCard = ({
   const { position } = useAnimeExpandedRotate(note.expanded);
 
   const renderItem = useCallback(
-    ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
+    ({ item }: { item: Notes }): JSX.Element => {
       return (
-        <ScaleDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={isActive}>
-            <NoteCard
-              note={item}
-              ids={[item.id, ...ids]}
-              parentExpanded={note.expanded}
-            />
-          </TouchableOpacity>
-        </ScaleDecorator>
+        <NoteCard
+          note={item}
+          ids={[item.id, ...ids]}
+          parentExpanded={note.expanded}
+        />
       );
     },
     [note.expanded],
@@ -149,15 +146,8 @@ export const NoteCard = ({
     if (note.children !== undefined) {
       const NoteChild = note.children;
       return (
-        <DraggableFlatList
+        <FlatList
           data={NoteChild}
-          onDragEnd={({ data, from, to }) => {
-            // setStateNotes(data)
-            const id = data[to]?.id;
-            if (id !== undefined) {
-              dispatch(updateOrder({ from, ids: [id, ...ids], to }));
-            }
-          }}
           keyExtractor={(item, index) => `child-item-${item.id}-${index}`}
           renderItem={renderItem}
         />
@@ -177,7 +167,7 @@ export const NoteCard = ({
       //   nativeEvent: {
       //     layout: { height },
       //   },
-      // TODO:↓の行移動
+      // // TODO:↓の行移動
       // }) => dispatch(updateHeight({ id: note.id, height }))
       // }
       // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに

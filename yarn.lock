@@ -4942,10 +4942,10 @@
     prompts "^2.4.0"
     semver "^6.3.0"
 
-"@react-native-community/netinfo@^9.3.7":
-  version "9.3.7"
-  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-9.3.7.tgz#92407f679f00bae005c785a9284e61d63e292b34"
-  integrity sha512-+taWmE5WpBp0uS6kf+bouCx/sn89G9EpR4s2M/ReLvctVIFL2Qh8WnWfBxqK9qwgmFha/uqjSr2Gq03OOtiDcw==
+"@react-native-community/netinfo@9.3.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-9.3.0.tgz#9792c23341eab5c629566baee016146f4f3f6086"
+  integrity sha512-NNdMeIXXqmPCbXrWxVqRzZ1gEZ6L1ykotWnCZLVjQBUgjyGWdL5LiDM/bcIa5DLzqZY7Km08rMgB7BoHUuEmnQ==
 
 "@react-native-picker/picker@2.4.2":
   version "2.4.2"
@@ -16793,6 +16793,11 @@ remark-squeeze-paragraphs@4.0.0:
   integrity sha512-8qRqmL9F4nuLPIgl92XUuxI3pFxize+F1H0e/W3llTk0UsjJaj01+RrirkMw7P21RKe4X6goQhYRSvNWX+70Rw==
   dependencies:
     mdast-squeeze-paragraphs "^4.0.0"
+
+remeda@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/remeda/-/remeda-1.6.0.tgz#37dd182cb9be170bc800ef81b4aee13d1718f714"
+  integrity sha512-2NBGJZrwWeqAY+Tzo66FyBYyW0CmMFh0tCg97T8G76krXmI45j/EK1oy+5WYrl2j7oPbgRkN6loGIiliiquvxg==
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

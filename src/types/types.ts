@@ -11,5 +11,6 @@ export type Notes = {
   emoji?: string;
   expanded: boolean;
   level: number;
+  order_number: number;
   parentId?: number;
 };

@@ -32,11 +32,26 @@ export type NoteCardProps = {
 };
 
 // NOTE:icloudに保存はできるのか？ 一旦断念
-
-// TODO:グラフQL導入グラフQL導入
+// NOTE:APIを叩く前に処理を実施 APIがfalseだったらStateの処理を戻すようにする
+// TODO:選択している要素の下に追加する
+// TODO:[graphQL]データを作る db orderのカラム持たす？
+// TODO:[graphQL]取得する
+// TODO:[graphQL]アップデートする
+// TODO:[graphQL]削除する
+// TODO:[graphQL]NoteをUserIdと紐付ける
 // TODO:Googleの広告をつっこむ
 // TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
+// TODO:styleのcolor動的↓に書けるように
+// const iconStyle = (props: {
+//   focused: boolean;
+//   size: number;
+//   color: string;
+// }): StyleProp<ImageStyle> => ({
+//   width: props.size,
+//   height: props.size,
+//   tintColor: props.color,
+// });
 // TODO:関心の分離化
 // TODO:なんかサイドツリー２回押さないと動作しない
 // TODO:会員登録は必須にする
@@ -171,7 +186,14 @@ export const NoteCard = ({
       // }
       // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
       onTouchStart={() =>
-        dispatch(updateFucusId({ focusId: note.id, ids, level: note.level }))
+        dispatch(
+          updateFucusId({
+            focusId: note.id,
+            ids,
+            level: note.level,
+            order_number: note.order_number,
+          }),
+        )
       }
       mt={0}
       mb={8}

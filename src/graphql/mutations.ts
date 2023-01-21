@@ -2,43 +2,259 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createTodo = /* GraphQL */ `
-  mutation CreateTodo(
-    $input: CreateTodoInput!
-    $condition: ModelTodoConditionInput
+export const createNote = /* GraphQL */ `
+  mutation CreateNote(
+    $input: CreateNoteInput!
+    $condition: ModelNoteConditionInput
   ) {
-    createTodo(input: $input, condition: $condition) {
+    createNote(input: $input, condition: $condition) {
+      id
+      title
+      description
+      expanded
+      level
+      order_number
+      emoji {
+        id
+        name
+        createdAt
+        updatedAt
+      }
+      parent {
+        id
+        title
+        description
+        expanded
+        level
+        order_number
+        emoji {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        parent {
+          id
+          title
+          description
+          expanded
+          level
+          order_number
+          createdAt
+          updatedAt
+          noteChildrenId
+          noteEmojiId
+        }
+        children {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        noteChildrenId
+        noteEmojiId
+      }
+      children {
+        items {
+          id
+          title
+          description
+          expanded
+          level
+          order_number
+          createdAt
+          updatedAt
+          noteChildrenId
+          noteEmojiId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      noteChildrenId
+      noteEmojiId
+    }
+  }
+`;
+export const updateNote = /* GraphQL */ `
+  mutation UpdateNote(
+    $input: UpdateNoteInput!
+    $condition: ModelNoteConditionInput
+  ) {
+    updateNote(input: $input, condition: $condition) {
+      id
+      title
+      description
+      expanded
+      level
+      order_number
+      emoji {
+        id
+        name
+        createdAt
+        updatedAt
+      }
+      parent {
+        id
+        title
+        description
+        expanded
+        level
+        order_number
+        emoji {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        parent {
+          id
+          title
+          description
+          expanded
+          level
+          order_number
+          createdAt
+          updatedAt
+          noteChildrenId
+          noteEmojiId
+        }
+        children {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        noteChildrenId
+        noteEmojiId
+      }
+      children {
+        items {
+          id
+          title
+          description
+          expanded
+          level
+          order_number
+          createdAt
+          updatedAt
+          noteChildrenId
+          noteEmojiId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      noteChildrenId
+      noteEmojiId
+    }
+  }
+`;
+export const deleteNote = /* GraphQL */ `
+  mutation DeleteNote(
+    $input: DeleteNoteInput!
+    $condition: ModelNoteConditionInput
+  ) {
+    deleteNote(input: $input, condition: $condition) {
+      id
+      title
+      description
+      expanded
+      level
+      order_number
+      emoji {
+        id
+        name
+        createdAt
+        updatedAt
+      }
+      parent {
+        id
+        title
+        description
+        expanded
+        level
+        order_number
+        emoji {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        parent {
+          id
+          title
+          description
+          expanded
+          level
+          order_number
+          createdAt
+          updatedAt
+          noteChildrenId
+          noteEmojiId
+        }
+        children {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        noteChildrenId
+        noteEmojiId
+      }
+      children {
+        items {
+          id
+          title
+          description
+          expanded
+          level
+          order_number
+          createdAt
+          updatedAt
+          noteChildrenId
+          noteEmojiId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      noteChildrenId
+      noteEmojiId
+    }
+  }
+`;
+export const createEmoji = /* GraphQL */ `
+  mutation CreateEmoji(
+    $input: CreateEmojiInput!
+    $condition: ModelEmojiConditionInput
+  ) {
+    createEmoji(input: $input, condition: $condition) {
       id
       name
-      description
       createdAt
       updatedAt
     }
   }
 `;
-export const updateTodo = /* GraphQL */ `
-  mutation UpdateTodo(
-    $input: UpdateTodoInput!
-    $condition: ModelTodoConditionInput
+export const updateEmoji = /* GraphQL */ `
+  mutation UpdateEmoji(
+    $input: UpdateEmojiInput!
+    $condition: ModelEmojiConditionInput
   ) {
-    updateTodo(input: $input, condition: $condition) {
+    updateEmoji(input: $input, condition: $condition) {
       id
       name
-      description
       createdAt
       updatedAt
     }
   }
 `;
-export const deleteTodo = /* GraphQL */ `
-  mutation DeleteTodo(
-    $input: DeleteTodoInput!
-    $condition: ModelTodoConditionInput
+export const deleteEmoji = /* GraphQL */ `
+  mutation DeleteEmoji(
+    $input: DeleteEmojiInput!
+    $condition: ModelEmojiConditionInput
   ) {
-    deleteTodo(input: $input, condition: $condition) {
+    deleteEmoji(input: $input, condition: $condition) {
       id
       name
-      description
       createdAt
       updatedAt
     }

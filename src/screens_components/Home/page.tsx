@@ -31,23 +31,8 @@ export const Home: FC<Props> = (props) => {
   // const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
-  const noteDetails = {
-    title: 'Note 1',
-    description: 'description',
-    emoji: '🥺',
-    expanded: false,
-    level: 0,
-  };
   const deleteTodoDetails = {
     id: 'some_id',
-  };
-
-  const addNote = async (): Promise<void> => {
-    const newNote = await API.graphql({
-      query: mutations.createNote,
-      variables: { input: noteDetails },
-    });
-    console.log({ newNote });
   };
 
   const deleteTodo = async (): Promise<void> => {
@@ -73,7 +58,7 @@ export const Home: FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    void addNote();
+    // void addNote();
   }, []);
   const onPress = (height: number): void => {
     flatListRef.current.scrollToOffset({ animated: true, offset: height });

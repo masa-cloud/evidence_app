@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
 type noteHeight = {
-  id: number;
+  id: string;
   contentsHeight: number;
   height: number;
 };
@@ -13,7 +13,13 @@ type State = {
 };
 
 const initialState: State = {
-  noteHeights: [{ id: 0, contentsHeight: 0, height: 0 }],
+  noteHeights: [
+    {
+      id: Math.random().toString(32).substring(2),
+      contentsHeight: 0,
+      height: 0,
+    },
+  ],
 };
 
 export const noteHeightSlice = createSlice({

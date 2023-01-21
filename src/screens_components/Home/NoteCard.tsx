@@ -26,15 +26,13 @@ import { useAnimeExpand } from './hook/useAnimeExpand';
 import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 
 export type NoteCardProps = {
-  ids: number[];
+  ids: string[];
   note: Notes;
   parentExpanded?: boolean;
 };
 
 // NOTE:icloudに保存はできるのか？ 一旦断念
 // NOTE:APIを叩く前に処理を実施 APIがfalseだったらStateの処理を戻すようにする
-// TODO:選択している要素の下に追加する
-// TODO:[graphQL]データを作る db orderのカラム持たす？
 // TODO:[graphQL]取得する
 // TODO:[graphQL]アップデートする
 // TODO:[graphQL]削除する
@@ -52,6 +50,7 @@ export type NoteCardProps = {
 //   height: props.size,
 //   tintColor: props.color,
 // });
+// TODO:子供を追加した時はexpandedを1にする
 // TODO:関心の分離化
 // TODO:なんかサイドツリー２回押さないと動作しない
 // TODO:会員登録は必須にする
@@ -169,7 +168,7 @@ export const NoteCard = ({
     } else {
       return <></>;
     }
-  }, [note.children, note.expanded]);
+  }, [note.children, renderItem]);
 
   if (!parentExpanded) {
     return <></>;
@@ -188,10 +187,11 @@ export const NoteCard = ({
       onTouchStart={() =>
         dispatch(
           updateFucusId({
+            focusChildrenLength: note.children?.length ?? 0,
             focusId: note.id,
             ids,
             level: note.level,
-            order_number: note.order_number,
+            orderNumber: note.orderNumber,
           }),
         )
       }

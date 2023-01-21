@@ -8,7 +8,7 @@ type Note @model {
   description: String!
   expanded: Boolean!
   level: Int!
-  order_number: Int!
+  orderNumber: Int!
   emoji: Emoji @hasOne
   parent: Note @belongsTo
   children: [Note] @hasMany

@@ -10,7 +10,7 @@ export const onCreateNote = /* GraphQL */ `
       description
       expanded
       level
-      order_number
+      orderNumber
       emoji {
         id
         name
@@ -23,7 +23,7 @@ export const onCreateNote = /* GraphQL */ `
         description
         expanded
         level
-        order_number
+        orderNumber
         emoji {
           id
           name
@@ -36,7 +36,7 @@ export const onCreateNote = /* GraphQL */ `
           description
           expanded
           level
-          order_number
+          orderNumber
           createdAt
           updatedAt
           noteChildrenId
@@ -57,7 +57,7 @@ export const onCreateNote = /* GraphQL */ `
           description
           expanded
           level
-          order_number
+          orderNumber
           createdAt
           updatedAt
           noteChildrenId
@@ -80,7 +80,7 @@ export const onUpdateNote = /* GraphQL */ `
       description
       expanded
       level
-      order_number
+      orderNumber
       emoji {
         id
         name
@@ -93,7 +93,7 @@ export const onUpdateNote = /* GraphQL */ `
         description
         expanded
         level
-        order_number
+        orderNumber
         emoji {
           id
           name
@@ -106,7 +106,7 @@ export const onUpdateNote = /* GraphQL */ `
           description
           expanded
           level
-          order_number
+          orderNumber
           createdAt
           updatedAt
           noteChildrenId
@@ -127,7 +127,7 @@ export const onUpdateNote = /* GraphQL */ `
           description
           expanded
           level
-          order_number
+          orderNumber
           createdAt
           updatedAt
           noteChildrenId
@@ -150,7 +150,7 @@ export const onDeleteNote = /* GraphQL */ `
       description
       expanded
       level
-      order_number
+      orderNumber
       emoji {
         id
         name
@@ -163,7 +163,7 @@ export const onDeleteNote = /* GraphQL */ `
         description
         expanded
         level
-        order_number
+        orderNumber
         emoji {
           id
           name
@@ -176,7 +176,7 @@ export const onDeleteNote = /* GraphQL */ `
           description
           expanded
           level
-          order_number
+          orderNumber
           createdAt
           updatedAt
           noteChildrenId
@@ -197,7 +197,7 @@ export const onDeleteNote = /* GraphQL */ `
           description
           expanded
           level
-          order_number
+          orderNumber
           createdAt
           updatedAt
           noteChildrenId

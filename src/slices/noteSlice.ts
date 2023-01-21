@@ -1,6 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { API } from 'aws-amplify';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
+import { CreateNoteInput, Note } from '~/API';
+import * as mutations from '~/graphql/mutations';
 import { Notes } from '~/types/types';
 
 import type { RootState } from '../store';
@@ -11,56 +14,101 @@ type State = {
   notes: Notes[];
 };
 
+const addBrotherNote = createAsyncThunk<
+  { newNote: Note },
+  { focusLevel: number; orderNumber: number },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addBrotherNote', async (focusData) => {
+  const noteDetails: CreateNoteInput = {
+    title: '',
+    description: '',
+    expanded: true,
+    level: focusData.focusLevel,
+    orderNumber: focusData.orderNumber + 1,
+  };
+  const newNote = (await API.graphql({
+    query: mutations.createNote,
+    variables: { input: noteDetails },
+  })) as Note;
+  return { newNote };
+});
+
+const addChildNote = createAsyncThunk<
+  { newNote: Note },
+  { childrenLength: number; focusLevel: number },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addChildNote', async (focusData) => {
+  const noteDetails: CreateNoteInput = {
+    title: '',
+    description: '',
+    expanded: true,
+    level: focusData.focusLevel + 1,
+    orderNumber: focusData.childrenLength + 1,
+  };
+  const newNote = (await API.graphql({
+    query: mutations.createNote,
+    variables: { input: noteDetails },
+  })) as Note;
+  return { newNote };
+});
+
 const initialState: State = {
   focusNote: {
-    focusId: 0,
+    focusChildrenLength: 0,
+    focusId: '1',
     ids: [],
     level: 0,
     levelStock: 0,
-    order_number: 0,
+    orderNumber: 0,
   },
   maxId: 10,
   notes: [
     {
-      id: 1,
+      id: '1',
       title: '1',
       children: [
         {
-          id: 2,
+          id: '2',
           title: 'カスタムヘッダー1',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: false,
           level: 1,
-          order_number: 0,
+          orderNumber: 0,
           parentId: 1,
         },
         {
-          id: 3,
+          id: '3',
           title: 'カスタムヘッダー2',
           children: [
             {
-              id: 9,
+              id: '9',
               title: 'カスタムヘッダー',
               description: 'メモメモメモメモメモメモメモメモメモメモ',
               expanded: true,
               level: 2,
-              order_number: 0,
+              orderNumber: 0,
               parentId: 1,
             },
           ],
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: true,
           level: 1,
-          order_number: 1,
+          orderNumber: 1,
           parentId: 1,
         },
         {
-          id: 4,
+          id: '4',
           title: 'カスタムヘッダー3',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: false,
           level: 1,
-          order_number: 2,
+          orderNumber: 2,
           parentId: 1,
         },
       ],
@@ -69,37 +117,37 @@ const initialState: State = {
       emoji: '😁',
       expanded: true,
       level: 0,
-      order_number: 0,
+      orderNumber: 0,
     },
     {
-      id: 5,
+      id: '5',
       title: '5',
       children: [
         {
-          id: 6,
+          id: '6',
           title: 'カスタムヘッダー',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: false,
           level: 1,
-          order_number: 1,
+          orderNumber: 1,
           parentId: 1,
         },
         {
-          id: 7,
+          id: '7',
           title: 'カスタムヘッダー',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: true,
           level: 1,
-          order_number: 2,
+          orderNumber: 2,
           parentId: 1,
         },
         {
-          id: 8,
+          id: '8',
           title: 'カスタムヘッダー',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: false,
           level: 1,
-          order_number: 3,
+          orderNumber: 3,
           parentId: 1,
         },
       ],
@@ -108,37 +156,37 @@ const initialState: State = {
       emoji: '😁',
       expanded: true,
       level: 0,
-      order_number: 1,
+      orderNumber: 1,
     },
     {
-      id: 15,
+      id: '15',
       title: '15',
       children: [
         {
-          id: 16,
+          id: '16',
           title: 'カスタムヘッダー',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: false,
           level: 1,
-          order_number: 1,
+          orderNumber: 1,
           parentId: 1,
         },
         {
-          id: 17,
+          id: '17',
           title: 'カスタムヘッダー',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: true,
           level: 1,
-          order_number: 2,
+          orderNumber: 2,
           parentId: 1,
         },
         {
-          id: 18,
+          id: '18',
           title: 'カスタムヘッダー',
           description: 'メモメモメモメモメモメモメモメモメモメモ',
           expanded: false,
           level: 1,
-          order_number: 3,
+          orderNumber: 3,
           parentId: 1,
         },
       ],
@@ -147,52 +195,52 @@ const initialState: State = {
       emoji: '😁',
       expanded: true,
       level: 0,
-      order_number: 2,
+      orderNumber: 2,
     },
   ],
 };
 
 type targetIds = {
-  ids: number[];
+  ids: string[];
 };
 
 type focusNote = {
-  focusId: number;
-  ids: number[];
+  focusChildrenLength: number;
+  focusId: string;
+  ids: string[];
   level: number;
   levelStock: number;
-  order_number: number;
+  orderNumber: number;
 };
 
 type orderIds = {
   from: number;
-  ids: number[];
+  ids: string[];
   to: number;
 };
+
 export const noteSlice = createSlice({
   name: 'notes',
-  initialState,
-  reducers: {
-    // TODO:そもそも選択している要素の↓に入ってくれない
-    addBrotherNote: (state) => {
+  extraReducers: (builder) => {
+    builder.addCase(addBrotherNote.fulfilled, (state, action) => {
       const loopCount: number = state.focusNote.ids.length - 1;
-      const ids: number[] = state.focusNote.ids;
+      const ids: string[] = state.focusNote.ids;
       const notes: WritableDraft<Notes> | undefined = state.notes.find(
         (note) => note.id === ids[loopCount],
       );
       const addNoteObject = {
-        id: state.maxId + 1,
+        id: action.payload.newNote.id,
         title: '',
         description: '',
         expanded: true,
-        level: 0,
-        order_number: state.focusNote.order_number + 1,
+        level: state.focusNote.level,
+        orderNumber: state.focusNote.orderNumber + 1,
       };
       const orderUpdateNote = (
         orderChangeNotes: Array<WritableDraft<Notes>>,
       ): void => {
         for (const note of orderChangeNotes) {
-          note.order_number = note.order_number + 1;
+          note.orderNumber = note.orderNumber + 1;
         }
       };
       const addNote = (
@@ -202,10 +250,10 @@ export const noteSlice = createSlice({
         if (loopCount === 1) {
           if (parentNote.children) {
             const orderChangeNotes = parentNote.children.filter(
-              (note) => note.order_number >= state.focusNote.order_number + 1,
+              (note) => note.orderNumber >= state.focusNote.orderNumber + 1,
             );
             parentNote.children.splice(
-              state.focusNote.order_number + 1,
+              state.focusNote.orderNumber + 1,
               0,
               addNoteObject,
             );
@@ -222,46 +270,35 @@ export const noteSlice = createSlice({
       };
       if (loopCount === 0) {
         const orderChangeNotes = state.notes.filter(
-          (note) => note.order_number >= state.focusNote.order_number + 1,
+          (note) => note.orderNumber >= state.focusNote.orderNumber + 1,
         );
-        state.notes.splice(state.focusNote.order_number + 1, 0, addNoteObject);
+        state.notes.splice(state.focusNote.orderNumber + 1, 0, addNoteObject);
         orderUpdateNote(orderChangeNotes);
         state.maxId = state.maxId + 1;
       } else {
         notes && addNote(notes, loopCount);
       }
-    },
-    addChildNote: (state) => {
+    });
+    builder.addCase(addChildNote.fulfilled, (state, action) => {
       const loopCount = state.focusNote.ids.length - 1;
       const ids = state.focusNote.ids;
       const notes = state.notes.find((note) => note.id === ids[loopCount]);
+      const addChildObject = {
+        id: action.payload.newNote.id,
+        title: '',
+        description: '',
+        expanded: true,
+        level: state.focusNote.level + 1,
+        orderNumber: state.focusNote.orderNumber + 1,
+      };
       const noteDescriptionUpdate = (
         notes: WritableDraft<Notes>,
         loopCount: number,
       ): void => {
         if (loopCount === 0) {
-          if (notes.children) {
-            notes.children.push({
-              id: state.maxId + 1,
-              title: '',
-              description: '',
-              expanded: true,
-              level: notes.level + 1,
-              order_number: notes.children.length,
-            });
-            state.maxId = state.maxId + 1;
-          } else {
-            notes.children = [];
-            notes.children.push({
-              id: state.maxId + 1,
-              title: '',
-              description: '',
-              expanded: true,
-              level: notes.level + 1,
-              order_number: notes.children.length,
-            });
-            state.maxId = state.maxId + 1;
-          }
+          if (!notes.children) notes.children = [];
+          notes.children.push(addChildObject);
+          state.maxId = state.maxId + 1;
         }
         if (notes.children) {
           const childNotes = notes.children.find(
@@ -271,7 +308,10 @@ export const noteSlice = createSlice({
         }
       };
       notes && noteDescriptionUpdate(notes, loopCount);
-    },
+    });
+  },
+  initialState,
+  reducers: {
     updateDescription: (
       state,
       action: PayloadAction<Required<Pick<Notes, 'description'>> & targetIds>,
@@ -351,8 +391,10 @@ export const noteSlice = createSlice({
       if (state.focusNote.levelStock === 0) {
         state.focusNote.focusId = action.payload.focusId;
         state.focusNote.levelStock = action.payload.level;
+        state.focusNote.focusChildrenLength =
+          action.payload.focusChildrenLength;
         state.focusNote.level = action.payload.level;
-        state.focusNote.order_number = action.payload.order_number;
+        state.focusNote.orderNumber = action.payload.orderNumber;
         state.focusNote.ids = action.payload.ids;
       } else {
         state.focusNote.levelStock--;
@@ -417,8 +459,6 @@ export const noteSlice = createSlice({
 });
 
 const {
-  addBrotherNote,
-  addChildNote,
   updateDescription,
   updateEmoji,
   updateExpanded,

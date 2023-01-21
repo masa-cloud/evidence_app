@@ -4,7 +4,7 @@ import { Animated } from 'react-native';
 type Props = {
   descriptionHeight: number;
   expanded: boolean;
-  ids: number[];
+  ids: string[];
   level: number;
 };
 

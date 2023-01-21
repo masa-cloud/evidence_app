@@ -2,11 +2,11 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Image, Stack, XStack } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import { addBrotherNote, addChildNote } from '~/slices/noteSlice';
+import { addBrotherNote, addChildNote, selectNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
 import { useSideTree } from './hook/useSideTree';
@@ -16,6 +16,7 @@ export const HomeHeader = (): JSX.Element => {
   const { colors } = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { onPress } = useSideTree();
+  const { focusNote } = useSelector(selectNote);
 
   return (
     <XStack
@@ -45,12 +46,34 @@ export const HomeHeader = (): JSX.Element => {
           size={30}
           color={colors.text}
         />
-        <TouchableOpacity onPress={() => dispatch(addBrotherNote())}>
+        <TouchableOpacity
+          onPress={() => {
+            void (async () => {
+              await dispatch(
+                addBrotherNote({
+                  focusLevel: focusNote.level,
+                  orderNumber: focusNote.orderNumber,
+                }),
+              );
+            })();
+          }}
+        >
           <Stack mx={8}>
             <Image height={24} width={24} src={Images.plusPare} />
           </Stack>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => dispatch(addChildNote())}>
+        <TouchableOpacity
+          onPress={() => {
+            void (async () => {
+              await dispatch(
+                addChildNote({
+                  childrenLength: focusNote.focusChildrenLength,
+                  focusLevel: focusNote.level,
+                }),
+              );
+            })();
+          }}
+        >
           <Stack mx={8}>
             <Image height={24} width={24} src={Images.plusChild} />
           </Stack>

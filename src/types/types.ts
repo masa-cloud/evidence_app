@@ -4,13 +4,13 @@ export type User = {
 };
 
 export type Notes = {
-  id: number;
+  id: string;
   title: string;
   children?: Notes[];
   description: string;
   emoji?: string;
   expanded: boolean;
   level: number;
-  order_number: number;
+  orderNumber: number;
   parentId?: number;
 };

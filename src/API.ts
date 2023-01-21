@@ -8,7 +8,7 @@ export type CreateNoteInput = {
   description: string;
   expanded: boolean;
   level: number;
-  order_number: number;
+  orderNumber: number;
   noteChildrenId?: string | null;
   noteEmojiId?: string | null;
 };
@@ -18,7 +18,7 @@ export type ModelNoteConditionInput = {
   description?: ModelStringInput | null;
   expanded?: ModelBooleanInput | null;
   level?: ModelIntInput | null;
-  order_number?: ModelIntInput | null;
+  orderNumber?: ModelIntInput | null;
   and?: Array<ModelNoteConditionInput | null> | null;
   or?: Array<ModelNoteConditionInput | null> | null;
   not?: ModelNoteConditionInput | null;
@@ -107,7 +107,7 @@ export type Note = {
   description: string;
   expanded: boolean;
   level: number;
-  order_number: number;
+  orderNumber: number;
   emoji?: Emoji | null;
   parent?: Note | null;
   children?: ModelNoteConnection | null;
@@ -137,7 +137,7 @@ export type UpdateNoteInput = {
   description?: string | null;
   expanded?: boolean | null;
   level?: number | null;
-  order_number?: number | null;
+  orderNumber?: number | null;
   noteChildrenId?: string | null;
   noteEmojiId?: string | null;
 };
@@ -173,7 +173,7 @@ export type ModelNoteFilterInput = {
   description?: ModelStringInput | null;
   expanded?: ModelBooleanInput | null;
   level?: ModelIntInput | null;
-  order_number?: ModelIntInput | null;
+  orderNumber?: ModelIntInput | null;
   and?: Array<ModelNoteFilterInput | null> | null;
   or?: Array<ModelNoteFilterInput | null> | null;
   not?: ModelNoteFilterInput | null;
@@ -206,7 +206,7 @@ export type ModelSubscriptionNoteFilterInput = {
   description?: ModelSubscriptionStringInput | null;
   expanded?: ModelSubscriptionBooleanInput | null;
   level?: ModelSubscriptionIntInput | null;
-  order_number?: ModelSubscriptionIntInput | null;
+  orderNumber?: ModelSubscriptionIntInput | null;
   and?: Array<ModelSubscriptionNoteFilterInput | null> | null;
   or?: Array<ModelSubscriptionNoteFilterInput | null> | null;
 };
@@ -278,7 +278,7 @@ export type CreateNoteMutation = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -293,7 +293,7 @@ export type CreateNoteMutation = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -308,7 +308,7 @@ export type CreateNoteMutation = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -332,7 +332,7 @@ export type CreateNoteMutation = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -360,7 +360,7 @@ export type UpdateNoteMutation = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -375,7 +375,7 @@ export type UpdateNoteMutation = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -390,7 +390,7 @@ export type UpdateNoteMutation = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -414,7 +414,7 @@ export type UpdateNoteMutation = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -442,7 +442,7 @@ export type DeleteNoteMutation = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -457,7 +457,7 @@ export type DeleteNoteMutation = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -472,7 +472,7 @@ export type DeleteNoteMutation = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -496,7 +496,7 @@ export type DeleteNoteMutation = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -568,7 +568,7 @@ export type GetNoteQuery = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -583,7 +583,7 @@ export type GetNoteQuery = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -598,7 +598,7 @@ export type GetNoteQuery = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -622,7 +622,7 @@ export type GetNoteQuery = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -655,7 +655,7 @@ export type ListNotesQuery = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -670,7 +670,7 @@ export type ListNotesQuery = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -735,7 +735,7 @@ export type OnCreateNoteSubscription = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -750,7 +750,7 @@ export type OnCreateNoteSubscription = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -765,7 +765,7 @@ export type OnCreateNoteSubscription = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -789,7 +789,7 @@ export type OnCreateNoteSubscription = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -816,7 +816,7 @@ export type OnUpdateNoteSubscription = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -831,7 +831,7 @@ export type OnUpdateNoteSubscription = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -846,7 +846,7 @@ export type OnUpdateNoteSubscription = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -870,7 +870,7 @@ export type OnUpdateNoteSubscription = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -897,7 +897,7 @@ export type OnDeleteNoteSubscription = {
     description: string;
     expanded: boolean;
     level: number;
-    order_number: number;
+    orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
       id: string;
@@ -912,7 +912,7 @@ export type OnDeleteNoteSubscription = {
       description: string;
       expanded: boolean;
       level: number;
-      order_number: number;
+      orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
         id: string;
@@ -927,7 +927,7 @@ export type OnDeleteNoteSubscription = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;
@@ -951,7 +951,7 @@ export type OnDeleteNoteSubscription = {
         description: string;
         expanded: boolean;
         level: number;
-        order_number: number;
+        orderNumber: number;
         createdAt: string;
         updatedAt: string;
         noteChildrenId?: string | null;

@@ -17,57 +17,19 @@ export const getNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -100,24 +62,19 @@ export const listNotes = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
+        parentId
+        childrenIds {
+          items {
+            id
+            childrenId
+            createdAt
+            updatedAt
+            noteChildrenIdsId
+          }
           nextToken
         }
         createdAt
         updatedAt
-        noteChildrenId
         noteEmojiId
       }
       nextToken
@@ -146,6 +103,35 @@ export const listEmojis = /* GraphQL */ `
         name
         createdAt
         updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getChildrenId = /* GraphQL */ `
+  query GetChildrenId($id: ID!) {
+    getChildrenId(id: $id) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
+    }
+  }
+`;
+export const listChildrenIds = /* GraphQL */ `
+  query ListChildrenIds(
+    $filter: ModelChildrenIdFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listChildrenIds(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        childrenId
+        createdAt
+        updatedAt
+        noteChildrenIdsId
       }
       nextToken
     }

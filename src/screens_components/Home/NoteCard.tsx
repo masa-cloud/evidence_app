@@ -20,23 +20,32 @@ import {
   updateTitle,
 } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
-import { Notes } from '~/types/types';
+import { Note } from '~/types/types';
 
 import { useAnimeExpand } from './hook/useAnimeExpand';
 import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 
 export type NoteCardProps = {
   ids: string[];
-  note: Notes;
+  note: Note;
   parentExpanded?: boolean;
 };
 
 // NOTE:icloudに保存はできるのか？ 一旦断念
 // NOTE:APIを叩く前に処理を実施 APIがfalseだったらStateの処理を戻すようにする
+// NOTE:見えなくなったNoteのデータは削除した方がヌルヌル動くのでは？
 // TODO:[graphQL]取得する
+// TODO:focusの処理を直す
+// TODO:addBrotherを階層事にできるようにする
+// TODO:開いているもののみ処理するように修正する
 // TODO:[graphQL]アップデートする
 // TODO:[graphQL]削除する
 // TODO:[graphQL]NoteをUserIdと紐付ける
+// TODO:[graphQL]をユーザーと紐付けれるようにする
+// TODO:設計見直す
+// TODO:https://alexsidorenko.com/blog/react-render-children-prop/
+// TODO:https://alexsidorenko.com/blog/react-optimize-rerenders-without-refs-memo/
+// TODO:コマンドZってどうやってやるん？
 // TODO:Googleの広告をつっこむ
 // TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
 // TODO:パフォーマンス測るもの入れときたい
@@ -78,16 +87,17 @@ export const NoteCard = ({
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useTheme();
   // useState
-  const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
+  // const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
   const [description, setDescription] = useState<string>(note.description);
   const [title, setTitle] = useState<string>(note.title);
   const { noteHeights } = useSelector(selectNoteHeight);
   const noteHeight = noteHeights.find(
     (noteHeight) => noteHeight.id === note.id,
   );
+  // console.log({noteHeight})
   // customHook
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
-    descriptionHeight,
+    descriptionHeight: noteHeight?.contentsHeight ?? 32,
     expanded: note.expanded,
     ids,
     level: note.level,
@@ -95,7 +105,7 @@ export const NoteCard = ({
   const { position } = useAnimeExpandedRotate(note.expanded);
 
   const renderItem = useCallback(
-    ({ item }: { item: Notes }): JSX.Element => {
+    ({ item }: { item: Note }): JSX.Element => {
       return (
         <NoteCard
           note={item}
@@ -104,18 +114,15 @@ export const NoteCard = ({
         />
       );
     },
-    [note.expanded],
+    [ids, note.expanded],
   );
 
   const Emoji = (): JSX.Element => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const handlePick = useCallback(
-      (emojiObject: EmojiType): void => {
-        // setEmoji(emojiObject.emoji)
-        dispatch(updateEmoji({ emoji: emojiObject.emoji, ids }));
-      },
-      [ids],
-    );
+    const handlePick = useCallback((emojiObject: EmojiType): void => {
+      // setEmoji(emojiObject.emoji)
+      dispatch(updateEmoji({ emoji: emojiObject.emoji, ids }));
+    }, []);
 
     return (
       <>
@@ -184,7 +191,8 @@ export const NoteCard = ({
       // }) => dispatch(updateHeight({ id: note.id, height }))
       // }
       // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
-      onTouchStart={() =>
+      onTouchStart={() => {
+        console.log('note.level', note.level);
         dispatch(
           updateFucusId({
             focusChildrenLength: note.children?.length ?? 0,
@@ -193,8 +201,8 @@ export const NoteCard = ({
             level: note.level,
             orderNumber: note.orderNumber,
           }),
-        )
-      }
+        );
+      }}
       mt={0}
       mb={8}
       ml={8}
@@ -212,13 +220,14 @@ export const NoteCard = ({
         py={4}
       >
         <XStack alignItems="center" f={1}>
-          <Emoji />
+          {/* TODO:絵文字の箇所型など修正 */}
+          {/* <Emoji /> */}
           <TextArea
             style={[styles.titleTextInputStyle, { color: colors.text }]}
             focusStyle={{ ...styles.focusTitleStyle, borderColor: colors.text }}
             bg={colors.primary}
-            py={2}
-            lineHeight={20}
+            py={10}
+            lineHeight={8}
             px={4}
             bw={0}
             value={title ?? ''}
@@ -261,9 +270,9 @@ export const NoteCard = ({
           boc={colors.primary}
           value={description ?? ''}
           lineHeight={16}
+          height={noteHeight?.contentsHeight ?? 32}
           multiline={true}
           onContentSizeChange={(event) => {
-            setDescriptionHeight(event.nativeEvent.contentSize.height);
             // level0 2回ずつ
             // level1 ?回ずつ
             if (
@@ -271,20 +280,13 @@ export const NoteCard = ({
               event.nativeEvent.contentSize.height !==
                 noteHeight?.contentsHeight
             ) {
-              console.log(note.id, event.nativeEvent.contentSize.height);
               dispatch(
                 updateContentsHeight({
                   id: note.id,
-                  contentsHeight: event.nativeEvent.contentSize.height + 50,
+                  contentsHeight: event.nativeEvent.contentSize.height + 30,
                 }),
               );
             }
-            // note.id === 16 &&
-            //   console.log(event.nativeEvent.contentSize.height, note.id, note.title);
-            // note.id === 6 &&
-            //   console.log(event.nativeEvent.contentSize.height, note.id, note.title);
-            // note.id === 2 &&
-            //   console.log(event.nativeEvent.contentSize.height, note.id, note.title);
           }}
           onChangeText={(description) => {
             setDescription(description);
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderStyle: 'dashed',
     borderWidth: 2,
-    paddingVertical: 0,
+    paddingVertical: 10,
   },
   titleTextInputStyle: {
     alignItems: 'center',

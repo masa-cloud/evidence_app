@@ -9,7 +9,7 @@ export type CreateNoteInput = {
   expanded: boolean;
   level: number;
   orderNumber: number;
-  noteChildrenId?: string | null;
+  parentId?: string | null;
   noteEmojiId?: string | null;
 };
 
@@ -19,10 +19,10 @@ export type ModelNoteConditionInput = {
   expanded?: ModelBooleanInput | null;
   level?: ModelIntInput | null;
   orderNumber?: ModelIntInput | null;
+  parentId?: ModelIDInput | null;
   and?: Array<ModelNoteConditionInput | null> | null;
   or?: Array<ModelNoteConditionInput | null> | null;
   not?: ModelNoteConditionInput | null;
-  noteChildrenId?: ModelIDInput | null;
   noteEmojiId?: ModelIDInput | null;
 };
 
@@ -109,11 +109,10 @@ export type Note = {
   level: number;
   orderNumber: number;
   emoji?: Emoji | null;
-  parent?: Note | null;
-  children?: ModelNoteConnection | null;
+  parentId?: string | null;
+  childrenIds?: ModelChildrenIdConnection | null;
   createdAt: string;
   updatedAt: string;
-  noteChildrenId?: string | null;
   noteEmojiId?: string | null;
 };
 
@@ -125,10 +124,19 @@ export type Emoji = {
   updatedAt: string;
 };
 
-export type ModelNoteConnection = {
-  __typename: 'ModelNoteConnection';
-  items: Array<Note | null>;
+export type ModelChildrenIdConnection = {
+  __typename: 'ModelChildrenIdConnection';
+  items: Array<ChildrenId | null>;
   nextToken?: string | null;
+};
+
+export type ChildrenId = {
+  __typename: 'ChildrenId';
+  id: string;
+  childrenId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  noteChildrenIdsId?: string | null;
 };
 
 export type UpdateNoteInput = {
@@ -138,7 +146,7 @@ export type UpdateNoteInput = {
   expanded?: boolean | null;
   level?: number | null;
   orderNumber?: number | null;
-  noteChildrenId?: string | null;
+  parentId?: string | null;
   noteEmojiId?: string | null;
 };
 
@@ -167,6 +175,30 @@ export type DeleteEmojiInput = {
   id: string;
 };
 
+export type CreateChildrenIdInput = {
+  id?: string | null;
+  childrenId?: string | null;
+  noteChildrenIdsId?: string | null;
+};
+
+export type ModelChildrenIdConditionInput = {
+  childrenId?: ModelIDInput | null;
+  and?: Array<ModelChildrenIdConditionInput | null> | null;
+  or?: Array<ModelChildrenIdConditionInput | null> | null;
+  not?: ModelChildrenIdConditionInput | null;
+  noteChildrenIdsId?: ModelIDInput | null;
+};
+
+export type UpdateChildrenIdInput = {
+  id: string;
+  childrenId?: string | null;
+  noteChildrenIdsId?: string | null;
+};
+
+export type DeleteChildrenIdInput = {
+  id: string;
+};
+
 export type ModelNoteFilterInput = {
   id?: ModelIDInput | null;
   title?: ModelStringInput | null;
@@ -174,10 +206,10 @@ export type ModelNoteFilterInput = {
   expanded?: ModelBooleanInput | null;
   level?: ModelIntInput | null;
   orderNumber?: ModelIntInput | null;
+  parentId?: ModelIDInput | null;
   and?: Array<ModelNoteFilterInput | null> | null;
   or?: Array<ModelNoteFilterInput | null> | null;
   not?: ModelNoteFilterInput | null;
-  noteChildrenId?: ModelIDInput | null;
   noteEmojiId?: ModelIDInput | null;
 };
 
@@ -185,6 +217,12 @@ export enum ModelSortDirection {
   ASC = 'ASC',
   DESC = 'DESC',
 }
+
+export type ModelNoteConnection = {
+  __typename: 'ModelNoteConnection';
+  items: Array<Note | null>;
+  nextToken?: string | null;
+};
 
 export type ModelEmojiFilterInput = {
   id?: ModelIDInput | null;
@@ -200,6 +238,15 @@ export type ModelEmojiConnection = {
   nextToken?: string | null;
 };
 
+export type ModelChildrenIdFilterInput = {
+  id?: ModelIDInput | null;
+  childrenId?: ModelIDInput | null;
+  and?: Array<ModelChildrenIdFilterInput | null> | null;
+  or?: Array<ModelChildrenIdFilterInput | null> | null;
+  not?: ModelChildrenIdFilterInput | null;
+  noteChildrenIdsId?: ModelIDInput | null;
+};
+
 export type ModelSubscriptionNoteFilterInput = {
   id?: ModelSubscriptionIDInput | null;
   title?: ModelSubscriptionStringInput | null;
@@ -207,6 +254,7 @@ export type ModelSubscriptionNoteFilterInput = {
   expanded?: ModelSubscriptionBooleanInput | null;
   level?: ModelSubscriptionIntInput | null;
   orderNumber?: ModelSubscriptionIntInput | null;
+  parentId?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionNoteFilterInput | null> | null;
   or?: Array<ModelSubscriptionNoteFilterInput | null> | null;
 };
@@ -265,6 +313,13 @@ export type ModelSubscriptionEmojiFilterInput = {
   or?: Array<ModelSubscriptionEmojiFilterInput | null> | null;
 };
 
+export type ModelSubscriptionChildrenIdFilterInput = {
+  id?: ModelSubscriptionIDInput | null;
+  childrenId?: ModelSubscriptionIDInput | null;
+  and?: Array<ModelSubscriptionChildrenIdFilterInput | null> | null;
+  or?: Array<ModelSubscriptionChildrenIdFilterInput | null> | null;
+};
+
 export type CreateNoteMutationVariables = {
   input: CreateNoteInput;
   condition?: ModelNoteConditionInput | null;
@@ -286,63 +341,21 @@ export type CreateNoteMutation = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -368,63 +381,21 @@ export type UpdateNoteMutation = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -450,63 +421,21 @@ export type DeleteNoteMutation = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -556,6 +485,54 @@ export type DeleteEmojiMutation = {
   } | null;
 };
 
+export type CreateChildrenIdMutationVariables = {
+  input: CreateChildrenIdInput;
+  condition?: ModelChildrenIdConditionInput | null;
+};
+
+export type CreateChildrenIdMutation = {
+  createChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
+  } | null;
+};
+
+export type UpdateChildrenIdMutationVariables = {
+  input: UpdateChildrenIdInput;
+  condition?: ModelChildrenIdConditionInput | null;
+};
+
+export type UpdateChildrenIdMutation = {
+  updateChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
+  } | null;
+};
+
+export type DeleteChildrenIdMutationVariables = {
+  input: DeleteChildrenIdInput;
+  condition?: ModelChildrenIdConditionInput | null;
+};
+
+export type DeleteChildrenIdMutation = {
+  deleteChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
+  } | null;
+};
+
 export type GetNoteQueryVariables = {
   id: string;
 };
@@ -576,63 +553,21 @@ export type GetNoteQuery = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -663,26 +598,21 @@ export type ListNotesQuery = {
         createdAt: string;
         updatedAt: string;
       } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
+      parentId?: string | null;
+      childrenIds?: {
+        __typename: 'ModelChildrenIdConnection';
+        items: Array<{
+          __typename: 'ChildrenId';
+          id: string;
+          childrenId?: string | null;
+          createdAt: string;
+          updatedAt: string;
+          noteChildrenIdsId?: string | null;
+        } | null>;
         nextToken?: string | null;
       } | null;
       createdAt: string;
       updatedAt: string;
-      noteChildrenId?: string | null;
       noteEmojiId?: string | null;
     } | null>;
     nextToken?: string | null;
@@ -723,6 +653,42 @@ export type ListEmojisQuery = {
   } | null;
 };
 
+export type GetChildrenIdQueryVariables = {
+  id: string;
+};
+
+export type GetChildrenIdQuery = {
+  getChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
+  } | null;
+};
+
+export type ListChildrenIdsQueryVariables = {
+  filter?: ModelChildrenIdFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+};
+
+export type ListChildrenIdsQuery = {
+  listChildrenIds?: {
+    __typename: 'ModelChildrenIdConnection';
+    items: Array<{
+      __typename: 'ChildrenId';
+      id: string;
+      childrenId?: string | null;
+      createdAt: string;
+      updatedAt: string;
+      noteChildrenIdsId?: string | null;
+    } | null>;
+    nextToken?: string | null;
+  } | null;
+};
+
 export type OnCreateNoteSubscriptionVariables = {
   filter?: ModelSubscriptionNoteFilterInput | null;
 };
@@ -743,63 +709,21 @@ export type OnCreateNoteSubscription = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -824,63 +748,21 @@ export type OnUpdateNoteSubscription = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -905,63 +787,21 @@ export type OnDeleteNoteSubscription = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parent?: {
-      __typename: 'Note';
-      id: string;
-      title: string;
-      description: string;
-      expanded: boolean;
-      level: number;
-      orderNumber: number;
-      emoji?: {
-        __typename: 'Emoji';
-        id: string;
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-      } | null;
-      parent?: {
-        __typename: 'Note';
-        id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
-        createdAt: string;
-        updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
-      } | null;
-      children?: {
-        __typename: 'ModelNoteConnection';
-        nextToken?: string | null;
-      } | null;
-      createdAt: string;
-      updatedAt: string;
-      noteChildrenId?: string | null;
-      noteEmojiId?: string | null;
-    } | null;
-    children?: {
-      __typename: 'ModelNoteConnection';
+    parentId?: string | null;
+    childrenIds?: {
+      __typename: 'ModelChildrenIdConnection';
       items: Array<{
-        __typename: 'Note';
+        __typename: 'ChildrenId';
         id: string;
-        title: string;
-        description: string;
-        expanded: boolean;
-        level: number;
-        orderNumber: number;
+        childrenId?: string | null;
         createdAt: string;
         updatedAt: string;
-        noteChildrenId?: string | null;
-        noteEmojiId?: string | null;
+        noteChildrenIdsId?: string | null;
       } | null>;
       nextToken?: string | null;
     } | null;
     createdAt: string;
     updatedAt: string;
-    noteChildrenId?: string | null;
     noteEmojiId?: string | null;
   } | null;
 };
@@ -1005,5 +845,50 @@ export type OnDeleteEmojiSubscription = {
     name: string;
     createdAt: string;
     updatedAt: string;
+  } | null;
+};
+
+export type OnCreateChildrenIdSubscriptionVariables = {
+  filter?: ModelSubscriptionChildrenIdFilterInput | null;
+};
+
+export type OnCreateChildrenIdSubscription = {
+  onCreateChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
+  } | null;
+};
+
+export type OnUpdateChildrenIdSubscriptionVariables = {
+  filter?: ModelSubscriptionChildrenIdFilterInput | null;
+};
+
+export type OnUpdateChildrenIdSubscription = {
+  onUpdateChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
+  } | null;
+};
+
+export type OnDeleteChildrenIdSubscriptionVariables = {
+  filter?: ModelSubscriptionChildrenIdFilterInput | null;
+};
+
+export type OnDeleteChildrenIdSubscription = {
+  onDeleteChildrenId?: {
+    __typename: 'ChildrenId';
+    id: string;
+    childrenId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    noteChildrenIdsId?: string | null;
   } | null;
 };

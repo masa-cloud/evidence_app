@@ -1,17 +1,16 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FlatList } from '@stream-io/flat-list-mvcp';
-import { API } from 'aws-amplify';
-import React, { FC, useCallback, useEffect, useRef } from 'react';
+import React, { FC, useCallback, useRef } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import * as mutations from '~/graphql/mutations';
-import * as queries from '~/graphql/queries';
 import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
-import { selectNote } from '~/slices/noteSlice';
-import { Notes } from '~/types/types';
+import { fetchAsyncNotes, selectNote } from '~/slices/noteSlice';
+import { AppDispatch } from '~/store';
+import { Note } from '~/types/types';
 
 import { HomeHeader } from './HomeHeader';
 import { NoteCard } from './NoteCard';
@@ -28,45 +27,55 @@ type Props = {
 
 /** @package */
 export const Home: FC<Props> = (props) => {
-  // const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
-  const deleteTodoDetails = {
-    id: 'some_id',
-  };
+  // const deleteTodoDetails = {
+  //   id: 'some_id',
+  // };
 
-  const deleteTodo = async (): Promise<void> => {
-    const deletedTodo = await API.graphql({
-      query: mutations.deleteTodo,
-      variables: { input: deleteTodoDetails },
-    });
-    console.log({ deletedTodo });
-  };
+  // const deleteTodo = async (): Promise<void> => {
+  //   const deletedTodo = await API.graphql({
+  //     query: mutations.deleteTodo,
+  //     variables: { input: deleteTodoDetails },
+  //   });
+  //   console.log({ deletedTodo });
+  // };
 
-  const getAllTodo = async (): Promise<void> => {
-    const allTodos = await API.graphql({ query: queries.listTodos });
-    console.log(allTodos);
-  };
+  useFocusEffect(
+    useCallback(() => {
+      // APIを叩く処理を記述
+      const fetchNotes = async (): Promise<void> => {
+        try {
+          await dispatch(fetchAsyncNotes());
+        } catch (e) {
+          console.log({ e });
+          // Handle error
+        }
+      };
+      void fetchNotes();
+    }, [dispatch]),
+  );
 
-  const getOneTodo = async (): Promise<void> => {
-    // Query using a parameter
-    const oneTodo = await API.graphql({
-      query: queries.getTodo,
-      variables: { id: '246fe283-2c58-4459-8358-ee0ece37a71e' },
-    });
-    console.log(oneTodo);
-  };
+  // const getOneTodo = async (): Promise<void> => {
+  //   // Query using a parameter
+  //   const oneTodo = await API.graphql({
+  //     query: queries.getTodo,
+  //     variables: { id: '246fe283-2c58-4459-8358-ee0ece37a71e' },
+  //   });
+  //   console.log(oneTodo);
+  // };
 
-  useEffect(() => {
-    // void addNote();
-  }, []);
   const onPress = (height: number): void => {
     flatListRef.current.scrollToOffset({ animated: true, offset: height });
   };
 
-  const renderItem = useCallback(({ item }: { item: Notes }): JSX.Element => {
+  const renderItem = useCallback(({ item }: { item: Note }): JSX.Element => {
     return <NoteCard note={item} ids={[item.id]} />;
   }, []);
+
+  // TODO:データが無い時のハンドリング
+  // if ( notes.length === 0 ) return <></>
 
   return (
     <SafeAreaView>
@@ -83,7 +92,7 @@ export const Home: FC<Props> = (props) => {
         <FlatList
           data={notes}
           ref={flatListRef}
-          extraData={flatListRef}
+          extraData={flatListRef || notes}
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />

@@ -20,57 +20,19 @@ export const createNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -93,57 +55,19 @@ export const updateNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -166,57 +90,19 @@ export const deleteNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -257,6 +143,48 @@ export const deleteEmoji = /* GraphQL */ `
       name
       createdAt
       updatedAt
+    }
+  }
+`;
+export const createChildrenId = /* GraphQL */ `
+  mutation CreateChildrenId(
+    $input: CreateChildrenIdInput!
+    $condition: ModelChildrenIdConditionInput
+  ) {
+    createChildrenId(input: $input, condition: $condition) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
+    }
+  }
+`;
+export const updateChildrenId = /* GraphQL */ `
+  mutation UpdateChildrenId(
+    $input: UpdateChildrenIdInput!
+    $condition: ModelChildrenIdConditionInput
+  ) {
+    updateChildrenId(input: $input, condition: $condition) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
+    }
+  }
+`;
+export const deleteChildrenId = /* GraphQL */ `
+  mutation DeleteChildrenId(
+    $input: DeleteChildrenIdInput!
+    $condition: ModelChildrenIdConditionInput
+  ) {
+    deleteChildrenId(input: $input, condition: $condition) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
     }
   }
 `;

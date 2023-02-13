@@ -13,13 +13,7 @@ type State = {
 };
 
 const initialState: State = {
-  noteHeights: [
-    {
-      id: Math.random().toString(32).substring(2),
-      contentsHeight: 0,
-      height: 0,
-    },
-  ],
+  noteHeights: [],
 };
 
 export const noteHeightSlice = createSlice({
@@ -35,6 +29,12 @@ export const noteHeightSlice = createSlice({
       });
       if (updateNoteHeight !== undefined) {
         updateNoteHeight.contentsHeight = action.payload.contentsHeight;
+      } else {
+        state.noteHeights.push({
+          id: action.payload.id,
+          contentsHeight: action.payload.contentsHeight,
+          height: 0,
+        });
       }
     },
     updateHeight: (

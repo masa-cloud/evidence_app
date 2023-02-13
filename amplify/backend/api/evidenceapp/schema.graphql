@@ -10,11 +10,15 @@ type Note @model {
   level: Int!
   orderNumber: Int!
   emoji: Emoji @hasOne
-  parent: Note @belongsTo
-  children: [Note] @hasMany
+  childrenIds: [ChildrenId] @hasMany
 }
 
 type Emoji @model {
   id: ID!
   name: String!
+}
+
+type ChildrenId @model {
+  id: ID!
+  childrenId: ID
 }

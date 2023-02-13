@@ -2,202 +2,17 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { API } from 'aws-amplify';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
-import { CreateNoteInput, Note } from '~/API';
+import { CreateNoteInput } from '~/API';
+import { fetchNotes } from '~/api/noteAPI';
 import * as mutations from '~/graphql/mutations';
-import { Notes } from '~/types/types';
+import { Note } from '~/types/types';
 
 import type { RootState } from '../store';
+import { CreateChildrenIdInput } from './../API';
 
 type State = {
   focusNote: focusNote;
-  maxId: number;
-  notes: Notes[];
-};
-
-const addBrotherNote = createAsyncThunk<
-  { newNote: Note },
-  { focusLevel: number; orderNumber: number },
-  {
-    rejectValue: string;
-    state: { notes: State };
-  }
->('notes/addBrotherNote', async (focusData) => {
-  const noteDetails: CreateNoteInput = {
-    title: '',
-    description: '',
-    expanded: true,
-    level: focusData.focusLevel,
-    orderNumber: focusData.orderNumber + 1,
-  };
-  const newNote = (await API.graphql({
-    query: mutations.createNote,
-    variables: { input: noteDetails },
-  })) as Note;
-  return { newNote };
-});
-
-const addChildNote = createAsyncThunk<
-  { newNote: Note },
-  { childrenLength: number; focusLevel: number },
-  {
-    rejectValue: string;
-    state: { notes: State };
-  }
->('notes/addChildNote', async (focusData) => {
-  const noteDetails: CreateNoteInput = {
-    title: '',
-    description: '',
-    expanded: true,
-    level: focusData.focusLevel + 1,
-    orderNumber: focusData.childrenLength + 1,
-  };
-  const newNote = (await API.graphql({
-    query: mutations.createNote,
-    variables: { input: noteDetails },
-  })) as Note;
-  return { newNote };
-});
-
-const initialState: State = {
-  focusNote: {
-    focusChildrenLength: 0,
-    focusId: '1',
-    ids: [],
-    level: 0,
-    levelStock: 0,
-    orderNumber: 0,
-  },
-  maxId: 10,
-  notes: [
-    {
-      id: '1',
-      title: '1',
-      children: [
-        {
-          id: '2',
-          title: 'カスタムヘッダー1',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: false,
-          level: 1,
-          orderNumber: 0,
-          parentId: 1,
-        },
-        {
-          id: '3',
-          title: 'カスタムヘッダー2',
-          children: [
-            {
-              id: '9',
-              title: 'カスタムヘッダー',
-              description: 'メモメモメモメモメモメモメモメモメモメモ',
-              expanded: true,
-              level: 2,
-              orderNumber: 0,
-              parentId: 1,
-            },
-          ],
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: true,
-          level: 1,
-          orderNumber: 1,
-          parentId: 1,
-        },
-        {
-          id: '4',
-          title: 'カスタムヘッダー3',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: false,
-          level: 1,
-          orderNumber: 2,
-          parentId: 1,
-        },
-      ],
-      description:
-        'メモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモ',
-      emoji: '😁',
-      expanded: true,
-      level: 0,
-      orderNumber: 0,
-    },
-    {
-      id: '5',
-      title: '5',
-      children: [
-        {
-          id: '6',
-          title: 'カスタムヘッダー',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: false,
-          level: 1,
-          orderNumber: 1,
-          parentId: 1,
-        },
-        {
-          id: '7',
-          title: 'カスタムヘッダー',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: true,
-          level: 1,
-          orderNumber: 2,
-          parentId: 1,
-        },
-        {
-          id: '8',
-          title: 'カスタムヘッダー',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: false,
-          level: 1,
-          orderNumber: 3,
-          parentId: 1,
-        },
-      ],
-      description:
-        'メモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモ',
-      emoji: '😁',
-      expanded: true,
-      level: 0,
-      orderNumber: 1,
-    },
-    {
-      id: '15',
-      title: '15',
-      children: [
-        {
-          id: '16',
-          title: 'カスタムヘッダー',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: false,
-          level: 1,
-          orderNumber: 1,
-          parentId: 1,
-        },
-        {
-          id: '17',
-          title: 'カスタムヘッダー',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: true,
-          level: 1,
-          orderNumber: 2,
-          parentId: 1,
-        },
-        {
-          id: '18',
-          title: 'カスタムヘッダー',
-          description: 'メモメモメモメモメモメモメモメモメモメモ',
-          expanded: false,
-          level: 1,
-          orderNumber: 3,
-          parentId: 1,
-        },
-      ],
-      description:
-        'メモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモ',
-      emoji: '😁',
-      expanded: true,
-      level: 0,
-      orderNumber: 2,
-    },
-  ],
+  notes: Note[];
 };
 
 type targetIds = {
@@ -219,167 +34,261 @@ type orderIds = {
   to: number;
 };
 
+const initialState: State = {
+  focusNote: {
+    focusChildrenLength: 0,
+    focusId: '1',
+    ids: [],
+    level: 0,
+    levelStock: 0,
+    orderNumber: 0,
+  },
+  notes: [],
+};
+
+const addBrotherNote = createAsyncThunk<
+  { newNote: Note },
+  { focusLevel: number; orderNumber: number },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addBrotherNote', async (focusData) => {
+  try {
+    // TODO:親があれば、親のIDを入れてあげる
+    const noteDetails: CreateNoteInput = {
+      title: '',
+      description: '',
+      expanded: true,
+      level: focusData.focusLevel,
+      orderNumber: focusData.orderNumber + 1,
+    };
+    const newNote = (await API.graphql({
+      query: mutations.createNote,
+      variables: { input: noteDetails },
+    })) as { data: { createNote: Note } };
+    return { newNote: newNote.data.createNote };
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+});
+
+const addChildNote = createAsyncThunk<
+  { newNote: Note },
+  { id: string; childrenLength: number; focusLevel: number },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addChildNote', async (focusData) => {
+  try {
+    const noteDetail: CreateNoteInput = {
+      title: '',
+      description: '',
+      expanded: true,
+      level: focusData.focusLevel + 1,
+      orderNumber: focusData.childrenLength + 1,
+      parentId: focusData.id,
+    };
+    // TODO:childrenIdをchildrenIdsに加えないとおかしくなるようだったら見直す
+    const newNote = (await API.graphql({
+      query: mutations.createNote,
+      variables: { input: noteDetail },
+    })) as { data: { createNote: Note } };
+    const childrenIdDetail: CreateChildrenIdInput = {
+      childrenId: newNote.data.createNote.id,
+      noteChildrenIdsId: focusData.id,
+    };
+    await API.graphql({
+      query: mutations.createChildrenId,
+      variables: { input: childrenIdDetail },
+    });
+    return { newNote: newNote.data.createNote };
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+});
+
+const fetchAsyncNotes = createAsyncThunk('notes/fetchAsyncNotes', async () => {
+  const notes = await fetchNotes().catch((error) => {
+    throw error;
+  });
+  if (notes) {
+    return notes;
+  } else {
+    return initialState.notes;
+  }
+});
+
 export const noteSlice = createSlice({
   name: 'notes',
   extraReducers: (builder) => {
-    builder.addCase(addBrotherNote.fulfilled, (state, action) => {
-      const loopCount: number = state.focusNote.ids.length - 1;
-      const ids: string[] = state.focusNote.ids;
-      const notes: WritableDraft<Notes> | undefined = state.notes.find(
-        (note) => note.id === ids[loopCount],
-      );
-      const addNoteObject = {
-        id: action.payload.newNote.id,
-        title: '',
-        description: '',
-        expanded: true,
-        level: state.focusNote.level,
-        orderNumber: state.focusNote.orderNumber + 1,
-      };
-      const orderUpdateNote = (
-        orderChangeNotes: Array<WritableDraft<Notes>>,
-      ): void => {
-        for (const note of orderChangeNotes) {
-          note.orderNumber = note.orderNumber + 1;
-        }
-      };
-      const addNote = (
-        parentNote: WritableDraft<Notes>,
-        loopCount: number,
-      ): void => {
-        if (loopCount === 1) {
-          if (parentNote.children) {
-            const orderChangeNotes = parentNote.children.filter(
-              (note) => note.orderNumber >= state.focusNote.orderNumber + 1,
-            );
-            parentNote.children.splice(
-              state.focusNote.orderNumber + 1,
-              0,
-              addNoteObject,
-            );
-            orderUpdateNote(orderChangeNotes);
-            state.maxId = state.maxId + 1;
-          }
-        }
-        if (parentNote.children) {
-          const childNotes = parentNote.children.find(
-            (note) => note.id === ids[loopCount - 1],
-          );
-          childNotes && addNote(childNotes, loopCount - 1);
-        }
-      };
-      if (loopCount === 0) {
-        const orderChangeNotes = state.notes.filter(
-          (note) => note.orderNumber >= state.focusNote.orderNumber + 1,
+    builder
+      .addCase(addBrotherNote.fulfilled, (state, action) => {
+        const loopCount: number = state.focusNote.ids.length - 1;
+        const ids: string[] = state.focusNote.ids;
+        const notes: WritableDraft<Note> | undefined = state.notes.find(
+          (note) => note.id === ids[loopCount],
         );
-        state.notes.splice(state.focusNote.orderNumber + 1, 0, addNoteObject);
-        orderUpdateNote(orderChangeNotes);
-        state.maxId = state.maxId + 1;
-      } else {
-        notes && addNote(notes, loopCount);
-      }
-    });
-    builder.addCase(addChildNote.fulfilled, (state, action) => {
-      const loopCount = state.focusNote.ids.length - 1;
-      const ids = state.focusNote.ids;
-      const notes = state.notes.find((note) => note.id === ids[loopCount]);
-      const addChildObject = {
-        id: action.payload.newNote.id,
-        title: '',
-        description: '',
-        expanded: true,
-        level: state.focusNote.level + 1,
-        orderNumber: state.focusNote.orderNumber + 1,
-      };
-      const noteDescriptionUpdate = (
-        notes: WritableDraft<Notes>,
-        loopCount: number,
-      ): void => {
+        const orderUpdateNote = (
+          orderChangeNote: Array<WritableDraft<Note>>,
+        ): void => {
+          for (const note of orderChangeNote) {
+            note.orderNumber = note.orderNumber + 1;
+          }
+        };
+        const addNote = (
+          parentNote: WritableDraft<Note>,
+          loopCount: number,
+        ): void => {
+          if (loopCount === 1) {
+            if (parentNote.children) {
+              const orderChangeNote = parentNote.children.filter(
+                (note) =>
+                  note !== null &&
+                  note.orderNumber >= state.focusNote.orderNumber + 1,
+              );
+              parentNote.children.splice(
+                state.focusNote.orderNumber + 1,
+                0,
+                action.payload.newNote,
+              );
+              orderUpdateNote(orderChangeNote);
+            }
+          }
+          if (parentNote.children) {
+            const childNote = parentNote.children.find(
+              (note) => note?.id === ids[loopCount - 1],
+            );
+            childNote && addNote(childNote, loopCount - 1);
+          }
+        };
         if (loopCount === 0) {
-          if (!notes.children) notes.children = [];
-          notes.children.push(addChildObject);
-          state.maxId = state.maxId + 1;
-        }
-        if (notes.children) {
-          const childNotes = notes.children.find(
-            (note) => note.id === ids[loopCount - 1],
+          const orderChangeNote = state.notes.filter(
+            (note) => note.orderNumber >= state.focusNote.orderNumber + 1,
           );
-          childNotes && noteDescriptionUpdate(childNotes, loopCount - 1);
+          state.notes.splice(
+            state.focusNote.orderNumber + 1,
+            0,
+            action.payload.newNote,
+          );
+          orderUpdateNote(orderChangeNote);
+        } else {
+          notes && addNote(notes, loopCount);
         }
-      };
-      notes && noteDescriptionUpdate(notes, loopCount);
-    });
+      })
+      .addCase(addChildNote.fulfilled, (state, action) => {
+        const loopCount: number = state.focusNote.ids.length - 1;
+        const ids: string[] = state.focusNote.ids;
+        const notes: WritableDraft<Note> | undefined = state.notes.find(
+          (note) => note.id === ids[loopCount],
+        );
+        const noteDescriptionUpdate = (
+          targetNotes: WritableDraft<Note>,
+          loopCount: number,
+        ): void => {
+          console.log({ loopCount });
+          if (loopCount === 0) {
+            if (targetNotes.children) {
+              targetNotes.children.push(action.payload.newNote);
+            } else {
+              targetNotes.children = [action.payload.newNote];
+            }
+          }
+          // childrenがある場合と無い場合で分ける
+          if (targetNotes) {
+            const childNote = targetNotes.children?.find(
+              (note) => note?.id === ids[loopCount - 1],
+            );
+            childNote !== null &&
+              childNote !== undefined &&
+              noteDescriptionUpdate(childNote, loopCount - 1);
+          }
+          // childrenがある場合と無い場合で分ける
+        };
+        notes && noteDescriptionUpdate(notes, loopCount);
+      })
+      .addCase(fetchAsyncNotes.pending, (state) => {
+        // TODO:ロードの完了有無追加
+        // state.status = 'loading';
+      })
+      .addCase(fetchAsyncNotes.fulfilled, (state, action) => {
+        // TODO:ロードの完了有無追加
+        // state.status = 'idle';
+        console.log('action', action.payload);
+        state.notes = action.payload;
+      });
   },
   initialState,
   reducers: {
     updateDescription: (
       state,
-      action: PayloadAction<Required<Pick<Notes, 'description'>> & targetIds>,
+      action: PayloadAction<Required<Pick<Note, 'description'>> & targetIds>,
     ) => {
       const loopCount = action.payload.ids.length - 1;
       const ids = action.payload.ids;
       const description = action.payload.description;
       const notes = state.notes.find((note) => note.id === ids[loopCount]);
       const noteDescriptionUpdate = (
-        notes: WritableDraft<Notes>,
+        notes: WritableDraft<Note>,
         loopCount: number,
       ): void => {
         if (loopCount === 0) {
           notes.description = description;
         }
         if (notes.children) {
-          const childNotes = notes.children.find(
+          const childNote = notes.children.find(
             (note) => note.id === ids[loopCount - 1],
           );
-          childNotes && noteDescriptionUpdate(childNotes, loopCount - 1);
+          childNote && noteDescriptionUpdate(childNote, loopCount - 1);
         }
       };
       notes && noteDescriptionUpdate(notes, loopCount);
     },
     updateEmoji: (
       state,
-      action: PayloadAction<Required<Pick<Notes, 'emoji'>> & targetIds>,
+      action: PayloadAction<Required<Pick<Note, 'emoji'>> & targetIds>,
     ) => {
       const loopCount = action.payload.ids.length - 1;
       const ids = action.payload.ids;
       const emoji = action.payload.emoji;
       const notes = state.notes.find((note) => note.id === ids[loopCount]);
       const noteEmojiUpdate = (
-        notes: WritableDraft<Notes>,
+        notes: WritableDraft<Note>,
         loopCount: number,
       ): void => {
         if (loopCount === 0) {
           notes.emoji = emoji;
         }
         if (notes.children) {
-          const childNotes = notes.children.find(
+          const childNote = notes.children.find(
             (note) => note.id === ids[loopCount - 1],
           );
-          childNotes && noteEmojiUpdate(childNotes, loopCount - 1);
+          childNote && noteEmojiUpdate(childNote, loopCount - 1);
         }
       };
       notes && noteEmojiUpdate(notes, loopCount);
     },
     updateExpanded: (
       state,
-      action: PayloadAction<Required<Pick<Notes, 'expanded'>> & targetIds>,
+      action: PayloadAction<Required<Pick<Note, 'expanded'>> & targetIds>,
     ) => {
       const loopCount = action.payload.ids.length - 1;
       const ids = action.payload.ids;
       const expanded = action.payload.expanded;
       const notes = state.notes.find((note) => note.id === ids[loopCount]);
       const noteExpandedUpdate = (
-        notes: WritableDraft<Notes>,
+        notes: WritableDraft<Note>,
         loopCount: number,
       ): void => {
         if (loopCount === 0) {
           notes.expanded = expanded;
         }
         if (notes.children) {
-          const childNotes = notes.children.find(
+          const childNote = notes.children.find(
             (note) => note.id === ids[loopCount - 1],
           );
-          childNotes && noteExpandedUpdate(childNotes, loopCount - 1);
+          childNote && noteExpandedUpdate(childNote, loopCount - 1);
         }
       };
       notes && noteExpandedUpdate(notes, loopCount);
@@ -388,6 +297,7 @@ export const noteSlice = createSlice({
       state,
       action: PayloadAction<Omit<focusNote, 'levelStock'>>,
     ) => {
+      // TODO:最初押したやつが反映されるよに！
       if (state.focusNote.levelStock === 0) {
         state.focusNote.focusId = action.payload.focusId;
         state.focusNote.levelStock = action.payload.level;
@@ -405,41 +315,39 @@ export const noteSlice = createSlice({
       const ids = action.payload.ids;
       const notes = state.notes;
       const noteTitleUpdate = (
-        targetNotes: Array<WritableDraft<Notes>>,
+        targetNote: Array<WritableDraft<Note>>,
         loopCount: number,
-        parentNote?: WritableDraft<Notes>,
+        parentNote?: WritableDraft<Note>,
       ): void => {
         if (loopCount === 0) {
-          const deleteNotes = targetNotes.filter(
-            (state) => state.id !== ids[0],
-          );
-          const insertNote = targetNotes.find((state) => state.id === ids[0]);
+          const deleteNote = targetNote.filter((state) => state.id !== ids[0]);
+          const insertNote = targetNote.find((state) => state.id === ids[0]);
           if (insertNote !== undefined) {
-            deleteNotes.splice(action.payload.to, 0, insertNote);
+            deleteNote.splice(action.payload.to, 0, insertNote);
             if (parentNote) {
-              parentNote.children = deleteNotes;
+              parentNote.children = deleteNote;
             } else {
-              state.notes = deleteNotes;
+              state.notes = deleteNote;
             }
           }
         } else {
-          const parentNotes = notes.find((note) => note.id === ids[loopCount]);
-          parentNotes?.children &&
-            noteTitleUpdate(parentNotes.children, loopCount - 1, parentNotes);
+          const parentNote = notes.find((note) => note.id === ids[loopCount]);
+          parentNote?.children &&
+            noteTitleUpdate(parentNote.children, loopCount - 1, parentNote);
         }
       };
       notes && noteTitleUpdate(notes, loopCount);
     },
     updateTitle: (
       state,
-      action: PayloadAction<Required<Pick<Notes, 'title'>> & targetIds>,
+      action: PayloadAction<Required<Pick<Note, 'title'>> & targetIds>,
     ) => {
       const loopCount = action.payload.ids.length - 1;
       const ids = action.payload.ids;
       const title = action.payload.title;
       const notes = state.notes.find((note) => note.id === ids[loopCount]);
       const noteTitleUpdate = (
-        notes: WritableDraft<Notes>,
+        notes: WritableDraft<Note>,
         loopCount: number,
       ): void => {
         if (loopCount === 0) {
@@ -447,10 +355,10 @@ export const noteSlice = createSlice({
         }
         const minusLoopCount = loopCount - 1;
         if (notes.children) {
-          const childNotes = notes.children.find(
+          const childNote = notes.children.find(
             (note) => note.id === ids[minusLoopCount],
           );
-          childNotes && noteTitleUpdate(childNotes, minusLoopCount);
+          childNote && noteTitleUpdate(childNote, minusLoopCount);
         }
       };
       notes && noteTitleUpdate(notes, loopCount);
@@ -472,6 +380,7 @@ const selectNote = (state: RootState): State => state.notes;
 export {
   addBrotherNote,
   addChildNote,
+  fetchAsyncNotes,
   selectNote,
   updateDescription,
   updateEmoji,

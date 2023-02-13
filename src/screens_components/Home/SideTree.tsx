@@ -12,7 +12,7 @@ import { height, width } from '~/lib/constants';
 import { updateOrder } from '~/slices/noteSlice';
 import { selectSideTree } from '~/slices/sideTreeSlice';
 import { AppDispatch } from '~/store';
-import { Notes } from '~/types/types';
+import { Note } from '~/types/types';
 
 import { useSideTree } from './hook/useSideTree';
 import { SideTreeItem } from './SideTreeItem';
@@ -22,7 +22,7 @@ export const SideTree = ({
   notes,
   onNoteNavigate,
 }: {
-  notes: Notes[];
+  notes: Note[];
   onNoteNavigate: (height: number) => void;
 }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -31,21 +31,23 @@ export const SideTree = ({
   const { onPress } = useSideTree();
 
   const renderItem = useCallback(
-    ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
+    ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <ScaleDecorator>
           <TouchableOpacity onLongPress={drag} disabled={isActive}>
             <SideTreeItem
               onNoteNavigate={onNoteNavigate}
               note={item}
-              ids={[item.id]}
+              ids={[item?.id ?? '']}
             />
           </TouchableOpacity>
         </ScaleDecorator>
       );
     },
-    [],
+    [onNoteNavigate],
   );
+
+  if (notes.length === 0) return <></>;
 
   return (
     <Suspense fallback={<Spinner />}>
@@ -81,7 +83,10 @@ export const SideTree = ({
                 dispatch(updateOrder({ from, ids: [id], to }));
               }
             }}
-            keyExtractor={(item, index) => `side-tree-${item.id}-${index}`}
+            extraData={notes}
+            keyExtractor={(item, index) =>
+              `side-tree-${item?.id ?? index}-${index}`
+            }
             renderItem={renderItem}
           />
         </Stack>

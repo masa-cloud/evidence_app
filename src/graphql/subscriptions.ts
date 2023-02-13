@@ -17,57 +17,19 @@ export const onCreateNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -87,57 +49,19 @@ export const onUpdateNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -157,57 +81,19 @@ export const onDeleteNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parent {
-        id
-        title
-        description
-        expanded
-        level
-        orderNumber
-        emoji {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        parent {
-          id
-          title
-          description
-          expanded
-          level
-          orderNumber
-          createdAt
-          updatedAt
-          noteChildrenId
-          noteEmojiId
-        }
-        children {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        noteChildrenId
-        noteEmojiId
-      }
-      children {
+      parentId
+      childrenIds {
         items {
           id
-          title
-          description
-          expanded
-          level
-          orderNumber
+          childrenId
           createdAt
           updatedAt
-          noteChildrenId
-          noteEmojiId
+          noteChildrenIdsId
         }
         nextToken
       }
       createdAt
       updatedAt
-      noteChildrenId
       noteEmojiId
     }
   }
@@ -239,6 +125,45 @@ export const onDeleteEmoji = /* GraphQL */ `
       name
       createdAt
       updatedAt
+    }
+  }
+`;
+export const onCreateChildrenId = /* GraphQL */ `
+  subscription OnCreateChildrenId(
+    $filter: ModelSubscriptionChildrenIdFilterInput
+  ) {
+    onCreateChildrenId(filter: $filter) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
+    }
+  }
+`;
+export const onUpdateChildrenId = /* GraphQL */ `
+  subscription OnUpdateChildrenId(
+    $filter: ModelSubscriptionChildrenIdFilterInput
+  ) {
+    onUpdateChildrenId(filter: $filter) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
+    }
+  }
+`;
+export const onDeleteChildrenId = /* GraphQL */ `
+  subscription OnDeleteChildrenId(
+    $filter: ModelSubscriptionChildrenIdFilterInput
+  ) {
+    onDeleteChildrenId(filter: $filter) {
+      id
+      childrenId
+      createdAt
+      updatedAt
+      noteChildrenIdsId
     }
   }
 `;

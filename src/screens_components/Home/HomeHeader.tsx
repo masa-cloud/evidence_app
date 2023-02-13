@@ -67,6 +67,7 @@ export const HomeHeader = (): JSX.Element => {
             void (async () => {
               await dispatch(
                 addChildNote({
+                  id: focusNote.focusId,
                   childrenLength: focusNote.focusChildrenLength,
                   focusLevel: focusNote.level,
                 }),

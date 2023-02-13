@@ -13,13 +13,13 @@ import { width } from '~/lib/constants';
 import { selectNoteHeight } from '~/slices/noteHeightSlice';
 import { selectNote, updateExpanded, updateOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
-import { Notes } from '~/types/types';
+import { Note } from '~/types/types';
 
 import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 
 export type SieTreeItemProps = {
-  ids: number[];
-  note: Notes;
+  ids: string[];
+  note: Note;
   onNoteNavigate: (height: number) => void;
   parentExpanded?: boolean;
 };
@@ -34,12 +34,13 @@ export const SideTreeItem = ({
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useTheme();
   // customHook
-  const { position } = useAnimeExpandedRotate(note.expanded);
+  const { position } = useAnimeExpandedRotate(note?.expanded ?? false);
   const { noteHeights } = useSelector(selectNoteHeight);
   const { notes } = useSelector(selectNote);
 
   const renderItem = useCallback(
-    ({ drag, isActive, item }: RenderItemParams<Notes>): JSX.Element => {
+    ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
+      if (item === undefined) return <></>;
       return (
         <ScaleDecorator>
           <TouchableOpacity onLongPress={drag} disabled={isActive}>
@@ -47,7 +48,7 @@ export const SideTreeItem = ({
               note={item}
               onNoteNavigate={onNoteNavigate}
               ids={[item.id, ...ids]}
-              parentExpanded={note.expanded}
+              parentExpanded={note?.expanded ?? false}
             />
           </TouchableOpacity>
         </ScaleDecorator>
@@ -61,7 +62,7 @@ export const SideTreeItem = ({
     // looopが何回必要か0番目の要素かどうか判定する
     const totalLoopCount = ids.length - 1;
     const sumHeight = (
-      notes: Notes[],
+      notes: Note[],
       loopCount: number,
       targetHeight: number,
       prevTargetNoteHeight?: number,
@@ -93,8 +94,9 @@ export const SideTreeItem = ({
               )?.contentsHeight ?? 0)
             : 0;
         if (targetIndex === 0 && targetNote?.children?.length) {
+          const targetNoteChildren = targetNote.children;
           return sumHeight(
-            targetNote.children,
+            targetNoteChildren,
             loopCount - 1,
             targetHeight,
             targetNoteHeight,
@@ -110,8 +112,9 @@ export const SideTreeItem = ({
           return sum + prevNoteHeight;
         }, 0);
         if (targetNote?.children?.length) {
+          const targetNoteChildren = targetNote.children;
           return sumHeight(
-            targetNote.children,
+            targetNoteChildren,
             loopCount - 1,
             targetHeight + sumPrevHeight,
             targetNoteHeight,
@@ -125,7 +128,8 @@ export const SideTreeItem = ({
   };
 
   const SideTreeChildItem = useCallback((): JSX.Element => {
-    if (note.children !== undefined) {
+    // console.log('note.children', note.children)
+    if (note?.children?.length) {
       const NoteChild = note.children;
       return (
         <DraggableFlatList
@@ -137,6 +141,7 @@ export const SideTreeItem = ({
               dispatch(updateOrder({ from, ids: [id, ...ids], to }));
             }
           }}
+          extraData={notes}
           keyExtractor={(item, index) => `side-tree-item-${item.id}-${index}`}
           renderItem={renderItem}
         />
@@ -144,7 +149,7 @@ export const SideTreeItem = ({
     } else {
       return <></>;
     }
-  }, [note.children, note.expanded]);
+  }, [dispatch, ids, note.children, notes, renderItem]);
 
   const Emoji = (): JSX.Element => {
     return (
@@ -196,7 +201,8 @@ export const SideTreeItem = ({
         animation="bouncy"
       >
         <XStack alignItems="center" f={1}>
-          <Emoji />
+          {/* TODO:絵文字の型など修正 */}
+          {/* <Emoji /> */}
           <Text
             style={[styles.titleTextInputStyle, { color: colors.text }]}
             focusStyle={{ ...styles.focusTitleStyle, borderColor: colors.text }}

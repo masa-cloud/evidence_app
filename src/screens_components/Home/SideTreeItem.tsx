@@ -128,7 +128,6 @@ export const SideTreeItem = ({
   };
 
   const SideTreeChildItem = useCallback((): JSX.Element => {
-    // console.log('note.children', note.children)
     if (note?.children?.length) {
       const NoteChild = note.children;
       return (

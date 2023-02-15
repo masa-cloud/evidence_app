@@ -1,31 +1,22 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { API } from 'aws-amplify';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
-import { CreateNoteInput } from '~/API';
-import { fetchNotes } from '~/api/noteAPI';
-import * as mutations from '~/graphql/mutations';
+import {
+  createBrotherNote,
+  createChildNote,
+  deleteNoteApi,
+  getNotes,
+} from '~/api/noteAPI';
 import { Note } from '~/types/types';
 
 import type { RootState } from '../store';
-import { CreateChildrenIdInput } from './../API';
 
 type State = {
-  focusNote: focusNote;
   notes: Note[];
 };
 
 type targetIds = {
   ids: string[];
-};
-
-type focusNote = {
-  focusChildrenLength: number;
-  focusId: string;
-  ids: string[];
-  level: number;
-  levelStock: number;
-  orderNumber: number;
 };
 
 type orderIds = {
@@ -35,82 +26,11 @@ type orderIds = {
 };
 
 const initialState: State = {
-  focusNote: {
-    focusChildrenLength: 0,
-    focusId: '1',
-    ids: [],
-    level: 0,
-    levelStock: 0,
-    orderNumber: 0,
-  },
   notes: [],
 };
 
-const addBrotherNote = createAsyncThunk<
-  { newNote: Note },
-  { focusLevel: number; orderNumber: number },
-  {
-    rejectValue: string;
-    state: { notes: State };
-  }
->('notes/addBrotherNote', async (focusData) => {
-  try {
-    // TODO:親があれば、親のIDを入れてあげる
-    const noteDetails: CreateNoteInput = {
-      title: '',
-      description: '',
-      expanded: true,
-      level: focusData.focusLevel,
-      orderNumber: focusData.orderNumber + 1,
-    };
-    const newNote = (await API.graphql({
-      query: mutations.createNote,
-      variables: { input: noteDetails },
-    })) as { data: { createNote: Note } };
-    return { newNote: newNote.data.createNote };
-  } catch (err) {
-    throw new Error(`${err}`);
-  }
-});
-
-const addChildNote = createAsyncThunk<
-  { newNote: Note },
-  { id: string; childrenLength: number; focusLevel: number },
-  {
-    rejectValue: string;
-    state: { notes: State };
-  }
->('notes/addChildNote', async (focusData) => {
-  try {
-    const noteDetail: CreateNoteInput = {
-      title: '',
-      description: '',
-      expanded: true,
-      level: focusData.focusLevel + 1,
-      orderNumber: focusData.childrenLength + 1,
-      parentId: focusData.id,
-    };
-    // TODO:childrenIdをchildrenIdsに加えないとおかしくなるようだったら見直す
-    const newNote = (await API.graphql({
-      query: mutations.createNote,
-      variables: { input: noteDetail },
-    })) as { data: { createNote: Note } };
-    const childrenIdDetail: CreateChildrenIdInput = {
-      childrenId: newNote.data.createNote.id,
-      noteChildrenIdsId: focusData.id,
-    };
-    await API.graphql({
-      query: mutations.createChildrenId,
-      variables: { input: childrenIdDetail },
-    });
-    return { newNote: newNote.data.createNote };
-  } catch (err) {
-    throw new Error(`${err}`);
-  }
-});
-
 const fetchAsyncNotes = createAsyncThunk('notes/fetchAsyncNotes', async () => {
-  const notes = await fetchNotes().catch((error) => {
+  const notes = await getNotes().catch((error) => {
     throw error;
   });
   if (notes) {
@@ -120,13 +40,76 @@ const fetchAsyncNotes = createAsyncThunk('notes/fetchAsyncNotes', async () => {
   }
 });
 
+const addBrotherNote = createAsyncThunk<
+  { ids: string[]; newNote: Note; orderNumber: number },
+  {
+    focusLevel: number;
+    ids: string[];
+    orderNumber: number;
+    parentId: string | undefined | null;
+  },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addBrotherNote', async (focusNote) => {
+  const newBrotherNotes = await createBrotherNote({ ...focusNote }).catch(
+    (error) => {
+      throw error;
+    },
+  );
+  if (newBrotherNotes) {
+    return newBrotherNotes;
+  } else {
+    throw new Error('error addBrotherNote');
+  }
+});
+
+const addChildNote = createAsyncThunk<
+  { ids: string[]; newNote: Note },
+  { id: string; childrenLength: number; focusLevel: number; ids: string[] },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addChildNote', async (focusData) => {
+  const newChildNote = await createChildNote({ ...focusData }).catch(
+    (error) => {
+      throw error;
+    },
+  );
+  if (newChildNote) {
+    return newChildNote;
+  } else {
+    throw new Error('error addChildNote');
+  }
+});
+
+const deleteNote = createAsyncThunk<
+  { deletedNote: Note },
+  { id: string },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/deleteNote', async (focusData) => {
+  const notes = await deleteNoteApi({ ...focusData }).catch((error) => {
+    throw error;
+  });
+  if (notes) {
+    return notes;
+  } else {
+    throw new Error('error addChildNote');
+  }
+});
+
 export const noteSlice = createSlice({
   name: 'notes',
   extraReducers: (builder) => {
     builder
       .addCase(addBrotherNote.fulfilled, (state, action) => {
-        const loopCount: number = state.focusNote.ids.length - 1;
-        const ids: string[] = state.focusNote.ids;
+        const loopCount: number = action.payload.ids.length - 1;
+        const ids: string[] = action.payload.ids;
         const notes: WritableDraft<Note> | undefined = state.notes.find(
           (note) => note.id === ids[loopCount],
         );
@@ -146,10 +129,10 @@ export const noteSlice = createSlice({
               const orderChangeNote = parentNote.children.filter(
                 (note) =>
                   note !== null &&
-                  note.orderNumber >= state.focusNote.orderNumber + 1,
+                  note.orderNumber >= action.payload.orderNumber + 1,
               );
               parentNote.children.splice(
-                state.focusNote.orderNumber + 1,
+                action.payload.orderNumber + 1,
                 0,
                 action.payload.newNote,
               );
@@ -165,10 +148,10 @@ export const noteSlice = createSlice({
         };
         if (loopCount === 0) {
           const orderChangeNote = state.notes.filter(
-            (note) => note.orderNumber >= state.focusNote.orderNumber + 1,
+            (note) => note.orderNumber >= action.payload.orderNumber + 1,
           );
           state.notes.splice(
-            state.focusNote.orderNumber + 1,
+            action.payload.orderNumber + 1,
             0,
             action.payload.newNote,
           );
@@ -178,8 +161,8 @@ export const noteSlice = createSlice({
         }
       })
       .addCase(addChildNote.fulfilled, (state, action) => {
-        const loopCount: number = state.focusNote.ids.length - 1;
-        const ids: string[] = state.focusNote.ids;
+        const loopCount: number = action.payload.ids.length - 1;
+        const ids: string[] = action.payload.ids;
         const notes: WritableDraft<Note> | undefined = state.notes.find(
           (note) => note.id === ids[loopCount],
         );
@@ -187,7 +170,6 @@ export const noteSlice = createSlice({
           targetNotes: WritableDraft<Note>,
           loopCount: number,
         ): void => {
-          console.log({ loopCount });
           if (loopCount === 0) {
             if (targetNotes.children) {
               targetNotes.children.push(action.payload.newNote);
@@ -217,6 +199,18 @@ export const noteSlice = createSlice({
         // state.status = 'idle';
         console.log('action', action.payload);
         state.notes = action.payload;
+      })
+      .addCase(deleteNote.pending, (state) => {
+        // TODO:ロードの完了有無追加
+        // state.status = 'loading';
+      })
+      .addCase(deleteNote.fulfilled, (state, action) => {
+        // TODO:ロードの完了有無追加
+        // state.status = 'idle';
+        // state.notes = action.payload;
+        state.notes = state.notes.filter(
+          (note) => note.id !== action.payload.deletedNote.id,
+        );
       });
   },
   initialState,
@@ -293,23 +287,6 @@ export const noteSlice = createSlice({
       };
       notes && noteExpandedUpdate(notes, loopCount);
     },
-    updateFucusId: (
-      state,
-      action: PayloadAction<Omit<focusNote, 'levelStock'>>,
-    ) => {
-      // TODO:最初押したやつが反映されるよに！
-      if (state.focusNote.levelStock === 0) {
-        state.focusNote.focusId = action.payload.focusId;
-        state.focusNote.levelStock = action.payload.level;
-        state.focusNote.focusChildrenLength =
-          action.payload.focusChildrenLength;
-        state.focusNote.level = action.payload.level;
-        state.focusNote.orderNumber = action.payload.orderNumber;
-        state.focusNote.ids = action.payload.ids;
-      } else {
-        state.focusNote.levelStock--;
-      }
-    },
     updateOrder: (state, action: PayloadAction<Required<orderIds>>) => {
       const loopCount = action.payload.ids.length - 1;
       const ids = action.payload.ids;
@@ -370,7 +347,6 @@ const {
   updateDescription,
   updateEmoji,
   updateExpanded,
-  updateFucusId,
   updateOrder,
   updateTitle,
 } = noteSlice.actions;
@@ -380,13 +356,14 @@ const selectNote = (state: RootState): State => state.notes;
 export {
   addBrotherNote,
   addChildNote,
+  deleteNote,
   fetchAsyncNotes,
   selectNote,
   updateDescription,
   updateEmoji,
   updateExpanded,
-  updateFucusId,
   updateOrder,
   updateTitle,
 };
+
 export default noteSlice.reducer;

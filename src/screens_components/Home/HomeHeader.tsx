@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Image, Stack, XStack } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import { addBrotherNote, addChildNote, selectNote } from '~/slices/noteSlice';
+import { selectFocusNote } from '~/slices/focusNoteSlice';
+import { addBrotherNote, addChildNote, deleteNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
 import { useSideTree } from './hook/useSideTree';
@@ -16,7 +17,7 @@ export const HomeHeader = (): JSX.Element => {
   const { colors } = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { onPress } = useSideTree();
-  const { focusNote } = useSelector(selectNote);
+  const { focusNote } = useSelector(selectFocusNote);
 
   return (
     <XStack
@@ -33,6 +34,21 @@ export const HomeHeader = (): JSX.Element => {
     >
       <Ionicons name="ios-menu-sharp" size={30} color={colors.text} />
       <XStack alignItems="center" justifyContent="space-between">
+        <MaterialIcons
+          name="delete"
+          onPress={() => {
+            void (async () => {
+              await dispatch(
+                deleteNote({
+                  id: focusNote.focusId,
+                }),
+              );
+            })();
+          }}
+          style={{ marginHorizontal: 8 }}
+          size={30}
+          color={colors.text}
+        />
         <Ionicons
           name="search-sharp"
           style={{ marginHorizontal: 8 }}
@@ -52,7 +68,9 @@ export const HomeHeader = (): JSX.Element => {
               await dispatch(
                 addBrotherNote({
                   focusLevel: focusNote.level,
+                  ids: focusNote.ids,
                   orderNumber: focusNote.orderNumber,
+                  parentId: focusNote.parentId,
                 }),
               );
             })();
@@ -70,6 +88,7 @@ export const HomeHeader = (): JSX.Element => {
                   id: focusNote.focusId,
                   childrenLength: focusNote.focusChildrenLength,
                   focusLevel: focusNote.level,
+                  ids: focusNote.ids,
                 }),
               );
             })();

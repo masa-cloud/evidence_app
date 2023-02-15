@@ -1,13 +1,11 @@
-import { GraphQLResult } from '@aws-amplify/api';
 import { Amplify } from '@aws-amplify/core';
 import { API, graphqlOperation } from 'aws-amplify';
 
+import { CreateChildrenIdInput, CreateNoteInput, DeleteNoteInput } from '~/API';
 import awsExports from '~/aws-exports';
-import { createNote } from '~/graphql/mutations';
+import { createChildrenId, createNote, deleteNote } from '~/graphql/mutations';
 import { listNotes } from '~/graphql/queries';
 import { Note } from '~/types/types';
-
-import { CreateNoteInput } from './../API';
 
 Amplify.configure(awsExports);
 
@@ -65,7 +63,7 @@ Amplify.configure(awsExports);
 //   }
 // };
 
-const fetchNotesChildren = async (items: Note[]): Promise<Note[]> => {
+const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
   const fetchedNoteChildren = async (
     childrenIds: Array<{ childrenId: string }>,
   ): Promise<Note[]> => {
@@ -100,7 +98,7 @@ const fetchNotesChildren = async (items: Note[]): Promise<Note[]> => {
         );
 
         if (isNestedNote) {
-          note.children = await fetchNotesChildren(childNotes);
+          note.children = await getNotesChildren(childNotes);
         } else {
           note.children = childNotes;
         }
@@ -113,7 +111,7 @@ const fetchNotesChildren = async (items: Note[]): Promise<Note[]> => {
   return notesWithChildren;
 };
 
-export const fetchNotes = async (): Promise<Note[] | undefined> => {
+export const getNotes = async (): Promise<Note[] | undefined> => {
   try {
     const filter = { level: { eq: 0 } };
 
@@ -126,7 +124,7 @@ export const fetchNotes = async (): Promise<Note[] | undefined> => {
     };
 
     if (notes) {
-      return await fetchNotesChildren(notes);
+      return await getNotesChildren(notes);
     }
 
     return undefined;
@@ -135,30 +133,100 @@ export const fetchNotes = async (): Promise<Note[] | undefined> => {
   }
 };
 
-export const addBrotherNote = async (focusData: {
+export const createBrotherNote = async (focusNote: {
   focusLevel: number;
+  ids: string[];
   orderNumber: number;
+  parentId: string | undefined | null;
 }): Promise<
   | {
-      newNote: CreateNoteInput | undefined;
+      ids: string[];
+      newNote: Note;
+      orderNumber: number;
     }
   | undefined
 > => {
   try {
-    if (!focusData.focusLevel || !focusData.orderNumber) return;
-    const note: CreateNoteInput = {
+    // TODO:orderNumberがおかしいはず。
+    const noteDetails: CreateNoteInput = {
       title: '',
       description: '',
       expanded: true,
-      level: focusData.focusLevel,
-      orderNumber: focusData.orderNumber + 1,
+      level: focusNote.focusLevel,
+      orderNumber: focusNote.orderNumber + 1,
+      parentId: focusNote.parentId ?? null,
     };
-    const newNote = (await API.graphql(
-      graphqlOperation(createNote, { input: note }),
-    )) as GraphQLResult<CreateNoteInput>;
-    console.log({ newNote });
-    return { newNote: newNote.data };
+    const newNote = (await API.graphql({
+      query: createNote,
+      variables: { input: noteDetails },
+    })) as { data: { createNote: Note } };
+    return {
+      ids: focusNote.ids,
+      newNote: newNote.data.createNote,
+      orderNumber: focusNote.orderNumber,
+    };
   } catch (err) {
-    throw new Error('error addBrotherNote');
+    throw new Error('error createBrotherNote');
+  }
+};
+
+export const createChildNote = async (focusNote: {
+  id: string;
+  childrenLength: number;
+  focusLevel: number;
+  ids: string[];
+}): Promise<
+  | {
+      ids: string[];
+      newNote: Note;
+    }
+  | undefined
+> => {
+  try {
+    const noteDetail: CreateNoteInput = {
+      title: '',
+      description: '',
+      expanded: true,
+      level: focusNote.focusLevel + 1,
+      orderNumber: focusNote.childrenLength + 1,
+      parentId: focusNote.id,
+    };
+    // NOTE:childrenIdをchildrenIdsに加えないとおかしくなるようだったら見直す
+    const newNote = (await API.graphql({
+      query: createNote,
+      variables: { input: noteDetail },
+    })) as { data: { createNote: Note } };
+    const childrenIdDetail: CreateChildrenIdInput = {
+      childrenId: newNote.data.createNote.id,
+      noteChildrenIdsId: focusNote.id,
+    };
+    await API.graphql({
+      query: createChildrenId,
+      variables: { input: childrenIdDetail },
+    });
+    return { ids: focusNote.ids, newNote: newNote.data.createNote };
+  } catch (err) {
+    throw new Error('error createChildNote');
+  }
+};
+
+// TODO:命名規則どうしよう。
+export const deleteNoteApi = async (focusNote: {
+  id: string;
+}): Promise<
+  | {
+      deletedNote: Note;
+    }
+  | undefined
+> => {
+  try {
+    const deleteNoteDetail: DeleteNoteInput = { id: focusNote.id };
+    const deletedNote = (await API.graphql({
+      query: deleteNote,
+      variables: { input: deleteNoteDetail },
+    })) as { data: { deleteNote: Note } };
+    return { deletedNote: deletedNote.data.deleteNote };
+  } catch (err) {
+    throw new Error('error deleteNoteApi');
   }
 };

@@ -22,7 +22,6 @@ export const useAnimeExpand = (props: Props): useAnimeExpandReturn => {
     if (props.expanded) {
       animatedValue.setValue(props.descriptionHeight + 16);
     }
-    console.log('props.descriptionHeight + 16', props.descriptionHeight + 16);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.descriptionHeight]);
 

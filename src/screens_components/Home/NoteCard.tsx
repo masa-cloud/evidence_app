@@ -8,6 +8,7 @@ import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
+import { updateFucusId } from '~/slices/focusNoteSlice';
 import {
   selectNoteHeight,
   updateContentsHeight,
@@ -16,7 +17,6 @@ import {
   updateDescription,
   updateEmoji,
   updateExpanded,
-  updateFucusId,
   updateTitle,
 } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
@@ -94,7 +94,6 @@ export const NoteCard = ({
   const noteHeight = noteHeights.find(
     (noteHeight) => noteHeight.id === note.id,
   );
-  // console.log({noteHeight})
   // customHook
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
     descriptionHeight: noteHeight?.contentsHeight ?? 32,
@@ -103,7 +102,6 @@ export const NoteCard = ({
     level: note.level,
   });
   const { position } = useAnimeExpandedRotate(note.expanded);
-
   const renderItem = useCallback(
     ({ item }: { item: Note }): JSX.Element => {
       return (
@@ -192,7 +190,6 @@ export const NoteCard = ({
       // }
       // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
       onTouchStart={() => {
-        console.log('note.level', note.level);
         dispatch(
           updateFucusId({
             focusChildrenLength: note.children?.length ?? 0,
@@ -200,6 +197,7 @@ export const NoteCard = ({
             ids,
             level: note.level,
             orderNumber: note.orderNumber,
+            parentId: note.parentId,
           }),
         );
       }}

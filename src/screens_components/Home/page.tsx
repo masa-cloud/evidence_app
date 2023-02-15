@@ -30,17 +30,6 @@ export const Home: FC<Props> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
-  // const deleteTodoDetails = {
-  //   id: 'some_id',
-  // };
-
-  // const deleteTodo = async (): Promise<void> => {
-  //   const deletedTodo = await API.graphql({
-  //     query: mutations.deleteTodo,
-  //     variables: { input: deleteTodoDetails },
-  //   });
-  //   console.log({ deletedTodo });
-  // };
 
   useFocusEffect(
     useCallback(() => {
@@ -92,7 +81,7 @@ export const Home: FC<Props> = (props) => {
         <FlatList
           data={notes}
           ref={flatListRef}
-          extraData={flatListRef || notes}
+          extraData={flatListRef}
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />

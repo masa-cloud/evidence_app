@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
 
+import focusNoteReducer from './slices/focusNoteSlice';
 import noteHeightReducer from './slices/noteHeightSlice';
 import noteReducer from './slices/noteSlice';
 import sideTreeReducer from './slices/sideTreeSlice';
 import userReducer from './slices/userSlice';
 
 export const rootReducer = combineReducers({
+  focusNote: focusNoteReducer,
   noteHeight: noteHeightReducer,
   notes: noteReducer,
   sideTree: sideTreeReducer,

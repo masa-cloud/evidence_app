@@ -38,7 +38,6 @@ export const useSideTree = (): useSideTreeReturn => {
   };
 
   useEffect(() => {
-    // console.log({})
     dispatch(updatePosition({ position }));
   }, [position]);
 

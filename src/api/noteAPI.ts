@@ -1,9 +1,19 @@
 import { Amplify } from '@aws-amplify/core';
 import { API, graphqlOperation } from 'aws-amplify';
 
-import { CreateChildrenIdInput, CreateNoteInput, DeleteNoteInput } from '~/API';
+import {
+  CreateChildrenIdInput,
+  CreateNoteInput,
+  DeleteNoteInput,
+  UpdateNoteInput,
+} from '~/API';
 import awsExports from '~/aws-exports';
-import { createChildrenId, createNote, deleteNote } from '~/graphql/mutations';
+import {
+  createChildrenId,
+  createNote,
+  deleteNote,
+  updateNote,
+} from '~/graphql/mutations';
 import { listNotes } from '~/graphql/queries';
 import { Note } from '~/types/types';
 
@@ -62,7 +72,7 @@ Amplify.configure(awsExports);
 //     throw new Error('error fetchNotes');
 //   }
 // };
-
+// === END CREATE ===
 const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
   const fetchedNoteChildren = async (
     childrenIds: Array<{ childrenId: string }>,
@@ -131,8 +141,8 @@ export const getNotes = async (): Promise<Note[] | undefined> => {
   } catch (err) {
     throw new Error('Error fetching notes');
   }
-};
-
+}; // === END CREATE ===
+// === START CREATE ===
 export const createBrotherNote = async (focusNote: {
   focusLevel: number;
   ids: string[];
@@ -208,9 +218,30 @@ export const createChildNote = async (focusNote: {
   } catch (err) {
     throw new Error('error createChildNote');
   }
-};
-
-// TODO:命名規則どうしよう。
+}; // === END CREATE ===
+// === START UPDATE ===
+export const updateNoteApi = async (
+  updateNoteData: UpdateNoteInput,
+): Promise<
+  | {
+      updatedNote: Note;
+    }
+  | undefined
+> => {
+  try {
+    const updateNoteDetail: UpdateNoteInput = { ...updateNoteData };
+    console.log({ updateNoteDetail });
+    const updatedNote = (await API.graphql({
+      query: updateNote,
+      variables: { input: updateNoteDetail },
+    })) as { data: { updateNote: Note } };
+    console.log({ updateNoteDetail });
+    return { updatedNote: updatedNote.data.updateNote };
+  } catch (err) {
+    throw new Error('error updateNoteApi');
+  }
+}; // === END UPDATE ===
+// === START DELETE ===
 export const deleteNoteApi = async (focusNote: {
   id: string;
 }): Promise<
@@ -229,4 +260,4 @@ export const deleteNoteApi = async (focusNote: {
   } catch (err) {
     throw new Error('error deleteNoteApi');
   }
-};
+}; // === END DELETE ===

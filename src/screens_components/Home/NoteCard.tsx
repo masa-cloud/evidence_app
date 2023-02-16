@@ -13,12 +13,7 @@ import {
   selectNoteHeight,
   updateContentsHeight,
 } from '~/slices/noteHeightSlice';
-import {
-  updateDescription,
-  updateEmoji,
-  updateExpanded,
-  updateTitle,
-} from '~/slices/noteSlice';
+import { updateAsyncNote, updateEmoji } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -31,53 +26,6 @@ export type NoteCardProps = {
   parentExpanded?: boolean;
 };
 
-// NOTE:icloudに保存はできるのか？ 一旦断念
-// NOTE:APIを叩く前に処理を実施 APIがfalseだったらStateの処理を戻すようにする
-// NOTE:見えなくなったNoteのデータは削除した方がヌルヌル動くのでは？
-// TODO:[graphQL]取得する
-// TODO:focusの処理を直す
-// TODO:addBrotherを階層事にできるようにする
-// TODO:開いているもののみ処理するように修正する
-// TODO:[graphQL]アップデートする
-// TODO:[graphQL]削除する
-// TODO:[graphQL]NoteをUserIdと紐付ける
-// TODO:[graphQL]をユーザーと紐付けれるようにする
-// TODO:設計見直す
-// TODO:https://alexsidorenko.com/blog/react-render-children-prop/
-// TODO:https://alexsidorenko.com/blog/react-optimize-rerenders-without-refs-memo/
-// TODO:コマンドZってどうやってやるん？
-// TODO:Googleの広告をつっこむ
-// TODO:↑の方どうなってるん？SafetyScrollAreaが微妙？な感じに思える
-// TODO:パフォーマンス測るもの入れときたい
-// TODO:styleのcolor動的↓に書けるように
-// const iconStyle = (props: {
-//   focused: boolean;
-//   size: number;
-//   color: string;
-// }): StyleProp<ImageStyle> => ({
-//   width: props.size,
-//   height: props.size,
-//   tintColor: props.color,
-// });
-// TODO:子供を追加した時はexpandedを1にする
-// TODO:関心の分離化
-// TODO:なんかサイドツリー２回押さないと動作しない
-// TODO:会員登録は必須にする
-// TODO:Storageの設定(保存方法と最大容量など)考えないといけないのでは？
-// TODO:dispatch(updateHeight)をcontentsHeightのところに移動 height = contentsHeight + ???px
-// TODO:何回も起きる高さupdateのdispatchをレンダリングを1回にする
-// ↓リリース後
-// TODO:updateテーマで色変えるのから、サブスクもあり(赤青黃以外はサブスクみたいな)
-// TODO:広めるためのシェア活動とかも必要 twitterにシェアで1週間広告非表示とか
-// TODO:背景画像変えれるように
-// TODO:皆のテンプレ動画導入 本日、1日前、2日前、週間(サブスク)、月間(サブスク)
-// TODO:ログインできるように
-// TODO:GraphQL使用
-// TODO:パスワードの強さ
-// TODO:検索できるように
-// TODO:文字を書けるように
-// TODO:サブスク導入
-// TODO:画像を使えるようにする
 /** @package */
 export const NoteCard = ({
   ids,
@@ -90,6 +38,7 @@ export const NoteCard = ({
   // const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
   const [description, setDescription] = useState<string>(note.description);
   const [title, setTitle] = useState<string>(note.title);
+  const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const { noteHeights } = useSelector(selectNoteHeight);
   const noteHeight = noteHeights.find(
     (noteHeight) => noteHeight.id === note.id,
@@ -97,22 +46,22 @@ export const NoteCard = ({
   // customHook
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
     descriptionHeight: noteHeight?.contentsHeight ?? 32,
-    expanded: note.expanded,
+    expanded,
     ids,
     level: note.level,
   });
-  const { position } = useAnimeExpandedRotate(note.expanded);
+  const { position } = useAnimeExpandedRotate(expanded);
   const renderItem = useCallback(
     ({ item }: { item: Note }): JSX.Element => {
       return (
         <NoteCard
           note={item}
           ids={[item.id, ...ids]}
-          parentExpanded={note.expanded}
+          parentExpanded={expanded}
         />
       );
     },
-    [ids, note.expanded],
+    [ids, expanded],
   );
 
   const Emoji = (): JSX.Element => {
@@ -232,7 +181,17 @@ export const NoteCard = ({
             multiline={true}
             onChangeText={(title) => setTitle(title)}
             autoCapitalize="none"
-            onEndEditing={() => dispatch(updateTitle({ title, ids }))}
+            onEndEditing={() => {
+              void (async () => {
+                // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
+                await dispatch(
+                  updateAsyncNote({
+                    ids,
+                    updateNoteData: { id: ids[0] ?? 'aaa', title },
+                  }),
+                );
+              })();
+            }}
           />
         </XStack>
         {/* TODO:Expandedはアニメーション終わったあとにコンポーネント化 */}
@@ -240,8 +199,17 @@ export const NoteCard = ({
           <Stack animation={'bouncy'} {...position}>
             <SimpleLineIcons
               onPress={() => {
-                dispatch(updateExpanded({ expanded: !note.expanded, ids }));
-                note.expanded ? fadeIn() : fadeOut();
+                void (async () => {
+                  expanded ? fadeIn() : fadeOut();
+                  setExpanded((prevExpanded) => !prevExpanded);
+                  // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん 更新されていそう
+                  await dispatch(
+                    updateAsyncNote({
+                      ids,
+                      updateNoteData: { id: ids[0] ?? '', expanded },
+                    }),
+                  );
+                })();
               }}
               name="arrow-up"
               size={20}
@@ -290,7 +258,17 @@ export const NoteCard = ({
             setDescription(description);
           }}
           autoCapitalize="none"
-          onEndEditing={() => dispatch(updateDescription({ description, ids }))}
+          onEndEditing={() => {
+            void (async () => {
+              // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
+              await dispatch(
+                updateAsyncNote({
+                  ids,
+                  updateNoteData: { id: ids[0] ?? '', description },
+                }),
+              );
+            })();
+          }}
         />
       </Animated.View>
       <NoteChildCard />

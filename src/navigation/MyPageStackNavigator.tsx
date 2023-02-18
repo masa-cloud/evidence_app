@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { MyPageScreen } from '~/screens/MyPageScreen';
+import { MyPageScreen } from '~/../app/MyPageScreen';
 
 import { RouteName } from './rootStackParamList';
 

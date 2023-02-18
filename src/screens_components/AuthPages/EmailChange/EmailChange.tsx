@@ -1,5 +1,4 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useTheme } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
@@ -9,6 +8,7 @@ import { Text } from 'tamagui';
 import { Button } from '~/components/Button';
 import { CognitoError, ValidationTextInput } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
+import { useColors } from '~/lib/constants';
 import { emailChangeSchema } from '~/schema/schema';
 import { emailChange, selectUser } from '~/slices/userSlice';
 import { AppDispatch } from '~/store';
@@ -32,7 +32,7 @@ export const EmailChange: FC<Props> = (props) => {
   } = useForm<EmailChangeInput>({
     resolver: yupResolver(emailChangeSchema),
   });
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const {
     user: { email },
   } = useSelector(selectUser);

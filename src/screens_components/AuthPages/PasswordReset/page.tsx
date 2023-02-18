@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import { PasswordResetScreenNavigationProps } from '~/screens/Auth/PasswordResetScreen';
+import { PasswordResetScreenNavigationProps } from '~/../app/(auth)/PasswordResetScreen';
 
 import { Complete } from './Complete';
 import { PasswordResetForm } from './PasswordResetForm';

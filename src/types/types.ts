@@ -1,4 +1,4 @@
-import { GetNoteQuery } from '~/API';
+import { GetEmojiQuery, GetNoteQuery } from '~/API';
 
 import { DeepOmit } from './DeepOmit';
 
@@ -22,6 +22,10 @@ export type FetchNote = FirstOfUnion<
 export type NoteChildren = { children?: Note[] };
 
 export type Note = NoteChildren & FetchNote;
+
+export type FetchEmoji = FirstOfUnion<
+  DeepOmit<Exclude<GetEmojiQuery['getEmoji'], null>, '__typename'>
+>;
 
 // export type Notes = {
 //   id: string;

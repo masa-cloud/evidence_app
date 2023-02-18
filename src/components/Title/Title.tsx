@@ -1,6 +1,7 @@
-import { useTheme } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { H1 } from 'tamagui';
+
+import { useColors } from '~/lib/constants';
 
 type Props = {
   title: string;
@@ -9,7 +10,7 @@ type Props = {
 
 /** @package */
 export const Title: FC<Props> = (props) => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   return (
     <H1 color={colors.text} fontSize="2xl" pl={props.pl ?? null} pb={16}>
       {props.title}

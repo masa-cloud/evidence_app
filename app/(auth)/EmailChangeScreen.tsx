@@ -13,6 +13,6 @@ type Props = {
   navigation: EmailChangeScreenNavigationProps;
 };
 
-export const EmailChangeScreen = (props: Props): JSX.Element => {
+export default function EmailChangeScreen(props: Props): JSX.Element {
   return <EmailChangePage {...props} />;
-};
+}

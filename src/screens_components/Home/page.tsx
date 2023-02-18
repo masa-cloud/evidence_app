@@ -1,13 +1,12 @@
-import { useFocusEffect } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// import { useFocusEffect } from '@react-navigation/native';
 import { FlatList } from '@stream-io/flat-list-mvcp';
+import { useFocusEffect, useRouter } from 'expo-router';
 import React, { FC, useCallback, useRef } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import { HomeTabParamList, RouteName } from '~/navigation/rootStackParamList';
 import { fetchAsyncNotes, selectNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
@@ -16,18 +15,19 @@ import { HomeHeader } from './HomeHeader';
 import { NoteCard } from './NoteCard';
 import { SideTree } from './SideTree';
 
-type HomeScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'HomeScreen'
->;
+// type HomeScreenNavigationProps = NativeStackNavigationProp<
+//   HomeTabParamList,
+//   'HomeScreen'
+// >;
 
-type Props = {
-  navigation: HomeScreenNavigationProps;
-};
+// type Props = {
+//   navigation: HomeScreenNavigationProps;
+// };
 
 /** @package */
-export const Home: FC<Props> = (props) => {
+export const Home: FC = () => {
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
 
@@ -73,11 +73,12 @@ export const Home: FC<Props> = (props) => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%' }}
       >
+        <HomeHeader />
         <SideTree notes={notes} onNoteNavigate={onPress} />
         <TouchableOpacity
-          onPress={() => props.navigation.navigate(RouteName.MyPageScreen)}
+          onPress={() => router.push('/MyPageScreen')}
         ></TouchableOpacity>
-        <Stack h={2} />
+        <Stack h={60} />
         <FlatList
           data={notes}
           ref={flatListRef}
@@ -85,7 +86,6 @@ export const Home: FC<Props> = (props) => {
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />
-        <HomeHeader />
       </ImageBackground>
     </SafeAreaView>
   );

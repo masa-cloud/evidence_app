@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'tamagui';
 
+import { PasswordResetScreenNavigationProps } from '~/../app/(auth)/PasswordResetScreen';
 import { Button } from '~/components/Button';
 import { PageContainer } from '~/components/PageContainer';
 import { RouteName } from '~/navigation/rootStackParamList';
-import { PasswordResetScreenNavigationProps } from '~/screens/Auth/PasswordResetScreen';
 
 type Props = {
   navigation: PasswordResetScreenNavigationProps;

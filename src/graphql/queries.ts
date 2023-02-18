@@ -17,7 +17,6 @@ export const getNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parentId
       childrenIds {
         items {
           id
@@ -28,6 +27,7 @@ export const getNote = /* GraphQL */ `
         }
         nextToken
       }
+      parentId
       createdAt
       updatedAt
       noteEmojiId
@@ -62,7 +62,6 @@ export const listNotes = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        parentId
         childrenIds {
           items {
             id
@@ -73,6 +72,7 @@ export const listNotes = /* GraphQL */ `
           }
           nextToken
         }
+        parentId
         createdAt
         updatedAt
         noteEmojiId

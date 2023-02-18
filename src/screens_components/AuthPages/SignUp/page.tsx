@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import { SignUpScreenNavigationProps } from '~/screens/Auth/SignUpScreen';
+import { SignUpScreenNavigationProps } from '~/../app/(auth)/SignUpScreen';
 
 import { ConfirmSignUp } from './ConfirmSignUp';
 import { SignUp } from './SignUp';

@@ -1,5 +1,4 @@
 import { SimpleLineIcons } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
 import React, { useCallback } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
@@ -9,9 +8,9 @@ import DraggableFlatList, {
 import { useDispatch, useSelector } from 'react-redux';
 import { Circle, Stack, Text, XStack } from 'tamagui';
 
-import { width } from '~/lib/constants';
+import { useColors, width } from '~/lib/constants';
 import { selectNoteHeight } from '~/slices/noteHeightSlice';
-import { selectNote, updateExpanded, updateOrder } from '~/slices/noteSlice';
+import { selectNote, updateAsyncNote, updateOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -32,7 +31,7 @@ export const SideTreeItem = ({
   parentExpanded = true,
 }: SieTreeItemProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { colors } = useTheme();
+  const { colors } = useColors();
   // customHook
   const { position } = useAnimeExpandedRotate(note?.expanded ?? false);
   const { noteHeights } = useSelector(selectNoteHeight);
@@ -164,7 +163,7 @@ export const SideTreeItem = ({
         >
           {note.emoji !== undefined ? (
             <Text textAlign="center" fontSize="lg" lineHeight="24">
-              {note.emoji}
+              {note.emoji?.name}
             </Text>
           ) : (
             <>
@@ -201,7 +200,7 @@ export const SideTreeItem = ({
       >
         <XStack alignItems="center" f={1}>
           {/* TODO:絵文字の型など修正 */}
-          {/* <Emoji /> */}
+          <Emoji />
           <Text
             style={[styles.titleTextInputStyle, { color: colors.text }]}
             focusStyle={{ ...styles.focusTitleStyle, borderColor: colors.text }}
@@ -217,7 +216,17 @@ export const SideTreeItem = ({
             <Stack animation={'bouncy'} {...position}>
               <SimpleLineIcons
                 onPress={() => {
-                  dispatch(updateExpanded({ expanded: !note.expanded, ids }));
+                  void (async () => {
+                    await dispatch(
+                      updateAsyncNote({
+                        ids,
+                        updateNoteData: {
+                          id: ids[0] ?? '',
+                          expanded: !note.expanded,
+                        },
+                      }),
+                    );
+                  })();
                 }}
                 name="arrow-up"
                 size={20}

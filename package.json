@@ -1,7 +1,7 @@
 {
   "name": "evidence_app",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "App.tsx",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -24,6 +24,10 @@
     "setupFilesAfterEnv": [
       "./globalMock.js"
     ]
+  },
+  "resolutions": {
+    "metro": "0.73.7",
+    "metro-resolver": "0.73.7"
   },
   "dependencies": {
     "-": "^0.0.1",
@@ -57,6 +61,7 @@
     "expo-linear-gradient": "~12.0.1",
     "expo-linking": "~3.3.0",
     "expo-localization": "~14.0.0",
+    "expo-router": "^1.0.0-rc7",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
     "expo-system-ui": "~2.0.1",

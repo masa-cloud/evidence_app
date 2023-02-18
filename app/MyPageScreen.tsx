@@ -14,5 +14,5 @@ type Props = {
 };
 
 export const MyPageScreen = (props: Props): JSX.Element => {
-  return <MyPage {...props} />;
+  return <MyPage />;
 };

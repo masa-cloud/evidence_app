@@ -1,7 +1,8 @@
-import { useTheme } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { GestureResponderEvent } from 'react-native';
 import { Stack, Text } from 'tamagui';
+
+import { useColors } from '~/lib/constants';
 
 type Props = {
   children: string;
@@ -10,7 +11,7 @@ type Props = {
 
 /** @package */
 export const LinkText: FC<Props> = (props) => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   return (
     <Stack alignItems="center">
       <Text

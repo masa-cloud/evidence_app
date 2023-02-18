@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 
+import { PasswordChangeScreenNavigationProps } from '~/../app/(auth)/PasswordChangeScreen';
 import { Button } from '~/components/Button';
 import { PageContainer } from '~/components/PageContainer';
 import { RouteName } from '~/navigation/rootStackParamList';
-import { PasswordChangeScreenNavigationProps } from '~/screens/Auth/PasswordChangeScreen';
 
 type Props = {
   navigation: PasswordChangeScreenNavigationProps;

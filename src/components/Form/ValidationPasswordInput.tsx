@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native';
 import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
 import {
@@ -18,6 +17,7 @@ import {
 import { Button, Input, Text } from 'tamagui';
 
 import { ErrorText } from '~/components/Text';
+import { useColors } from '~/lib/constants';
 
 interface Props extends TextInputProps {
   control: Control<any>;
@@ -29,7 +29,7 @@ interface Props extends TextInputProps {
 /** @package */
 export const ValidationPasswordInput: React.FC<Props> = (props) => {
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const labelNameBox = {
     confirmNewPassword: '新しいパスワードの確認',
     confirmPassword: 'パスワードの確認',

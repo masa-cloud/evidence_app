@@ -1,5 +1,4 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
 import { FlatList } from '@stream-io/flat-list-mvcp';
 import React, { useCallback, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
@@ -8,12 +7,17 @@ import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
+import { useColors } from '~/lib/constants';
 import { updateFucusId } from '~/slices/focusNoteSlice';
 import {
   selectNoteHeight,
   updateContentsHeight,
 } from '~/slices/noteHeightSlice';
-import { updateAsyncNote, updateEmoji } from '~/slices/noteSlice';
+import {
+  addEmoji,
+  updateAsyncEmoji,
+  updateAsyncNote,
+} from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -33,16 +37,18 @@ export const NoteCard = ({
   parentExpanded = true,
 }: NoteCardProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { colors } = useTheme();
+  const { colors } = useColors();
   // useState
   // const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
   const [description, setDescription] = useState<string>(note.description);
   const [title, setTitle] = useState<string>(note.title);
+  const [emoji, setEmoji] = useState<string | undefined>(note.emoji?.name);
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const { noteHeights } = useSelector(selectNoteHeight);
   const noteHeight = noteHeights.find(
     (noteHeight) => noteHeight.id === note.id,
   );
+  console.log('note.emoji', note.emoji);
   // customHook
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
     descriptionHeight: noteHeight?.contentsHeight ?? 32,
@@ -63,14 +69,44 @@ export const NoteCard = ({
     },
     [ids, expanded],
   );
-
-  const Emoji = (): JSX.Element => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const handlePick = useCallback((emojiObject: EmojiType): void => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const handlePick = useCallback(
+    (emojiObject: EmojiType): void => {
       // setEmoji(emojiObject.emoji)
-      dispatch(updateEmoji({ emoji: emojiObject.emoji, ids }));
-    }, []);
+      if (emoji) {
+        const updateEmoji = async (): Promise<void> => {
+          try {
+            setEmoji(emojiObject.emoji);
+            await dispatch(
+              updateAsyncEmoji({
+                emoji: emojiObject.emoji,
+                ids,
+                updateEmojiId: note.emoji?.id ?? '',
+              }),
+            );
+          } catch (e) {
+            console.log({ e });
+            // Handle error
+          }
+        };
+        void updateEmoji();
+      } else {
+        const createEmoji = async (): Promise<void> => {
+          try {
+            setEmoji(emojiObject.emoji);
+            await dispatch(addEmoji({ emoji: emojiObject.emoji, ids }));
+          } catch (e) {
+            console.log({ e });
+            // Handle error
+          }
+        };
+        void createEmoji();
+      }
+    },
+    [dispatch, ids],
+  );
 
+  const Emoji = useCallback((): JSX.Element => {
     return (
       <>
         <Stack
@@ -81,14 +117,14 @@ export const NoteCard = ({
           focusStyle={{ backgroundColor: '#c1d4f0' }}
           mr={8}
         >
-          {note.emoji ? (
+          {emoji ? (
             <Text
               onPress={() => setIsOpen(true)}
               textAlign="center"
               fos={22}
               lineHeight="28"
             >
-              {note.emoji}
+              {emoji}
             </Text>
           ) : (
             <AntDesign
@@ -107,7 +143,7 @@ export const NoteCard = ({
         />
       </>
     );
-  };
+  }, [colors.primary, colors.text, emoji, handlePick, isOpen]);
 
   const NoteChildCard = useCallback((): JSX.Element => {
     if (note.children !== undefined) {
@@ -168,7 +204,7 @@ export const NoteCard = ({
       >
         <XStack alignItems="center" f={1}>
           {/* TODO:絵文字の箇所型など修正 */}
-          {/* <Emoji /> */}
+          <Emoji />
           <TextArea
             style={[styles.titleTextInputStyle, { color: colors.text }]}
             focusStyle={{ ...styles.focusTitleStyle, borderColor: colors.text }}

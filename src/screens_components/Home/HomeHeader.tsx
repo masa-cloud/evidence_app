@@ -1,11 +1,11 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image, Stack, XStack } from 'tamagui';
 
 import { Images } from '~/assets/images';
+import { useColors } from '~/lib/constants';
 import { selectFocusNote } from '~/slices/focusNoteSlice';
 import { addBrotherNote, addChildNote, deleteNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
@@ -14,7 +14,7 @@ import { useSideTree } from './hook/useSideTree';
 
 /** @package */
 export const HomeHeader = (): JSX.Element => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const dispatch: AppDispatch = useDispatch();
   const { onPress } = useSideTree();
   const { focusNote } = useSelector(selectFocusNote);
@@ -27,6 +27,7 @@ export const HomeHeader = (): JSX.Element => {
       left={0}
       px={12}
       py={12}
+      zIndex="1"
       alignItems="center"
       w={'100%'}
       backgroundColor={colors.background}

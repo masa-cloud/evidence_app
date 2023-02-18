@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native';
 import React, { Suspense, useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
@@ -8,7 +7,7 @@ import DraggableFlatList, {
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner, Stack, XStack } from 'tamagui';
 
-import { height, width } from '~/lib/constants';
+import { height, useColors, width } from '~/lib/constants';
 import { updateOrder } from '~/slices/noteSlice';
 import { selectSideTree } from '~/slices/sideTreeSlice';
 import { AppDispatch } from '~/store';
@@ -26,7 +25,7 @@ export const SideTree = ({
   onNoteNavigate: (height: number) => void;
 }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const { position } = useSelector(selectSideTree);
   const { onPress } = useSideTree();
 
@@ -56,7 +55,7 @@ export const SideTree = ({
         h={height}
         w={width}
         pos={'absolute'}
-        zIndex={1}
+        zIndex="2"
         {...position}
       >
         <Stack

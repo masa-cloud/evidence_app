@@ -31,6 +31,7 @@ export default {
     userInterfaceStyle: 'automatic',
     version: '1.0.0',
     web: {
+      bundler: 'metro',
       favicon: 'src/assets/images/favicon.png',
     },
   },

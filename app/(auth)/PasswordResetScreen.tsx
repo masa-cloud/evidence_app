@@ -13,6 +13,6 @@ type Props = {
   navigation: PasswordResetScreenNavigationProps;
 };
 
-export const PasswordResetScreen = (props: Props): JSX.Element => {
+export default function PasswordResetScreen(props: Props): JSX.Element {
   return <PasswordResetPage {...props} />;
-};
+}

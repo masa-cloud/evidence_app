@@ -13,6 +13,6 @@ type Props = {
   navigation: SignUpScreenNavigationProps;
 };
 
-export const SignUpScreen = (props: Props): JSX.Element => {
+export default function SignUpScreen(props: Props): JSX.Element {
   return <SignUpPage {...props} />;
-};
+}

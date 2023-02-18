@@ -1,9 +1,9 @@
 import React, { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { LogoutScreenNavigationProps } from '~/../app/(auth)/LogoutScreen';
 import { Button } from '~/components/Button';
 import { PageContainer } from '~/components/PageContainer';
-import { LogoutScreenNavigationProps } from '~/screens/Auth/LogoutScreen';
 import { logout } from '~/slices/userSlice';
 import { AppDispatch } from '~/store';
 

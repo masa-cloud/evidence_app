@@ -109,8 +109,8 @@ export type Note = {
   level: number;
   orderNumber: number;
   emoji?: Emoji | null;
-  parentId?: string | null;
   childrenIds?: ModelChildrenIdConnection | null;
+  parentId?: string | null;
   createdAt: string;
   updatedAt: string;
   noteEmojiId?: string | null;
@@ -341,7 +341,6 @@ export type CreateNoteMutation = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -354,6 +353,7 @@ export type CreateNoteMutation = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;
@@ -381,7 +381,6 @@ export type UpdateNoteMutation = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -394,6 +393,7 @@ export type UpdateNoteMutation = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;
@@ -421,7 +421,6 @@ export type DeleteNoteMutation = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -434,6 +433,7 @@ export type DeleteNoteMutation = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;
@@ -553,7 +553,6 @@ export type GetNoteQuery = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -566,6 +565,7 @@ export type GetNoteQuery = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;
@@ -598,7 +598,6 @@ export type ListNotesQuery = {
         createdAt: string;
         updatedAt: string;
       } | null;
-      parentId?: string | null;
       childrenIds?: {
         __typename: 'ModelChildrenIdConnection';
         items: Array<{
@@ -611,6 +610,7 @@ export type ListNotesQuery = {
         } | null>;
         nextToken?: string | null;
       } | null;
+      parentId?: string | null;
       createdAt: string;
       updatedAt: string;
       noteEmojiId?: string | null;
@@ -709,7 +709,6 @@ export type OnCreateNoteSubscription = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -722,6 +721,7 @@ export type OnCreateNoteSubscription = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;
@@ -748,7 +748,6 @@ export type OnUpdateNoteSubscription = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -761,6 +760,7 @@ export type OnUpdateNoteSubscription = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;
@@ -787,7 +787,6 @@ export type OnDeleteNoteSubscription = {
       createdAt: string;
       updatedAt: string;
     } | null;
-    parentId?: string | null;
     childrenIds?: {
       __typename: 'ModelChildrenIdConnection';
       items: Array<{
@@ -800,6 +799,7 @@ export type OnDeleteNoteSubscription = {
       } | null>;
       nextToken?: string | null;
     } | null;
+    parentId?: string | null;
     createdAt: string;
     updatedAt: string;
     noteEmojiId?: string | null;

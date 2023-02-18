@@ -3,8 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { ColorSchemeName } from 'react-native';
 
-import { ModalScreen } from '~/screens/ModalScreen';
-import NotFoundScreen from '~/screens/NotFoundScreen';
+import { ModalScreen } from '~/../app/ModalScreen';
+import NotFoundScreen from '~/../app/NotFoundScreen';
 
 import { CustomDarkTheme, CustomTheme } from './../lib/constants';
 import { BottomTabNavigator } from './BottomTabNavigator';

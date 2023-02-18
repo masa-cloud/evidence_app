@@ -11,6 +11,7 @@ type Note @model {
   orderNumber: Int!
   emoji: Emoji @hasOne
   childrenIds: [ChildrenId] @hasMany
+  parentId: ID
 }
 
 type Emoji @model {

@@ -1,9 +1,9 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { useColors } from '~/lib/constants';
 import { selectUser } from '~/slices/userSlice';
 
 import { AuthStackScreen } from './AuthStackNavigator';
@@ -20,7 +20,7 @@ function TabBarIcon(props: {
 }
 
 export const BottomTabNavigator = (): JSX.Element => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const {
     user: { isLogin },
   } = useSelector(selectUser);

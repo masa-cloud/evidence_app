@@ -5,6 +5,7 @@ import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 import { Text } from 'tamagui';
 
+import { PasswordResetScreenNavigationProps } from '~/../app/(auth)/PasswordResetScreen';
 import { Button } from '~/components/Button';
 import {
   CognitoError,
@@ -13,7 +14,6 @@ import {
 } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
 import { passwordResetFormSchema } from '~/schema/schema';
-import { PasswordResetScreenNavigationProps } from '~/screens/Auth/PasswordResetScreen';
 
 import { PasswordResetState } from './page';
 

@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { EmailChangeScreen } from '~/screens/Auth/EmailChangeScreen';
-import { LogoutScreen } from '~/screens/Auth/LogoutScreen';
-import { PasswordChangeScreen } from '~/screens/Auth/PasswordChangeScreen';
-import { HomeScreen } from '~/screens/HomeScreen';
-import { MyPageScreen } from '~/screens/MyPageScreen';
+import { EmailChangeScreen } from '~/../app/(auth)/EmailChangeScreen';
+import { LogoutScreen } from '~/../app/(auth)/LogoutScreen';
+import { PasswordChangeScreen } from '~/../app/(auth)/PasswordChangeScreen';
+import { HomeScreen } from '~/../app/HomeScreen';
+import { MyPageScreen } from '~/../app/MyPageScreen';
 
 import { RouteName } from './rootStackParamList';
 

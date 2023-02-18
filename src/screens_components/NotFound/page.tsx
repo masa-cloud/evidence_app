@@ -1,4 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRouter } from 'expo-router';
 import React, { FC } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
@@ -16,13 +17,11 @@ type Props = {
 
 /** @package */
 export const NotFound: FC<Props> = (props) => {
+  const router = useRouter();
   return (
     <PageContainer>
       <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
-      <TouchableOpacity
-        onPress={() => props.navigation.replace('Root')}
-        style={styles.link}
-      >
+      <TouchableOpacity onPress={() => router.back()} style={styles.link}>
         <Text style={styles.linkText}>Go to home screen!</Text>
       </TouchableOpacity>
     </PageContainer>

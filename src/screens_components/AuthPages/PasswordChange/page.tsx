@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import { PasswordChangeScreenNavigationProps } from '~/screens/Auth/PasswordChangeScreen';
+import { PasswordChangeScreenNavigationProps } from '~/../app/(auth)/PasswordChangeScreen';
 
 import { Complete } from './Complete';
 import { PasswordChange } from './PasswordChange';

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { LoginScreenNavigationProps } from '~/screens/Auth/LoginScreen';
+import { LoginScreenNavigationProps } from '~/../app/(auth)/LoginScreen';
 
 import { LoginDialog } from './LoginDialog';
 

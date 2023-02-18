@@ -20,7 +20,6 @@ export const createNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parentId
       childrenIds {
         items {
           id
@@ -31,6 +30,7 @@ export const createNote = /* GraphQL */ `
         }
         nextToken
       }
+      parentId
       createdAt
       updatedAt
       noteEmojiId
@@ -55,7 +55,6 @@ export const updateNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parentId
       childrenIds {
         items {
           id
@@ -66,6 +65,7 @@ export const updateNote = /* GraphQL */ `
         }
         nextToken
       }
+      parentId
       createdAt
       updatedAt
       noteEmojiId
@@ -90,7 +90,6 @@ export const deleteNote = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      parentId
       childrenIds {
         items {
           id
@@ -101,6 +100,7 @@ export const deleteNote = /* GraphQL */ `
         }
         nextToken
       }
+      parentId
       createdAt
       updatedAt
       noteEmojiId

@@ -1,6 +1,7 @@
-import { useTheme } from '@react-navigation/native';
 import React, { FC, ReactNode } from 'react';
 import { Stack, Text } from 'tamagui';
+
+import { useColors } from '~/lib/constants';
 
 type Props = {
   title?: string;
@@ -10,7 +11,7 @@ type Props = {
 
 /** @package */
 export const PageContainer: FC<Props> = (props) => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   return (
     <Stack pt={16} px={16}>
       {!!props.title && (

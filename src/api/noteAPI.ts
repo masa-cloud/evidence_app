@@ -3,6 +3,7 @@ import { API, graphqlOperation } from 'aws-amplify';
 
 import {
   CreateChildrenIdInput,
+  CreateEmojiInput,
   CreateNoteInput,
   DeleteNoteInput,
   UpdateNoteInput,
@@ -12,67 +13,58 @@ import {
   createChildrenId,
   createNote,
   deleteNote,
+  updateEmoji,
   updateNote,
 } from '~/graphql/mutations';
 import { listNotes } from '~/graphql/queries';
-import { Note } from '~/types/types';
+import { FetchEmoji, Note } from '~/types/types';
+
+import { UpdateEmojiInput } from './../API';
+import { createEmoji } from './../graphql/mutations';
 
 Amplify.configure(awsExports);
 
-// TODO:特にネストの処理のリファクタリングのコードに問題がなかったら消す。
-// const ex = async (items: Note[]): Promise<Note[]> => {
-//   return await Promise.all(
-//     items.map(async (note) => {
-//       if (note.childrenIds?.items.length) {
-//         const fetchIds = note.childrenIds?.items
-//           .map((childrenId) => {
-//             if (typeof childrenId?.childrenId === 'string') {
-//               return { id: { eq: childrenId?.childrenId } };
-//             }
-//             return undefined;
-//           })
-//           .filter((fetchId) => fetchId !== undefined) as Array<{
-//           id: {
-//             eq: string;
-//           };
-//         }>;
-//         const filter = {
-//           or: fetchIds,
-//         };
-//         const childNoteData = (await API.graphql(
-//           graphqlOperation(listNotes, { filter }),
-//         )) as { data: { listNotes: { items: Note[] } } };
-//         const isNestNote = childNoteData.data.listNotes.items.some((childNote) => childNote.childrenIds?.items.length !== 0)
-//         if(isNestNote) {
-//           note.children = await ex(childNoteData.data.listNotes.items);
-//         } else {
-//           note.children = childNoteData.data.listNotes.items;
-//         }
-//       }
-//       return note;
-//     }),
-//   );
-// };
+// === START CREATE ===
+export const createEmojiApi = async (focusNote: {
+  emoji: string;
+  ids: string[];
+}): Promise<
+  | {
+      ids: string[];
+      newEmoji: FetchEmoji;
+    }
+  | undefined
+> => {
+  try {
+    const emojiDetails: CreateEmojiInput = {
+      name: focusNote.emoji,
+    };
+    const newEmoji = (await API.graphql({
+      query: createEmoji,
+      variables: { input: emojiDetails },
+    })) as { data: { createEmoji: FetchEmoji } };
+    if (focusNote.ids[0]) {
+      const noteDetails: UpdateNoteInput = {
+        id: focusNote.ids[0],
+        noteEmojiId: newEmoji.data.createEmoji.id,
+      };
+      await API.graphql({
+        query: updateNote,
+        variables: { input: noteDetails },
+      });
+      return {
+        ids: focusNote.ids,
+        newEmoji: newEmoji.data.createEmoji,
+      };
+    } else {
+      throw new Error('error createEmojiApi');
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error('error createEmojiApi');
+  }
+};
 
-// export const fetchNotes = async (): Promise<Note[] | undefined> => {
-//   try {
-//     const filter = {
-//       level: {
-//         eq: 0,
-//       },
-//     };
-//     const noteData = (await API.graphql(
-//       graphqlOperation(listNotes, { filter }),
-//     )) as { data: { listNotes: { items: Note[] } } };
-//     if (noteData.data.listNotes.items) {
-//       return await ex(noteData.data.listNotes.items);
-//     }
-//     return undefined;
-//   } catch (err) {
-//     throw new Error('error fetchNotes');
-//   }
-// };
-// === END CREATE ===
 const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
   const fetchedNoteChildren = async (
     childrenIds: Array<{ childrenId: string }>,
@@ -80,7 +72,6 @@ const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
     const fetchIds = childrenIds
       .filter(({ childrenId }) => typeof childrenId === 'string')
       .map(({ childrenId }) => ({ id: { eq: childrenId } }));
-
     const filter = {
       or: fetchIds,
     };
@@ -95,7 +86,6 @@ const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
 
     return childNotes;
   };
-
   const notesWithChildren = await Promise.all(
     items.map(async (note) => {
       if (note.childrenIds?.items.length) {
@@ -113,36 +103,12 @@ const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
           note.children = childNotes;
         }
       }
-
       return note;
     }),
   );
-
   return notesWithChildren;
 };
 
-export const getNotes = async (): Promise<Note[] | undefined> => {
-  try {
-    const filter = { level: { eq: 0 } };
-
-    const {
-      data: {
-        listNotes: { items: notes },
-      },
-    } = (await API.graphql(graphqlOperation(listNotes, { filter }))) as {
-      data: { listNotes: { items: Note[] } };
-    };
-
-    if (notes) {
-      return await getNotesChildren(notes);
-    }
-
-    return undefined;
-  } catch (err) {
-    throw new Error('Error fetching notes');
-  }
-}; // === END CREATE ===
-// === START CREATE ===
 export const createBrotherNote = async (focusNote: {
   focusLevel: number;
   ids: string[];
@@ -164,8 +130,10 @@ export const createBrotherNote = async (focusNote: {
       expanded: true,
       level: focusNote.focusLevel,
       orderNumber: focusNote.orderNumber + 1,
-      parentId: focusNote.parentId ?? null,
     };
+    focusNote.parentId &&
+      Object.assign(noteDetails, { parentId: focusNote.parentId });
+    // parentId: focusNote.parentId ?? null,
     const newNote = (await API.graphql({
       query: createNote,
       variables: { input: noteDetails },
@@ -176,6 +144,7 @@ export const createBrotherNote = async (focusNote: {
       orderNumber: focusNote.orderNumber,
     };
   } catch (err) {
+    console.error(err);
     throw new Error('error createBrotherNote');
   }
 };
@@ -216,10 +185,63 @@ export const createChildNote = async (focusNote: {
     });
     return { ids: focusNote.ids, newNote: newNote.data.createNote };
   } catch (err) {
+    console.error(err);
     throw new Error('error createChildNote');
   }
 }; // === END CREATE ===
+// === START READ ===
+export const getNotes = async (): Promise<Note[] | undefined> => {
+  try {
+    const filter = { level: { eq: 0 } };
+
+    const {
+      data: {
+        listNotes: { items: notes },
+      },
+    } = (await API.graphql(graphqlOperation(listNotes, { filter }))) as {
+      data: { listNotes: { items: Note[] } };
+    };
+
+    if (notes) {
+      return await getNotesChildren(notes);
+    }
+
+    return undefined;
+  } catch (err) {
+    console.error(err);
+    throw new Error('Error fetching notes');
+  }
+}; // === END READ ===
 // === START UPDATE ===
+export const updateEmojiApi = async ({
+  emoji,
+  ids,
+  updateEmojiId,
+}: {
+  emoji: string;
+  ids: string[];
+  updateEmojiId: string;
+}): Promise<
+  | {
+      ids: string[];
+      updatedEmoji: FetchEmoji;
+    }
+  | undefined
+> => {
+  try {
+    const updateNoteDetail: UpdateEmojiInput = {
+      id: updateEmojiId,
+      name: emoji,
+    };
+    const updatedEmoji = (await API.graphql({
+      query: updateEmoji,
+      variables: { input: updateNoteDetail },
+    })) as { data: { updateEmoji: FetchEmoji } };
+    return { ids, updatedEmoji: updatedEmoji.data.updateEmoji };
+  } catch (err) {
+    throw new Error('error updateNoteApi');
+  }
+};
 export const updateNoteApi = async (
   updateNoteData: UpdateNoteInput,
 ): Promise<
@@ -230,12 +252,10 @@ export const updateNoteApi = async (
 > => {
   try {
     const updateNoteDetail: UpdateNoteInput = { ...updateNoteData };
-    console.log({ updateNoteDetail });
     const updatedNote = (await API.graphql({
       query: updateNote,
       variables: { input: updateNoteDetail },
     })) as { data: { updateNote: Note } };
-    console.log({ updateNoteDetail });
     return { updatedNote: updatedNote.data.updateNote };
   } catch (err) {
     throw new Error('error updateNoteApi');
@@ -258,6 +278,7 @@ export const deleteNoteApi = async (focusNote: {
     })) as { data: { deleteNote: Note } };
     return { deletedNote: deletedNote.data.deleteNote };
   } catch (err) {
+    console.error(err);
     throw new Error('error deleteNoteApi');
   }
 }; // === END DELETE ===

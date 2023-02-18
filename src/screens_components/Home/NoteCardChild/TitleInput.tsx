@@ -1,9 +1,9 @@
-import { useTheme } from '@react-navigation/native';
 import { FC, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { TextArea } from 'tamagui';
 
+import { useColors } from '~/lib/constants';
 import { updateTitle } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
@@ -16,7 +16,7 @@ type TitleInputProps = {
 export const TitleInput: FC<TitleInputProps> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const [title, setTitle] = useState<string>(props.storeTitle);
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const styles = useMemo(
     () =>
       StyleSheet.create({

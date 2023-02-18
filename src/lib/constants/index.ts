@@ -1,2 +1,2 @@
-export { CustomDarkTheme, CustomTheme } from './Colors';
+export { useColors } from './Colors';
 export { height, isSmallDevice, width } from './Layout';

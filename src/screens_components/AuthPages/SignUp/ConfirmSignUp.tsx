@@ -3,11 +3,11 @@ import { Auth } from 'aws-amplify';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 
+import { SignUpScreenNavigationProps } from '~/../app/(auth)/SignUpScreen';
 import { Button } from '~/components/Button';
 import { CognitoError, ValidationTextInput } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
 import { confirmSignUpSchema } from '~/schema/schema';
-import { SignUpScreenNavigationProps } from '~/screens/Auth/SignUpScreen';
 
 type ConfirmInput = {
   certificationCode: string;

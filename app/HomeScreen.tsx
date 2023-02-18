@@ -13,6 +13,6 @@ type Props = {
   navigation: HomeScreenNavigationProps;
 };
 
-export const HomeScreen = (props: Props): JSX.Element => {
+export default function HomeScreen(props: Props): JSX.Element {
   return <Home {...props} />;
-};
+}

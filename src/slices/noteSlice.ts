@@ -1,4 +1,3 @@
-import { updateNote } from '~/graphql/mutations';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
@@ -6,11 +5,13 @@ import { UpdateNoteInput } from '~/API';
 import {
   createBrotherNote,
   createChildNote,
+  createEmojiApi,
   deleteNoteApi,
   getNotes,
+  updateEmojiApi,
   updateNoteApi,
 } from '~/api/noteAPI';
-import { Note } from '~/types/types';
+import { FetchEmoji, Note } from '~/types/types';
 
 import type { RootState } from '../store';
 
@@ -33,6 +34,27 @@ const initialState: State = {
 };
 
 // === START CREATE ===
+const addEmoji = createAsyncThunk<
+  { ids: string[]; newEmoji: FetchEmoji },
+  {
+    emoji: string;
+    ids: string[];
+  },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/addEmoji', async (focusData) => {
+  const newChildNote = await createEmojiApi({ ...focusData }).catch((error) => {
+    throw error;
+  });
+  if (newChildNote) {
+    return newChildNote;
+  } else {
+    throw new Error('error addChildNote');
+  }
+});
+
 const addBrotherNote = createAsyncThunk<
   { ids: string[]; newNote: Note; orderNumber: number },
   {
@@ -89,6 +111,27 @@ const fetchAsyncNotes = createAsyncThunk('notes/fetchAsyncNotes', async () => {
   }
 }); // === END READ ===
 // === START UPDATE ===
+const updateAsyncEmoji = createAsyncThunk<
+  { ids: string[]; updatedEmoji: FetchEmoji },
+  { emoji: string; ids: string[]; updateEmojiId: string },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>('notes/updateAsyncEmoji', async ({ emoji, ids, updateEmojiId }) => {
+  const updatedEmoji = await updateEmojiApi({
+    emoji,
+    ids,
+    updateEmojiId,
+  }).catch((error) => {
+    throw error;
+  });
+  if (updatedEmoji) {
+    return updatedEmoji;
+  } else {
+    throw new Error('error updateAsyncNote');
+  }
+});
 const updateAsyncNote = createAsyncThunk<
   { ids: string[]; updatedNote: Note; updateNoteData: UpdateNoteInput },
   { ids: string[]; updateNoteData: UpdateNoteInput },
@@ -129,6 +172,29 @@ export const noteSlice = createSlice({
   name: 'notes',
   extraReducers: (builder) => {
     builder // === START CREATE ==
+      .addCase(addEmoji.fulfilled, (state, action) => {
+        const loopCount = action.payload.ids.length - 1;
+        const ids = action.payload.ids;
+        const note = state.notes.find((note) => note.id === ids[loopCount]);
+        const createStoreEmoji = (
+          note: WritableDraft<Note>,
+          loopCount: number,
+        ): void => {
+          if (loopCount === 0) {
+            const newEmoji = action.payload.newEmoji;
+            note.emoji = newEmoji;
+          } else {
+            const minusLoopCount = loopCount - 1;
+            if (note.children) {
+              const childNote = note.children.find(
+                (note) => note.id === ids[minusLoopCount],
+              );
+              childNote && createStoreEmoji(childNote, minusLoopCount);
+            }
+          }
+        };
+        if (note !== undefined) createStoreEmoji(note, loopCount);
+      })
       .addCase(addBrotherNote.fulfilled, (state, action) => {
         const loopCount: number = action.payload.ids.length - 1;
         const ids: string[] = action.payload.ids;
@@ -223,6 +289,29 @@ export const noteSlice = createSlice({
         state.notes = action.payload;
       }) // === END READ ===
       // === START UPDATE ===
+      .addCase(updateAsyncEmoji.fulfilled, (state, action) => {
+        const loopCount = action.payload.ids.length - 1;
+        const ids = action.payload.ids;
+        const note = state.notes.find((note) => note.id === ids[loopCount]);
+        const updateStoreEmoji = (
+          note: WritableDraft<Note>,
+          loopCount: number,
+        ): void => {
+          if (loopCount === 0) {
+            const updateEmoji = action.payload.updatedEmoji;
+            note.emoji = updateEmoji;
+          } else {
+            const minusLoopCount = loopCount - 1;
+            if (note.children) {
+              const childNote = note.children.find(
+                (note) => note.id === ids[minusLoopCount],
+              );
+              childNote && updateStoreEmoji(childNote, minusLoopCount);
+            }
+          }
+        };
+        if (note !== undefined) updateStoreEmoji(note, loopCount);
+      })
       .addCase(updateAsyncNote.fulfilled, (state, action) => {
         const loopCount = action.payload.ids.length - 1;
         const ids = action.payload.ids;
@@ -346,19 +435,20 @@ export const noteSlice = createSlice({
   },
 });
 
-const { updateDescription, updateEmoji, updateOrder } = noteSlice.actions;
+const { updateDescription, updateOrder } = noteSlice.actions;
 
 const selectNote = (state: RootState): State => state.notes;
 
 export {
   addBrotherNote,
   addChildNote,
+  addEmoji,
   deleteNote,
   fetchAsyncNotes,
   selectNote,
+  updateAsyncEmoji,
   updateAsyncNote,
   updateDescription,
-  updateEmoji,
   updateOrder,
 };
 

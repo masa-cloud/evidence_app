@@ -1,11 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useTheme } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
+import { useRouter } from 'expo-router';
 import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { Stack, Text } from 'tamagui';
 
+import { LoginScreenNavigationProps } from '~/../app/(auth)/LoginScreen';
 import { Button } from '~/components/Button';
 import {
   CognitoError,
@@ -14,9 +15,9 @@ import {
 } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
 import { LinkText } from '~/components/Text';
+import { useColors } from '~/lib/constants';
 import { RouteName } from '~/navigation/rootStackParamList';
 import { loginSchema } from '~/schema/schema';
-import { LoginScreenNavigationProps } from '~/screens/Auth/LoginScreen';
 import { login } from '~/slices/userSlice';
 import { AppDispatch } from '~/store';
 
@@ -31,7 +32,7 @@ type Props = {
 
 /** @package */
 export const LoginDialog: FC<Props> = (props) => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   const {
     control,
     formState: { isSubmitting },
@@ -41,6 +42,7 @@ export const LoginDialog: FC<Props> = (props) => {
   });
   const [error, setError] = useState<string | React.ReactNode>('');
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
 
   const onError: SubmitErrorHandler<LoginInput> = (errors: any, e: any) =>
     console.log(errors, e);
@@ -52,6 +54,7 @@ export const LoginDialog: FC<Props> = (props) => {
     try {
       dispatch(login(await Auth.signIn({ password, username: email })));
       setError('');
+      router.push('HomeScreen');
     } catch (err) {
       console.log({ err });
       setError(<CognitoError error={err} />);

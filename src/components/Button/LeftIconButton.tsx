@@ -1,7 +1,8 @@
-import { useTheme } from '@react-navigation/native';
 import React, { FC, FunctionComponent } from 'react';
 import { GestureResponderEvent } from 'react-native';
 import { Button, Text } from 'tamagui';
+
+import { useColors } from '~/lib/constants';
 
 type Props = {
   iconComponent: JSX.Element | FunctionComponent | null;
@@ -13,7 +14,7 @@ type Props = {
 // TODO:Icon変更できるように
 /** @package */
 export const LeftIconButton: FC<Props> = (props) => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   return (
     <Button
       // TODO:Iconを動的にimportしてできれば良い

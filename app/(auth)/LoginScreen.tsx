@@ -13,6 +13,6 @@ type Props = {
   navigation: LoginScreenNavigationProps;
 };
 
-export const LoginScreen = (props: Props): JSX.Element => {
+export default function LoginScreen(props: Props): JSX.Element {
   return <Login {...props} />;
-};
+}

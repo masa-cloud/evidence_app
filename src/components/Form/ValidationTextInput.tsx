@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import {
   Control,
@@ -17,6 +16,7 @@ import {
 import { Stack, Text } from 'tamagui';
 
 import { ErrorText } from '~/components/Text';
+import { useColors } from '~/lib/constants';
 
 interface Props extends TextInputProps {
   control: Control<any>;
@@ -37,7 +37,7 @@ export const ValidationTextInput: React.FC<Props> = (props) => {
     email: 'example@example.com',
     newEmail: 'example@example.com',
   };
-  const { colors } = useTheme();
+  const { colors } = useColors();
   return (
     <Controller
       control={props.control}

@@ -1,6 +1,7 @@
-import { useTheme } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { Button as BaseButton, SizableText } from 'tamagui';
+
+import { useColors } from '~/lib/constants';
 
 type Props = {
   children: string;
@@ -12,7 +13,7 @@ type Props = {
 
 /** @package */
 export const Button: FC<Props> = (props) => {
-  const { colors } = useTheme();
+  const { colors } = useColors();
   return (
     <BaseButton
       color={colors.text}

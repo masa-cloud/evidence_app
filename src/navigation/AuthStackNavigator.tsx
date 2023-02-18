@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { LoginScreen } from '~/screens/Auth/LoginScreen';
-import { PasswordResetScreen } from '~/screens/Auth/PasswordResetScreen';
-import { SignUpScreen } from '~/screens/Auth/SignUpScreen';
+import { LoginScreen } from '~/../app/(auth)/LoginScreen';
+import { PasswordResetScreen } from '~/../app/(auth)/PasswordResetScreen';
+import { SignUpScreen } from '~/../app/(auth)/SignUpScreen';
 
 import { RouteName } from './rootStackParamList';
 

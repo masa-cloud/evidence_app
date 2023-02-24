@@ -1,15 +1,16 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
 import { UpdateNoteInput } from '~/API';
 import {
-  createBrotherNote,
-  createChildNote,
+  createBrotherNoteApi,
+  createChildNoteApi,
   createEmojiApi,
   deleteNoteApi,
-  getNotes,
+  getNotesApi,
   updateEmojiApi,
   updateNoteApi,
+  updateNoteOrdersApi,
 } from '~/api/noteAPI';
 import { FetchEmoji, Note } from '~/types/types';
 
@@ -19,22 +20,18 @@ type State = {
   notes: Note[];
 };
 
-type targetIds = {
-  ids: string[];
-};
-
-type orderIds = {
-  from: number;
-  ids: string[];
-  to: number;
-};
+// type orderIds = {
+//   from: number;
+//   ids: string[];
+//   to: number;
+// };
 
 const initialState: State = {
   notes: [],
 };
 
 // === START CREATE ===
-const addEmoji = createAsyncThunk<
+const addAsyncEmoji = createAsyncThunk<
   { ids: string[]; newEmoji: FetchEmoji },
   {
     emoji: string;
@@ -44,18 +41,18 @@ const addEmoji = createAsyncThunk<
     rejectValue: string;
     state: { notes: State };
   }
->('notes/addEmoji', async (focusData) => {
+>('notes/addAsyncEmoji', async (focusData) => {
   const newChildNote = await createEmojiApi({ ...focusData }).catch((error) => {
     throw error;
   });
   if (newChildNote) {
     return newChildNote;
   } else {
-    throw new Error('error addChildNote');
+    throw new Error('error addAsyncChildNote');
   }
 });
 
-const addBrotherNote = createAsyncThunk<
+const addAsyncBrotherNote = createAsyncThunk<
   { ids: string[]; newNote: Note; orderNumber: number },
   {
     focusLevel: number;
@@ -67,8 +64,8 @@ const addBrotherNote = createAsyncThunk<
     rejectValue: string;
     state: { notes: State };
   }
->('notes/addBrotherNote', async (focusNote) => {
-  const newBrotherNotes = await createBrotherNote({ ...focusNote }).catch(
+>('notes/addAsyncBrotherNote', async (focusNote) => {
+  const newBrotherNotes = await createBrotherNoteApi({ ...focusNote }).catch(
     (error) => {
       throw error;
     },
@@ -76,19 +73,19 @@ const addBrotherNote = createAsyncThunk<
   if (newBrotherNotes) {
     return newBrotherNotes;
   } else {
-    throw new Error('error addBrotherNote');
+    throw new Error('error addAsyncBrotherNote');
   }
 });
 
-const addChildNote = createAsyncThunk<
+const addAsyncChildNote = createAsyncThunk<
   { ids: string[]; newNote: Note },
   { id: string; childrenLength: number; focusLevel: number; ids: string[] },
   {
     rejectValue: string;
     state: { notes: State };
   }
->('notes/addChildNote', async (focusData) => {
-  const newChildNote = await createChildNote({ ...focusData }).catch(
+>('notes/addAsyncChildNote', async (focusData) => {
+  const newChildNote = await createChildNoteApi({ ...focusData }).catch(
     (error) => {
       throw error;
     },
@@ -96,12 +93,12 @@ const addChildNote = createAsyncThunk<
   if (newChildNote) {
     return newChildNote;
   } else {
-    throw new Error('error addChildNote');
+    throw new Error('error addAsyncChildNote');
   }
 }); // === END CREATE ===
 // === START READ
 const fetchAsyncNotes = createAsyncThunk('notes/fetchAsyncNotes', async () => {
-  const notes = await getNotes().catch((error) => {
+  const notes = await getNotesApi().catch((error) => {
     throw error;
   });
   if (notes) {
@@ -111,6 +108,25 @@ const fetchAsyncNotes = createAsyncThunk('notes/fetchAsyncNotes', async () => {
   }
 }); // === END READ ===
 // === START UPDATE ===
+const updateAsyncNoteOrder = createAsyncThunk<
+  { ids: string[]; targetOrderNumber: number },
+  {
+    ids: string[];
+    isIncreased: boolean;
+    parentId: string | undefined | null;
+    targetOrderNumber: number;
+  },
+  {
+    rejectValue: string;
+    state: { notes: State };
+  }
+>(
+  'notes/updateAsyncNoteOrder',
+  async ({ ids, isIncreased, parentId, targetOrderNumber }) => {
+    return { ids, targetOrderNumber };
+  },
+);
+
 const updateAsyncEmoji = createAsyncThunk<
   { ids: string[]; updatedEmoji: FetchEmoji },
   { emoji: string; ids: string[]; updateEmojiId: string },
@@ -132,6 +148,7 @@ const updateAsyncEmoji = createAsyncThunk<
     throw new Error('error updateAsyncNote');
   }
 });
+
 const updateAsyncNote = createAsyncThunk<
   { ids: string[]; updatedNote: Note; updateNoteData: UpdateNoteInput },
   { ids: string[]; updateNoteData: UpdateNoteInput },
@@ -150,21 +167,21 @@ const updateAsyncNote = createAsyncThunk<
   }
 }); // === END UPDATE ===
 // === START DELETE ===
-const deleteNote = createAsyncThunk<
+const deleteAsyncNote = createAsyncThunk<
   { deletedNote: Note },
   { id: string },
   {
     rejectValue: string;
     state: { notes: State };
   }
->('notes/deleteNote', async (focusData) => {
+>('notes/deleteAsyncNote', async (focusData) => {
   const notes = await deleteNoteApi({ ...focusData }).catch((error) => {
     throw error;
   });
   if (notes) {
     return notes;
   } else {
-    throw new Error('error addChildNote');
+    throw new Error('error addAsyncChildNote');
   }
 }); // === END DELETE ===
 
@@ -172,7 +189,7 @@ export const noteSlice = createSlice({
   name: 'notes',
   extraReducers: (builder) => {
     builder // === START CREATE ==
-      .addCase(addEmoji.fulfilled, (state, action) => {
+      .addCase(addAsyncEmoji.fulfilled, (state, action) => {
         const loopCount = action.payload.ids.length - 1;
         const ids = action.payload.ids;
         const note = state.notes.find((note) => note.id === ids[loopCount]);
@@ -195,7 +212,7 @@ export const noteSlice = createSlice({
         };
         if (note !== undefined) createStoreEmoji(note, loopCount);
       })
-      .addCase(addBrotherNote.fulfilled, (state, action) => {
+      .addCase(addAsyncBrotherNote.fulfilled, (state, action) => {
         const loopCount: number = action.payload.ids.length - 1;
         const ids: string[] = action.payload.ids;
         const notes: WritableDraft<Note> | undefined = state.notes.find(
@@ -248,7 +265,7 @@ export const noteSlice = createSlice({
           notes && addNote(notes, loopCount);
         }
       })
-      .addCase(addChildNote.fulfilled, (state, action) => {
+      .addCase(addAsyncChildNote.fulfilled, (state, action) => {
         const loopCount: number = action.payload.ids.length - 1;
         const ids: string[] = action.payload.ids;
         const notes: WritableDraft<Note> | undefined = state.notes.find(
@@ -312,12 +329,56 @@ export const noteSlice = createSlice({
         };
         if (note !== undefined) updateStoreEmoji(note, loopCount);
       })
+      .addCase(updateAsyncNoteOrder.fulfilled, (state, action) => {
+        const loopCount = action.payload.ids.length - 1;
+        const ids = action.payload.ids;
+        const notes = state.notes;
+        const noteTitleUpdate = async (
+          targetNote: Array<WritableDraft<Note>>,
+          loopCount: number,
+          parentNote?: WritableDraft<Note>,
+        ): Promise<void> => {
+          if (loopCount === 0) {
+            const deleteNote = targetNote.filter(
+              (state) => state.id !== ids[0],
+            );
+            const insertNote = targetNote.find((state) => state.id === ids[0]);
+            if (insertNote !== undefined) {
+              deleteNote.splice(
+                action.payload.targetOrderNumber,
+                0,
+                insertNote,
+              );
+              if (parentNote) {
+                parentNote.children = deleteNote;
+                await updateNoteOrdersApi({
+                  deleteNote: parentNote.children,
+                }).catch((error) => {
+                  throw error;
+                });
+              } else {
+                state.notes = deleteNote;
+                await updateNoteOrdersApi({
+                  deleteNote: state.notes,
+                }).catch((error) => {
+                  throw error;
+                });
+              }
+            }
+          } else {
+            const parentNote = notes.find((note) => note.id === ids[loopCount]);
+            parentNote?.children &&
+              noteTitleUpdate(parentNote.children, loopCount - 1, parentNote);
+          }
+        };
+        console.log('action.payload', action.payload, loopCount);
+        notes && noteTitleUpdate(notes, loopCount);
+      })
       .addCase(updateAsyncNote.fulfilled, (state, action) => {
         const loopCount = action.payload.ids.length - 1;
         const ids = action.payload.ids;
         const note = state.notes.find((note) => note.id === ids[loopCount]);
-        // TODO:更新ができていない。
-        const noteTitleUpdate = (
+        const updateStoreNote = (
           note: WritableDraft<Note>,
           loopCount: number,
         ): void => {
@@ -338,14 +399,14 @@ export const noteSlice = createSlice({
               const childNote = note.children.find(
                 (note) => note.id === ids[minusLoopCount],
               );
-              childNote && noteTitleUpdate(childNote, minusLoopCount);
+              childNote && updateStoreNote(childNote, minusLoopCount);
             }
           }
         };
-        if (note !== undefined) noteTitleUpdate(note, loopCount);
+        if (note !== undefined) updateStoreNote(note, loopCount);
       }) // === END UPDATE ===
       // === START CREATE ===
-      .addCase(deleteNote.fulfilled, (state, action) => {
+      .addCase(deleteAsyncNote.fulfilled, (state, action) => {
         // TODO:ロードの完了有無追加
         // state.status = 'idle';
         // state.notes = action.payload;
@@ -355,101 +416,23 @@ export const noteSlice = createSlice({
       }); // == END CREATE ===
   },
   initialState,
-  reducers: {
-    updateDescription: (
-      state,
-      action: PayloadAction<Required<Pick<Note, 'description'>> & targetIds>,
-    ) => {
-      const loopCount = action.payload.ids.length - 1;
-      const ids = action.payload.ids;
-      const description = action.payload.description;
-      const notes = state.notes.find((note) => note.id === ids[loopCount]);
-      const noteDescriptionUpdate = (
-        notes: WritableDraft<Note>,
-        loopCount: number,
-      ): void => {
-        if (loopCount === 0) {
-          notes.description = description;
-        }
-        if (notes.children) {
-          const childNote = notes.children.find(
-            (note) => note.id === ids[loopCount - 1],
-          );
-          childNote && noteDescriptionUpdate(childNote, loopCount - 1);
-        }
-      };
-      notes && noteDescriptionUpdate(notes, loopCount);
-    },
-    updateEmoji: (
-      state,
-      action: PayloadAction<Required<Pick<Note, 'emoji'>> & targetIds>,
-    ) => {
-      const loopCount = action.payload.ids.length - 1;
-      const ids = action.payload.ids;
-      const emoji = action.payload.emoji;
-      const notes = state.notes.find((note) => note.id === ids[loopCount]);
-      const noteEmojiUpdate = (
-        notes: WritableDraft<Note>,
-        loopCount: number,
-      ): void => {
-        if (loopCount === 0) {
-          notes.emoji = emoji;
-        }
-        if (notes.children) {
-          const childNote = notes.children.find(
-            (note) => note.id === ids[loopCount - 1],
-          );
-          childNote && noteEmojiUpdate(childNote, loopCount - 1);
-        }
-      };
-      notes && noteEmojiUpdate(notes, loopCount);
-    },
-    updateOrder: (state, action: PayloadAction<Required<orderIds>>) => {
-      const loopCount = action.payload.ids.length - 1;
-      const ids = action.payload.ids;
-      const notes = state.notes;
-      const noteTitleUpdate = (
-        targetNote: Array<WritableDraft<Note>>,
-        loopCount: number,
-        parentNote?: WritableDraft<Note>,
-      ): void => {
-        if (loopCount === 0) {
-          const deleteNote = targetNote.filter((state) => state.id !== ids[0]);
-          const insertNote = targetNote.find((state) => state.id === ids[0]);
-          if (insertNote !== undefined) {
-            deleteNote.splice(action.payload.to, 0, insertNote);
-            if (parentNote) {
-              parentNote.children = deleteNote;
-            } else {
-              state.notes = deleteNote;
-            }
-          }
-        } else {
-          const parentNote = notes.find((note) => note.id === ids[loopCount]);
-          parentNote?.children &&
-            noteTitleUpdate(parentNote.children, loopCount - 1, parentNote);
-        }
-      };
-      notes && noteTitleUpdate(notes, loopCount);
-    },
-  },
+  reducers: {},
 });
 
-const { updateDescription, updateOrder } = noteSlice.actions;
+// const { updateOrder } = noteSlice.actions;
 
 const selectNote = (state: RootState): State => state.notes;
 
 export {
-  addBrotherNote,
-  addChildNote,
-  addEmoji,
-  deleteNote,
+  addAsyncBrotherNote,
+  addAsyncChildNote,
+  addAsyncEmoji,
+  deleteAsyncNote,
   fetchAsyncNotes,
   selectNote,
   updateAsyncEmoji,
   updateAsyncNote,
-  updateDescription,
-  updateOrder,
+  updateAsyncNoteOrder,
 };
 
 export default noteSlice.reducer;

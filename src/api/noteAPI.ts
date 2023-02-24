@@ -1,11 +1,14 @@
 import { Amplify } from '@aws-amplify/core';
 import { API, graphqlOperation } from 'aws-amplify';
+import { WritableDraft } from 'immer/dist/internal';
 
 import {
   CreateChildrenIdInput,
   CreateEmojiInput,
   CreateNoteInput,
   DeleteNoteInput,
+  ModelNoteFilterInput,
+  ModelSortDirection,
   UpdateNoteInput,
 } from '~/API';
 import awsExports from '~/aws-exports';
@@ -16,7 +19,7 @@ import {
   updateEmoji,
   updateNote,
 } from '~/graphql/mutations';
-import { listNotes } from '~/graphql/queries';
+import { notesByOrderNumber } from '~/graphql/queries';
 import { FetchEmoji, Note } from '~/types/types';
 
 import { UpdateEmojiInput } from './../API';
@@ -65,51 +68,7 @@ export const createEmojiApi = async (focusNote: {
   }
 };
 
-const getNotesChildren = async (items: Note[]): Promise<Note[]> => {
-  const fetchedNoteChildren = async (
-    childrenIds: Array<{ childrenId: string }>,
-  ): Promise<Note[]> => {
-    const fetchIds = childrenIds
-      .filter(({ childrenId }) => typeof childrenId === 'string')
-      .map(({ childrenId }) => ({ id: { eq: childrenId } }));
-    const filter = {
-      or: fetchIds,
-    };
-
-    const {
-      data: {
-        listNotes: { items: childNotes },
-      },
-    } = (await API.graphql(graphqlOperation(listNotes, { filter }))) as {
-      data: { listNotes: { items: Note[] } };
-    };
-
-    return childNotes;
-  };
-  const notesWithChildren = await Promise.all(
-    items.map(async (note) => {
-      if (note.childrenIds?.items.length) {
-        const childrenIds = note.childrenIds.items.map((idData) => {
-          return { childrenId: idData?.childrenId as string };
-        });
-        const childNotes = await fetchedNoteChildren(childrenIds);
-        const isNestedNote = childNotes.some(
-          (childNote) => childNote.childrenIds?.items.length !== 0,
-        );
-
-        if (isNestedNote) {
-          note.children = await getNotesChildren(childNotes);
-        } else {
-          note.children = childNotes;
-        }
-      }
-      return note;
-    }),
-  );
-  return notesWithChildren;
-};
-
-export const createBrotherNote = async (focusNote: {
+export const createBrotherNoteApi = async (focusNote: {
   focusLevel: number;
   ids: string[];
   orderNumber: number;
@@ -130,6 +89,7 @@ export const createBrotherNote = async (focusNote: {
       expanded: true,
       level: focusNote.focusLevel,
       orderNumber: focusNote.orderNumber + 1,
+      type: 'Note',
     };
     focusNote.parentId &&
       Object.assign(noteDetails, { parentId: focusNote.parentId });
@@ -145,11 +105,11 @@ export const createBrotherNote = async (focusNote: {
     };
   } catch (err) {
     console.error(err);
-    throw new Error('error createBrotherNote');
+    throw new Error('error createBrotherNoteApi');
   }
 };
 
-export const createChildNote = async (focusNote: {
+export const createChildNoteApi = async (focusNote: {
   id: string;
   childrenLength: number;
   focusLevel: number;
@@ -169,6 +129,7 @@ export const createChildNote = async (focusNote: {
       level: focusNote.focusLevel + 1,
       orderNumber: focusNote.childrenLength + 1,
       parentId: focusNote.id,
+      type: 'Note',
     };
     // NOTE:childrenIdをchildrenIdsに加えないとおかしくなるようだったら見直す
     const newNote = (await API.graphql({
@@ -186,24 +147,115 @@ export const createChildNote = async (focusNote: {
     return { ids: focusNote.ids, newNote: newNote.data.createNote };
   } catch (err) {
     console.error(err);
-    throw new Error('error createChildNote');
+    throw new Error('error createChildNoteApi');
   }
 }; // === END CREATE ===
 // === START READ ===
-export const getNotes = async (): Promise<Note[] | undefined> => {
+export const getFilterParentIdNotesApi = async ({
+  parentId,
+  targetOrderNumber,
+}: {
+  parentId: string | undefined | null;
+  targetOrderNumber: number;
+}): Promise<Note[] | undefined> => {
   try {
-    const filter = { level: { eq: 0 } };
-
+    const levelFilter = {
+      and: [
+        { id: { eq: parentId } },
+        { orderNumber: { ge: targetOrderNumber } },
+      ],
+    };
+    const parentFilter = {
+      level: { eq: 0 },
+    };
+    const sortDirection: ModelSortDirection = ModelSortDirection.ASC;
+    const type = 'Note';
+    const filter = parentId ? levelFilter : parentFilter;
     const {
       data: {
-        listNotes: { items: notes },
+        notesByOrderNumber: { items: notes },
       },
-    } = (await API.graphql(graphqlOperation(listNotes, { filter }))) as {
-      data: { listNotes: { items: Note[] } };
+    } = (await API.graphql(
+      graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }),
+    )) as {
+      data: {
+        notesByOrderNumber: { items: Note[] };
+      };
+    };
+
+    return notes;
+  } catch (err) {
+    console.error(err);
+    throw new Error('Error getFilterParentIdNotes');
+  }
+};
+const getNotesChildrenApi = async (items: Note[]): Promise<Note[]> => {
+  const fetchedNoteChildren = async (
+    childrenIds: Array<{ childrenId: string }>,
+  ): Promise<Note[]> => {
+    const fetchIds = childrenIds
+      .filter(({ childrenId }) => typeof childrenId === 'string')
+      .map(({ childrenId }) => ({ id: { eq: childrenId } }));
+    const filter: ModelNoteFilterInput = {
+      or: fetchIds,
+    };
+    const sortDirection: ModelSortDirection = ModelSortDirection.ASC;
+    const type = 'Note';
+    const {
+      data: {
+        notesByOrderNumber: { items: childNotes },
+      },
+    } = (await API.graphql(
+      graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }),
+    )) as {
+      data: {
+        notesByOrderNumber: { items: Note[] };
+      };
+    };
+    // sortDirection: ASC, sortField: orderNumber
+    return childNotes;
+  };
+  const notesWithChildren = await Promise.all(
+    items.map(async (note) => {
+      if (note.childrenIds?.items.length) {
+        const childrenIds = note.childrenIds.items.map((idData) => {
+          return { childrenId: idData?.childrenId as string };
+        });
+        const childNotes = await fetchedNoteChildren(childrenIds);
+        const isNestedNote = childNotes.some(
+          (childNote) => childNote.childrenIds?.items.length !== 0,
+        );
+
+        if (isNestedNote) {
+          note.children = await getNotesChildrenApi(childNotes);
+        } else {
+          note.children = childNotes;
+        }
+      }
+      return note;
+    }),
+  );
+  return notesWithChildren;
+};
+export const getNotesApi = async (): Promise<Note[] | undefined> => {
+  try {
+    const filter = { level: { eq: 0 } };
+    const sortDirection: ModelSortDirection = ModelSortDirection.ASC;
+    const type = 'Note';
+    const {
+      data: {
+        notesByOrderNumber: { items: notes },
+      },
+    } = (await API.graphql(
+      graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }),
+    )) as {
+      data: {
+        notesByOrderNumber: { items: Note[] };
+      };
     };
 
     if (notes) {
-      return await getNotesChildren(notes);
+      return await getNotesChildrenApi(notes);
     }
 
     return undefined;
@@ -213,6 +265,29 @@ export const getNotes = async (): Promise<Note[] | undefined> => {
   }
 }; // === END READ ===
 // === START UPDATE ===
+export const updateNoteOrdersApi = async ({
+  deleteNote,
+}: {
+  deleteNote: Array<WritableDraft<Note>>;
+}): Promise<void> => {
+  // const orderChange = isIncreased ? -1 : 1
+  const promises = deleteNote.map((item, index) => {
+    // const targetNote = ids[0] === item.id
+    console.log(item.title, item.id, item.orderNumber);
+    return API.graphql({
+      query: updateNote,
+      variables: {
+        input: {
+          id: item.id,
+          orderNumber: index,
+        },
+      },
+    });
+  });
+
+  await Promise.all(promises);
+};
+
 export const updateEmojiApi = async ({
   emoji,
   ids,
@@ -242,6 +317,7 @@ export const updateEmojiApi = async ({
     throw new Error('error updateNoteApi');
   }
 };
+
 export const updateNoteApi = async (
   updateNoteData: UpdateNoteInput,
 ): Promise<

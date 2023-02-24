@@ -10,7 +10,11 @@ import { Circle, Stack, Text, XStack } from 'tamagui';
 
 import { useColors, width } from '~/lib/constants';
 import { selectNoteHeight } from '~/slices/noteHeightSlice';
-import { selectNote, updateAsyncNote, updateOrder } from '~/slices/noteSlice';
+import {
+  selectNote,
+  updateAsyncNote,
+  updateAsyncNoteOrder,
+} from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -133,10 +137,24 @@ export const SideTreeItem = ({
         <DraggableFlatList
           data={NoteChild}
           onDragEnd={({ data, from, to }) => {
-            // setStateNotes(data)
             const id = data[to]?.id;
             if (id !== undefined) {
-              dispatch(updateOrder({ from, ids: [id, ...ids], to }));
+              const updateOrder = async (): Promise<void> => {
+                try {
+                  await dispatch(
+                    updateAsyncNoteOrder({
+                      ids: [id, ...ids],
+                      isIncreased: from > to,
+                      parentId: data[to]?.parentId,
+                      targetOrderNumber: to,
+                    }),
+                  );
+                } catch (e) {
+                  console.log({ e });
+                  // Handle error
+                }
+              };
+              void updateOrder();
             }
           }}
           extraData={notes}
@@ -147,7 +165,7 @@ export const SideTreeItem = ({
     } else {
       return <></>;
     }
-  }, [dispatch, ids, note.children, notes, renderItem]);
+  }, [dispatch, note.children, notes, renderItem]);
 
   const Emoji = (): JSX.Element => {
     return (
@@ -161,7 +179,7 @@ export const SideTreeItem = ({
           }
           mr={4}
         >
-          {note.emoji !== undefined ? (
+          {note.emoji?.name.length ? (
             <Text textAlign="center" fontSize="lg" lineHeight="24">
               {note.emoji?.name}
             </Text>
@@ -216,6 +234,7 @@ export const SideTreeItem = ({
             <Stack animation={'bouncy'} {...position}>
               <SimpleLineIcons
                 onPress={() => {
+                  // TODO:サイドツリーでも開閉できるようにする
                   void (async () => {
                     await dispatch(
                       updateAsyncNote({

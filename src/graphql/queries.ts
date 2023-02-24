@@ -10,6 +10,7 @@ export const getNote = /* GraphQL */ `
       description
       expanded
       level
+      type
       orderNumber
       emoji {
         id
@@ -55,6 +56,7 @@ export const listNotes = /* GraphQL */ `
         description
         expanded
         level
+        type
         orderNumber
         emoji {
           id
@@ -132,6 +134,56 @@ export const listChildrenIds = /* GraphQL */ `
         createdAt
         updatedAt
         noteChildrenIdsId
+      }
+      nextToken
+    }
+  }
+`;
+export const notesByOrderNumber = /* GraphQL */ `
+  query NotesByOrderNumber(
+    $type: String!
+    $orderNumber: ModelIntKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelNoteFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    notesByOrderNumber(
+      type: $type
+      orderNumber: $orderNumber
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        description
+        expanded
+        level
+        type
+        orderNumber
+        emoji {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        childrenIds {
+          items {
+            id
+            childrenId
+            createdAt
+            updatedAt
+            noteChildrenIdsId
+          }
+          nextToken
+        }
+        parentId
+        createdAt
+        updatedAt
+        noteEmojiId
       }
       nextToken
     }

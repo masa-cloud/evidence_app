@@ -13,6 +13,7 @@ export const createNote = /* GraphQL */ `
       description
       expanded
       level
+      type
       orderNumber
       emoji {
         id
@@ -48,6 +49,7 @@ export const updateNote = /* GraphQL */ `
       description
       expanded
       level
+      type
       orderNumber
       emoji {
         id
@@ -83,6 +85,7 @@ export const deleteNote = /* GraphQL */ `
       description
       expanded
       level
+      type
       orderNumber
       emoji {
         id

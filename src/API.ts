@@ -8,6 +8,7 @@ export type CreateNoteInput = {
   description: string;
   expanded: boolean;
   level: number;
+  type: string;
   orderNumber: number;
   parentId?: string | null;
   noteEmojiId?: string | null;
@@ -18,6 +19,7 @@ export type ModelNoteConditionInput = {
   description?: ModelStringInput | null;
   expanded?: ModelBooleanInput | null;
   level?: ModelIntInput | null;
+  type?: ModelStringInput | null;
   orderNumber?: ModelIntInput | null;
   parentId?: ModelIDInput | null;
   and?: Array<ModelNoteConditionInput | null> | null;
@@ -107,6 +109,7 @@ export type Note = {
   description: string;
   expanded: boolean;
   level: number;
+  type: string;
   orderNumber: number;
   emoji?: Emoji | null;
   childrenIds?: ModelChildrenIdConnection | null;
@@ -145,6 +148,7 @@ export type UpdateNoteInput = {
   description?: string | null;
   expanded?: boolean | null;
   level?: number | null;
+  type?: string | null;
   orderNumber?: number | null;
   parentId?: string | null;
   noteEmojiId?: string | null;
@@ -205,6 +209,7 @@ export type ModelNoteFilterInput = {
   description?: ModelStringInput | null;
   expanded?: ModelBooleanInput | null;
   level?: ModelIntInput | null;
+  type?: ModelStringInput | null;
   orderNumber?: ModelIntInput | null;
   parentId?: ModelIDInput | null;
   and?: Array<ModelNoteFilterInput | null> | null;
@@ -247,12 +252,22 @@ export type ModelChildrenIdFilterInput = {
   noteChildrenIdsId?: ModelIDInput | null;
 };
 
+export type ModelIntKeyConditionInput = {
+  eq?: number | null;
+  le?: number | null;
+  lt?: number | null;
+  ge?: number | null;
+  gt?: number | null;
+  between?: Array<number | null> | null;
+};
+
 export type ModelSubscriptionNoteFilterInput = {
   id?: ModelSubscriptionIDInput | null;
   title?: ModelSubscriptionStringInput | null;
   description?: ModelSubscriptionStringInput | null;
   expanded?: ModelSubscriptionBooleanInput | null;
   level?: ModelSubscriptionIntInput | null;
+  type?: ModelSubscriptionStringInput | null;
   orderNumber?: ModelSubscriptionIntInput | null;
   parentId?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionNoteFilterInput | null> | null;
@@ -333,6 +348,7 @@ export type CreateNoteMutation = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
@@ -373,6 +389,7 @@ export type UpdateNoteMutation = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
@@ -413,6 +430,7 @@ export type DeleteNoteMutation = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
@@ -545,6 +563,7 @@ export type GetNoteQuery = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
@@ -590,6 +609,7 @@ export type ListNotesQuery = {
       description: string;
       expanded: boolean;
       level: number;
+      type: string;
       orderNumber: number;
       emoji?: {
         __typename: 'Emoji';
@@ -689,6 +709,55 @@ export type ListChildrenIdsQuery = {
   } | null;
 };
 
+export type NotesByOrderNumberQueryVariables = {
+  type: string;
+  orderNumber?: ModelIntKeyConditionInput | null;
+  sortDirection?: ModelSortDirection | null;
+  filter?: ModelNoteFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+};
+
+export type NotesByOrderNumberQuery = {
+  notesByOrderNumber?: {
+    __typename: 'ModelNoteConnection';
+    items: Array<{
+      __typename: 'Note';
+      id: string;
+      title: string;
+      description: string;
+      expanded: boolean;
+      level: number;
+      type: string;
+      orderNumber: number;
+      emoji?: {
+        __typename: 'Emoji';
+        id: string;
+        name: string;
+        createdAt: string;
+        updatedAt: string;
+      } | null;
+      childrenIds?: {
+        __typename: 'ModelChildrenIdConnection';
+        items: Array<{
+          __typename: 'ChildrenId';
+          id: string;
+          childrenId?: string | null;
+          createdAt: string;
+          updatedAt: string;
+          noteChildrenIdsId?: string | null;
+        } | null>;
+        nextToken?: string | null;
+      } | null;
+      parentId?: string | null;
+      createdAt: string;
+      updatedAt: string;
+      noteEmojiId?: string | null;
+    } | null>;
+    nextToken?: string | null;
+  } | null;
+};
+
 export type OnCreateNoteSubscriptionVariables = {
   filter?: ModelSubscriptionNoteFilterInput | null;
 };
@@ -701,6 +770,7 @@ export type OnCreateNoteSubscription = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
@@ -740,6 +810,7 @@ export type OnUpdateNoteSubscription = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';
@@ -779,6 +850,7 @@ export type OnDeleteNoteSubscription = {
     description: string;
     expanded: boolean;
     level: number;
+    type: string;
     orderNumber: number;
     emoji?: {
       __typename: 'Emoji';

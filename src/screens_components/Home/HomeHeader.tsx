@@ -7,7 +7,11 @@ import { Image, Stack, XStack } from 'tamagui';
 import { Images } from '~/assets/images';
 import { useColors } from '~/lib/constants';
 import { selectFocusNote } from '~/slices/focusNoteSlice';
-import { addBrotherNote, addChildNote, deleteNote } from '~/slices/noteSlice';
+import {
+  addAsyncBrotherNote,
+  addAsyncChildNote,
+  deleteAsyncNote,
+} from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
 import { useSideTree } from './hook/useSideTree';
@@ -40,7 +44,7 @@ export const HomeHeader = (): JSX.Element => {
           onPress={() => {
             void (async () => {
               await dispatch(
-                deleteNote({
+                deleteAsyncNote({
                   id: focusNote.focusId,
                 }),
               );
@@ -67,7 +71,7 @@ export const HomeHeader = (): JSX.Element => {
           onPress={() => {
             void (async () => {
               await dispatch(
-                addBrotherNote({
+                addAsyncBrotherNote({
                   focusLevel: focusNote.level,
                   ids: focusNote.ids,
                   orderNumber: focusNote.orderNumber,
@@ -85,7 +89,7 @@ export const HomeHeader = (): JSX.Element => {
           onPress={() => {
             void (async () => {
               await dispatch(
-                addChildNote({
+                addAsyncChildNote({
                   id: focusNote.focusId,
                   childrenLength: focusNote.focusChildrenLength,
                   focusLevel: focusNote.level,

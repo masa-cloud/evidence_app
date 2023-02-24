@@ -8,6 +8,7 @@ type Note @model {
   description: String!
   expanded: Boolean!
   level: Int!
+  type: String! @index(name: "notesByOrderNumber", queryField: "notesByOrderNumber", sortKeyFields: ["orderNumber"])
   orderNumber: Int!
   emoji: Emoji @hasOne
   childrenIds: [ChildrenId] @hasMany

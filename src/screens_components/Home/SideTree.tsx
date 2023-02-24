@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Spinner, Stack, XStack } from 'tamagui';
 
 import { height, useColors, width } from '~/lib/constants';
-import { updateOrder } from '~/slices/noteSlice';
+import { updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { selectSideTree } from '~/slices/sideTreeSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
@@ -79,7 +79,22 @@ export const SideTree = ({
             onDragEnd={({ data, from, to }) => {
               const id = data[to]?.id;
               if (id !== undefined) {
-                dispatch(updateOrder({ from, ids: [id], to }));
+                const updateOrder = async (): Promise<void> => {
+                  try {
+                    await dispatch(
+                      updateAsyncNoteOrder({
+                        ids: [id],
+                        isIncreased: from > to,
+                        parentId: data[to]?.parentId,
+                        targetOrderNumber: to,
+                      }),
+                    );
+                  } catch (e) {
+                    console.log({ e });
+                    // Handle error
+                  }
+                };
+                void updateOrder();
               }
             }}
             extraData={notes}

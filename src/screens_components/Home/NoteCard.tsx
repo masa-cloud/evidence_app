@@ -211,9 +211,10 @@ export const NoteCard = ({
               focusStyle={styles.focusBorderNoneStyle}
               bg={colors.primary}
               py={10}
-              lineHeight={8}
+              lineHeight={18}
               px={4}
               bw={0}
+              h={36}
               value={title ?? ''}
               multiline={true}
               onChangeText={(title) => setTitle(title)}

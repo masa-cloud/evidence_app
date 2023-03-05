@@ -2,5 +2,8 @@
   "AppSyncApiName": "evidenceapp",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2023-01-28T07:48:24.698Z"
+  "AuthModeLastUpdated": "2023-01-28T07:48:24.698Z",
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": ["authevidenceappb153651a", "Outputs.UserPoolId"]
+  }
 }

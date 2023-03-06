@@ -1,14 +1,20 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { FlatList } from '@stream-io/flat-list-mvcp';
-import React, { useCallback, useState } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { Animated, ScrollView, StyleSheet } from 'react-native';
+import {
+  actions,
+  RichEditor,
+  RichToolbar,
+} from 'react-native-pell-rich-editor';
+import RenderHtml from 'react-native-render-html';
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
-import { useColors } from '~/lib/constants';
-import { updateFucusId } from '~/slices/focusNoteSlice';
+import { useColors, width } from '~/lib/constants';
+import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
 import {
   selectNoteHeight,
   updateContentsHeight,
@@ -45,13 +51,43 @@ export const NoteCard = ({
   const [emoji, setEmoji] = useState<string | undefined>(note.emoji?.name);
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const { noteHeights } = useSelector(selectNoteHeight);
+  const { focusNote } = useSelector(selectFocusNote);
   const noteHeight = noteHeights.find(
     (noteHeight) => noteHeight.id === note.id,
   );
-
+  const richText = useRef<RichEditor | null>();
+  const scrollRef = useRef<ScrollView | null>();
+  const onDone = (): void => {
+    richText.current?.blurContentEditor();
+    void (async () => {
+      // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
+      await dispatch(
+        updateAsyncNote({
+          ids,
+          updateNoteData: { id: ids[0] ?? '', description },
+        }),
+      );
+      if (noteHeight?.contentsHeight) {
+        dispatch(
+          updateContentsHeight({
+            id: note.id,
+            contentsHeight: noteHeight.contentsHeight - 50,
+          }),
+        );
+      }
+    })();
+  };
+  const onFocus = (): void => {
+    scrollRef.current?.scrollTo({ animated: true, x: 0, y: 200 });
+  };
+  const linkModal = useRef();
   // customHook
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
-    descriptionHeight: noteHeight?.contentsHeight ?? 32,
+    descriptionHeight:
+      focusNote.focusId === note.id
+        ? noteHeight?.contentsHeight ?? 32
+        : (noteHeight?.contentsHeight ?? 32) -
+          (noteHeight?.contentsHeight ? 85 : 0),
     expanded,
     ids,
     level: note.level,
@@ -105,6 +141,21 @@ export const NoteCard = ({
     },
     [dispatch, ids],
   );
+  // TODO
+  // const onPressAddImage = useCallback(() => {
+  //   // insert URL
+  //   richText.current?.insertImage(
+  //     'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/100px-React-icon.svg.png',
+  //     'background: gray;',
+  //   );
+  //   // insert base64
+  //   // this.richText.current?.insertImage(`data:${image.mime};base64,${image.data}`);
+  // }, []);
+
+  // const onInsertLink = useCallback(() => {
+  //   // this.richText.current?.insertLink('Google', 'http://google.com');
+  //   linkModal.current?.setModalVisible(true);
+  // }, []);
 
   const Emoji = useCallback((): JSX.Element => {
     return (
@@ -263,51 +314,78 @@ export const NoteCard = ({
         <Animated.View
           style={[styles.animatedExpandedView, { height: animatedValue }]}
         >
-          <TextArea
-            bg={'transparent'}
-            py={2}
-            px={4}
-            color={colors.primary}
-            fontSize={14}
-            bw={0}
-            focusStyle={styles.focusBorderNoneStyle}
-            boc={colors.primary}
-            value={description ?? ''}
-            lineHeight={16}
-            height={noteHeight?.contentsHeight ?? 32}
-            multiline={true}
-            onContentSizeChange={(event) => {
-              // level0 2回ずつ
-              // level1 ?回ずつ
-              if (
-                event.nativeEvent.contentSize.height !== 16 &&
-                event.nativeEvent.contentSize.height !==
-                  noteHeight?.contentsHeight
-              ) {
-                dispatch(
-                  updateContentsHeight({
-                    id: note.id,
-                    contentsHeight: event.nativeEvent.contentSize.height + 30,
-                  }),
-                );
-              }
-            }}
-            onChangeText={(description) => {
-              setDescription(description);
-            }}
-            autoCapitalize="none"
-            onEndEditing={() => {
-              void (async () => {
-                // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
-                await dispatch(
-                  updateAsyncNote({
-                    ids,
-                    updateNoteData: { id: ids[0] ?? '', description },
-                  }),
-                );
-              })();
-            }}
-          />
+          {focusNote.focusId === note.id ? (
+            <>
+              <RichToolbar
+                // style={[styles.richBar, dark && styles.richBarDark]}
+                style={[styles.richBar]}
+                flatContainerStyle={styles.flatStyle}
+                editor={richText}
+                selectedIconTint={'#2095F2'}
+                disabledIconTint={'#bfbfbf'}
+                actions={[
+                  actions.setBold,
+                  actions.setItalic,
+                  actions.setUnderline,
+                  actions.setStrikethrough,
+                  actions.code,
+                  actions.insertBulletsList,
+                  actions.insertOrderedList,
+                  actions.checkboxList,
+                  actions.indent,
+                  actions.outdent,
+                  // TODO
+                  // actions.insertImage,
+                  // actions.insertLink,
+                ]}
+                // TODO
+                // onPressAddImage={onPressAddImage}
+                // onInsertLink={onInsertLink}
+              />
+              <RichEditor
+                ref={(r) => (richText.current = r)}
+                onFocus={onFocus}
+                onBlur={onDone}
+                initialContentHTML={description ?? ''}
+                onChange={(description) => {
+                  setDescription(description);
+                }}
+                initialFocus={true}
+                style={styles.rich}
+                onHeightChange={(height) => {
+                  if (height !== 16 && height !== noteHeight?.contentsHeight) {
+                    dispatch(
+                      updateContentsHeight({
+                        id: note.id,
+                        contentsHeight: height + 50,
+                      }),
+                    );
+                  }
+                }}
+              />
+            </>
+          ) : (
+            <Stack px={6.5}>
+              <RenderHtml
+                // htmlHeight={noteHeight?.contentsHeight ?? 0}
+                source={{
+                  html: description,
+                }}
+                tagsStyles={{
+                  code: {
+                    backgroundColor: colors.background,
+                    borderRadius: 4,
+                    color: colors.text,
+                    padding: 4,
+                  },
+                  div: { fontSize: 16 },
+                  p: { fontSize: 16 },
+                  span: { fontSize: 15 },
+                }}
+                contentWidth={width}
+              />
+            </Stack>
+          )}
         </Animated.View>
         <NoteChildCard />
       </Stack>
@@ -321,6 +399,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
+  flatStyle: {
+    paddingHorizontal: 12,
+  },
   focusBorderNoneStyle: {
     borderWidth: 0,
   },
@@ -332,6 +413,23 @@ const styles = StyleSheet.create({
     ml: 4,
     mr: 2,
     paddingTop: 8,
+  },
+  rich: {
+    borderColor: '#e3e3e3',
+    flex: 1,
+    fontSize: 14,
+    margin: 0,
+    minHeight: 300,
+    padding: 0,
+    width: '100%',
+  },
+  richBar: {
+    borderColor: '#efefef',
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  richBarDark: {
+    backgroundColor: '#191d20',
+    borderColor: '#696969',
   },
   titleTextInputStyle: {
     alignItems: 'center',

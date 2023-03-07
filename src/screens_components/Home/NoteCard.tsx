@@ -316,32 +316,6 @@ export const NoteCard = ({
         >
           {focusNote.focusId === note.id ? (
             <>
-              <RichToolbar
-                // style={[styles.richBar, dark && styles.richBarDark]}
-                style={[styles.richBar]}
-                flatContainerStyle={styles.flatStyle}
-                editor={richText}
-                selectedIconTint={'#2095F2'}
-                disabledIconTint={'#bfbfbf'}
-                actions={[
-                  actions.setBold,
-                  actions.setItalic,
-                  actions.setUnderline,
-                  actions.setStrikethrough,
-                  actions.code,
-                  actions.insertBulletsList,
-                  actions.insertOrderedList,
-                  actions.checkboxList,
-                  actions.indent,
-                  actions.outdent,
-                  // TODO
-                  // actions.insertImage,
-                  // actions.insertLink,
-                ]}
-                // TODO
-                // onPressAddImage={onPressAddImage}
-                // onInsertLink={onInsertLink}
-              />
               <RichEditor
                 ref={(r) => (richText.current = r)}
                 onFocus={onFocus}
@@ -362,6 +336,33 @@ export const NoteCard = ({
                     );
                   }
                 }}
+              />
+              <RichToolbar
+                // TODO: ダークモード対応目調整
+                // style={[styles.richBar, dark && styles.richBarDark]}
+                style={[styles.richBar]}
+                flatContainerStyle={styles.flatStyle}
+                editor={richText}
+                selectedIconTint={'#2095F2'}
+                disabledIconTint={'#bfbfbf'}
+                actions={[
+                  actions.setBold,
+                  actions.setItalic,
+                  actions.setStrikethrough,
+                  actions.insertLink,
+                  actions.insertOrderedList,
+                  actions.insertBulletsList,
+                  actions.blockquote,
+                  actions.code,
+                  // TODO:不要かなー
+                  // actions.checkboxList,
+                  // actions.indent,
+                  // actions.outdent,
+                  // TODO
+                  // actions.insertImage,
+                ]}
+                // TODO
+                // onPressAddImage={onPressAddImage}
               />
             </>
           ) : (
@@ -419,7 +420,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     margin: 0,
-    minHeight: 300,
     padding: 0,
     width: '100%',
   },

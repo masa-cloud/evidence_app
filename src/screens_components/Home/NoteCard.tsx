@@ -1,6 +1,6 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { FlatList } from '@stream-io/flat-list-mvcp';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
@@ -9,7 +9,6 @@ import { Stack, Text, TextArea, XStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
 import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
-import { selectNoteHeight } from '~/slices/noteHeightSlice';
 import {
   addAsyncEmoji,
   updateAsyncEmoji,
@@ -35,22 +34,22 @@ export const NoteCard = ({
   parentExpanded = true,
 }: NoteCardProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { colors } = useColors();
-  // useState
-  // const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
+  // reducer.
+  const { focusNote } = useSelector(selectFocusNote);
+  // state
   const [title, setTitle] = useState<string>(note.title);
+  const [descriptionHeight, setDescriptionHeight] = useState<number>(48);
   const [emoji, setEmoji] = useState<string | undefined>(note.emoji?.name);
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
-  const { noteHeights } = useSelector(selectNoteHeight);
-  const { focusNote } = useSelector(selectFocusNote);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // ref
+  // memo
   const thisNoteFocus = useMemo(
     () => focusNote.focusId === note.id,
     [focusNote.focusId, note.id],
   );
-  const noteHeight = noteHeights.find(
-    (noteHeight) => noteHeight.id === note.id,
-  );
-  const [descriptionHeight, setDescriptionHeight] = useState<number>(40);
+  // custom hook
+  const { colors } = useColors();
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
     descriptionHeight: thisNoteFocus
       ? descriptionHeight + 50
@@ -72,7 +71,9 @@ export const NoteCard = ({
     },
     [ids, expanded],
   );
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  useEffect(() => {
+    console.warn({ descriptionHeight });
+  }, [descriptionHeight]);
   const handlePick = useCallback(
     (emojiObject: EmojiType): void => {
       // setEmoji(emojiObject.emoji)
@@ -108,21 +109,6 @@ export const NoteCard = ({
     },
     [dispatch, ids],
   );
-  // TODO
-  // const onPressAddImage = useCallback(() => {
-  //   // insert URL
-  //   richText.current?.insertImage(
-  //     'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/100px-React-icon.svg.png',
-  //     'background: gray;',
-  //   );
-  //   // insert base64
-  //   // this.richText.current?.insertImage(`data:${image.mime};base64,${image.data}`);
-  // }, []);
-
-  // const onInsertLink = useCallback(() => {
-  //   // this.richText.current?.insertLink('Google', 'http://google.com');
-  //   linkModal.current?.setModalVisible(true);
-  // }, []);
 
   const Emoji = useCallback((): JSX.Element => {
     return (
@@ -181,10 +167,10 @@ export const NoteCard = ({
   if (!parentExpanded) {
     return <></>;
   }
-  // TODO:なんかスクロールしづらそう。。。
+
   return (
     <>
-      <Stack style={thisNoteFocus && styles.focusNoteStyle}>
+      <Stack focusStyle={styles.focusNoteStyle}>
         <Stack
           // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
           onTouchStart={() => {
@@ -192,7 +178,6 @@ export const NoteCard = ({
               updateFucusId({
                 focusChildrenLength: note.children?.length ?? 0,
                 focusId: note.id,
-                focusNoteHeight: noteHeight?.height ?? 0,
                 ids,
                 level: note.level,
                 orderNumber: note.orderNumber,

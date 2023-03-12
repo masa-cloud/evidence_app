@@ -9,7 +9,6 @@ type State = {
 type focusNote = {
   focusChildrenLength: number;
   focusId: string;
-  focusNoteHeight: number;
   ids: string[];
   level: number;
   levelStock: number;
@@ -21,7 +20,6 @@ const initialState: State = {
   focusNote: {
     focusChildrenLength: 0,
     focusId: '1',
-    focusNoteHeight: 0,
     ids: [],
     level: 0,
     levelStock: 0,
@@ -45,7 +43,6 @@ export const focusNoteSlice = createSlice({
         state.focusNote.focusChildrenLength =
           action.payload.focusChildrenLength;
         state.focusNote.level = action.payload.level;
-        state.focusNote.focusNoteHeight = action.payload.focusNoteHeight;
         state.focusNote.orderNumber = action.payload.orderNumber;
         state.focusNote.ids = action.payload.ids;
         state.focusNote.parentId = action.payload.parentId;

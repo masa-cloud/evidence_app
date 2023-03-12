@@ -73,7 +73,6 @@ export const Home: FC = () => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%' }}
       >
-        {/* <Stack py={focusNoteHeight}> */}
         <HomeHeader />
         <SideTree notes={notes} onNoteNavigate={onPress} />
         <TouchableOpacity

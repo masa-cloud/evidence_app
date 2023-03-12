@@ -1,24 +1,15 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { FlatList } from '@stream-io/flat-list-mvcp';
-import React, { useCallback, useRef, useState } from 'react';
-import { Animated, ScrollView, StyleSheet } from 'react-native';
-import {
-  actions,
-  RichEditor,
-  RichToolbar,
-} from 'react-native-pell-rich-editor';
-import RenderHtml from 'react-native-render-html';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Animated, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
-import { useColors, width } from '~/lib/constants';
+import { useColors } from '~/lib/constants';
 import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
-import {
-  selectNoteHeight,
-  updateContentsHeight,
-} from '~/slices/noteHeightSlice';
+import { selectNoteHeight } from '~/slices/noteHeightSlice';
 import {
   addAsyncEmoji,
   updateAsyncEmoji,
@@ -29,6 +20,7 @@ import { Note } from '~/types/types';
 
 import { useAnimeExpand } from './hook/useAnimeExpand';
 import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
+import { RichDescriptionDialog } from './RichDescriptionDialog';
 
 export type NoteCardProps = {
   ids: string[];
@@ -46,48 +38,23 @@ export const NoteCard = ({
   const { colors } = useColors();
   // useState
   // const [descriptionHeight, setDescriptionHeight] = useState<number>(0);
-  const [description, setDescription] = useState<string>(note.description);
   const [title, setTitle] = useState<string>(note.title);
   const [emoji, setEmoji] = useState<string | undefined>(note.emoji?.name);
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const { noteHeights } = useSelector(selectNoteHeight);
   const { focusNote } = useSelector(selectFocusNote);
+  const thisNoteFocus = useMemo(
+    () => focusNote.focusId === note.id,
+    [focusNote.focusId, note.id],
+  );
   const noteHeight = noteHeights.find(
     (noteHeight) => noteHeight.id === note.id,
   );
-  const richText = useRef<RichEditor | null>();
-  const scrollRef = useRef<ScrollView | null>();
-  const onDone = (): void => {
-    richText.current?.blurContentEditor();
-    void (async () => {
-      // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
-      await dispatch(
-        updateAsyncNote({
-          ids,
-          updateNoteData: { id: ids[0] ?? '', description },
-        }),
-      );
-      if (noteHeight?.contentsHeight) {
-        dispatch(
-          updateContentsHeight({
-            id: note.id,
-            contentsHeight: noteHeight.contentsHeight - 50,
-          }),
-        );
-      }
-    })();
-  };
-  const onFocus = (): void => {
-    scrollRef.current?.scrollTo({ animated: true, x: 0, y: 200 });
-  };
-  const linkModal = useRef();
-  // customHook
+  const [descriptionHeight, setDescriptionHeight] = useState<number>(40);
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
-    descriptionHeight:
-      focusNote.focusId === note.id
-        ? noteHeight?.contentsHeight ?? 32
-        : (noteHeight?.contentsHeight ?? 32) -
-          (noteHeight?.contentsHeight ? 85 : 0),
+    descriptionHeight: thisNoteFocus
+      ? descriptionHeight + 50
+      : descriptionHeight,
     expanded,
     ids,
     level: note.level,
@@ -216,181 +183,109 @@ export const NoteCard = ({
   }
   // TODO:なんかスクロールしづらそう。。。
   return (
-    <Stack focusStyle={styles.focusNoteStyle}>
-      <Stack
-        // onLayout={({
-        //   nativeEvent: {
-        //     layout: { height },
-        //   },
-        // // TODO:↓の行移動
-        // }) => dispatch(updateHeight({ id: note.id, height }))
-        // }
-        // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
-        onTouchStart={() => {
-          dispatch(
-            updateFucusId({
-              focusChildrenLength: note.children?.length ?? 0,
-              focusId: note.id,
-              ids,
-              level: note.level,
-              orderNumber: note.orderNumber,
-              parentId: note.parentId,
-            }),
-          );
-        }}
-        mt={0}
-        mb={8}
-        ml={8}
-        mr={2}
-        borderWidth={2}
-        borderColor={colors.primary}
-        borderRadius={8}
-      >
-        <XStack
-          position="relative"
-          alignItems="center"
-          justifyContent="space-between"
-          backgroundColor={colors.primary}
-          px={8}
-          py={4}
+    <>
+      <Stack style={thisNoteFocus && styles.focusNoteStyle}>
+        <Stack
+          // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
+          onTouchStart={() => {
+            dispatch(
+              updateFucusId({
+                focusChildrenLength: note.children?.length ?? 0,
+                focusId: note.id,
+                focusNoteHeight: noteHeight?.height ?? 0,
+                ids,
+                level: note.level,
+                orderNumber: note.orderNumber,
+                parentId: note.parentId,
+              }),
+            );
+          }}
+          mt={0}
+          mb={8}
+          ml={8}
+          mr={2}
+          borderWidth={2}
+          borderColor={colors.primary}
+          borderRadius={8}
         >
-          <XStack alignItems="center" f={1}>
-            {/* TODO:絵文字の箇所型など修正 */}
-            <Emoji />
-            <TextArea
-              style={[styles.titleTextInputStyle, { color: colors.text }]}
-              focusStyle={styles.focusBorderNoneStyle}
-              bg={colors.primary}
-              py={10}
-              lineHeight={18}
-              px={4}
-              bw={0}
-              h={36}
-              value={title ?? ''}
-              multiline={true}
-              onChangeText={(title) => setTitle(title)}
-              autoCapitalize="none"
-              onEndEditing={() => {
-                void (async () => {
-                  // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
-                  await dispatch(
-                    updateAsyncNote({
-                      ids,
-                      updateNoteData: { id: ids[0] ?? 'aaa', title },
-                    }),
-                  );
-                })();
-              }}
-            />
-          </XStack>
-          {/* TODO:Expandedはアニメーション終わったあとにコンポーネント化 */}
-          <Stack boc={colors.primary}>
-            <Stack animation={'bouncy'} {...position}>
-              <SimpleLineIcons
-                onPress={() => {
+          <XStack
+            position="relative"
+            alignItems="center"
+            justifyContent="space-between"
+            backgroundColor={colors.primary}
+            px={8}
+            py={4}
+          >
+            <XStack alignItems="center" f={1}>
+              {/* TODO:絵文字の箇所型など修正 */}
+              <Emoji />
+              <TextArea
+                style={[styles.titleTextInputStyle, { color: colors.text }]}
+                focusStyle={styles.focusBorderNoneStyle}
+                bg={colors.primary}
+                py={10}
+                lineHeight={18}
+                px={4}
+                bw={0}
+                h={36}
+                value={title ?? ''}
+                multiline={true}
+                onChangeText={(title) => setTitle(title)}
+                autoCapitalize="none"
+                onEndEditing={() => {
                   void (async () => {
-                    expanded ? fadeIn() : fadeOut();
-                    setExpanded((prevExpanded) => !prevExpanded);
-                    // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん 更新されていそう
+                    // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
                     await dispatch(
                       updateAsyncNote({
                         ids,
-                        updateNoteData: {
-                          id: ids[0] ?? '',
-                          expanded: !expanded,
-                        },
+                        updateNoteData: { id: ids[0] ?? 'aaa', title },
                       }),
                     );
                   })();
                 }}
-                name="arrow-up"
-                size={20}
-                color={colors.text}
-                px={12 - 4 * (note.level + 1)}
               />
+            </XStack>
+            {/* TODO:Expandedはアニメーション終わったあとにコンポーネント化 */}
+            <Stack boc={colors.primary}>
+              <Stack animation={'bouncy'} {...position}>
+                <SimpleLineIcons
+                  onPress={() => {
+                    void (async () => {
+                      expanded ? fadeIn() : fadeOut();
+                      setExpanded((prevExpanded) => !prevExpanded);
+                      // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん 更新されていそう
+                      await dispatch(
+                        updateAsyncNote({
+                          ids,
+                          updateNoteData: {
+                            id: ids[0] ?? '',
+                            expanded: !expanded,
+                          },
+                        }),
+                      );
+                    })();
+                  }}
+                  name="arrow-up"
+                  size={20}
+                  color={colors.text}
+                  px={12 - 4 * (note.level + 1)}
+                />
+              </Stack>
             </Stack>
-          </Stack>
-        </XStack>
-        <Animated.View
-          style={[styles.animatedExpandedView, { height: animatedValue }]}
-        >
-          {focusNote.focusId === note.id ? (
-            <>
-              <RichEditor
-                ref={(r) => (richText.current = r)}
-                onFocus={onFocus}
-                onBlur={onDone}
-                initialContentHTML={description ?? ''}
-                onChange={(description) => {
-                  setDescription(description);
-                }}
-                initialFocus={true}
-                style={styles.rich}
-                onHeightChange={(height) => {
-                  if (height !== 16 && height !== noteHeight?.contentsHeight) {
-                    dispatch(
-                      updateContentsHeight({
-                        id: note.id,
-                        contentsHeight: height + 50,
-                      }),
-                    );
-                  }
-                }}
-              />
-              <RichToolbar
-                // TODO: ダークモード対応目調整
-                // style={[styles.richBar, dark && styles.richBarDark]}
-                style={[styles.richBar]}
-                flatContainerStyle={styles.flatStyle}
-                editor={richText}
-                selectedIconTint={'#2095F2'}
-                disabledIconTint={'#bfbfbf'}
-                actions={[
-                  actions.setBold,
-                  actions.setItalic,
-                  actions.setStrikethrough,
-                  actions.insertLink,
-                  actions.insertOrderedList,
-                  actions.insertBulletsList,
-                  actions.blockquote,
-                  actions.code,
-                  // TODO:不要かなー
-                  // actions.checkboxList,
-                  // actions.indent,
-                  // actions.outdent,
-                  // TODO
-                  // actions.insertImage,
-                ]}
-                // TODO
-                // onPressAddImage={onPressAddImage}
-              />
-            </>
-          ) : (
-            <Stack px={6.5}>
-              <RenderHtml
-                // htmlHeight={noteHeight?.contentsHeight ?? 0}
-                source={{
-                  html: description,
-                }}
-                tagsStyles={{
-                  code: {
-                    backgroundColor: colors.background,
-                    borderRadius: 4,
-                    color: colors.text,
-                    padding: 4,
-                  },
-                  div: { fontSize: 16 },
-                  p: { fontSize: 16 },
-                  span: { fontSize: 15 },
-                }}
-                contentWidth={width}
-              />
-            </Stack>
-          )}
-        </Animated.View>
-        <NoteChildCard />
+          </XStack>
+          <Animated.View
+            style={[styles.animatedExpandedView, { height: animatedValue }]}
+          >
+            <RichDescriptionDialog
+              ids={ids}
+              note={note}
+              setDescriptionHeight={setDescriptionHeight}
+            />
+          </Animated.View>
+          <NoteChildCard />
+        </Stack>
       </Stack>
-    </Stack>
+    </>
   );
 };
 
@@ -399,9 +294,6 @@ const styles = StyleSheet.create({
     overflow: 'scroll',
     paddingHorizontal: 6,
     paddingVertical: 2,
-  },
-  flatStyle: {
-    paddingHorizontal: 12,
   },
   focusBorderNoneStyle: {
     borderWidth: 0,
@@ -414,22 +306,6 @@ const styles = StyleSheet.create({
     ml: 4,
     mr: 2,
     paddingTop: 8,
-  },
-  rich: {
-    borderColor: '#e3e3e3',
-    flex: 1,
-    fontSize: 14,
-    margin: 0,
-    padding: 0,
-    width: '100%',
-  },
-  richBar: {
-    borderColor: '#efefef',
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  richBarDark: {
-    backgroundColor: '#191d20',
-    borderColor: '#696969',
   },
   titleTextInputStyle: {
     alignItems: 'center',

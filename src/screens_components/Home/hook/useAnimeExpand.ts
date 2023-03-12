@@ -24,7 +24,6 @@ export const useAnimeExpand = (props: Props): useAnimeExpandReturn => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.descriptionHeight]);
-
   const fadeOut = useCallback((): void => {
     Animated.timing(animatedValue, {
       duration,

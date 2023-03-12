@@ -7,7 +7,7 @@ import DraggableFlatList, {
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner, Stack, XStack } from 'tamagui';
 
-import { height, useColors, width } from '~/lib/constants';
+import { _HEIGHT, useColors, width } from '~/lib/constants';
 import { updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { selectSideTree } from '~/slices/sideTreeSlice';
 import { AppDispatch } from '~/store';
@@ -52,14 +52,14 @@ export const SideTree = ({
     <Suspense fallback={<Spinner />}>
       <XStack
         animation={'bouncy'}
-        h={height}
+        h={_HEIGHT}
         w={width}
         pos={'absolute'}
         zIndex="2"
         {...position}
       >
         <Stack
-          h={height}
+          h={_HEIGHT}
           br="$4"
           pt={30}
           w={(width / 4) * 1}
@@ -67,7 +67,7 @@ export const SideTree = ({
         />
         <Stack
           bc={colors.primary}
-          h={height}
+          h={_HEIGHT}
           br="$4"
           pt={30}
           btrr={0}

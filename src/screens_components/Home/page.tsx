@@ -73,12 +73,14 @@ export const Home: FC = () => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%' }}
       >
+        {/* <Stack py={focusNoteHeight}> */}
         <HomeHeader />
         <SideTree notes={notes} onNoteNavigate={onPress} />
         <TouchableOpacity
           onPress={() => router.push('/MyPageScreen')}
         ></TouchableOpacity>
         <Stack h={60} />
+        {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         <FlatList
           data={notes}
           ref={flatListRef}
@@ -86,6 +88,8 @@ export const Home: FC = () => {
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />
+        {/* </TouchableWithoutFeedback> */}
+        {/* </Stack> */}
       </ImageBackground>
     </SafeAreaView>
   );

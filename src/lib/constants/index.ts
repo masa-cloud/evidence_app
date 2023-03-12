@@ -1,2 +1,2 @@
 export { useColors } from './Colors';
-export { height, isSmallDevice, width } from './Layout';
+export { _HEIGHT, isSmallDevice, width } from './Layout';

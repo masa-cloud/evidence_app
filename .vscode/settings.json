@@ -13,5 +13,5 @@
     "source.fixAll.eslint"
   ],
   "tailwindCSS.experimental.classRegex": ["tw\\('([^')]*)"],
-  "cSpell.words": ["tamagui"]
+  "cSpell.words": ["tamagui", "Unspaced"]
 }

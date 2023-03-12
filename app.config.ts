@@ -18,6 +18,7 @@ export default {
       supportsTablet: true,
     },
     orientation: 'portrait',
+    plugins: ['expo-localization'],
     scheme: 'myapp',
     slug: 'evidence_app',
     splash: {

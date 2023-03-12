@@ -1,62 +1,22 @@
 import { createInterFont } from '@tamagui/font-inter';
+import { createMedia } from '@tamagui/react-native-media-driver';
 import { shorthands } from '@tamagui/shorthands';
 import { themes, tokens } from '@tamagui/theme-base';
 import { createTamagui } from 'tamagui';
 
 import { animations } from './src/lib/constants/animations';
 
-const headingFont = createInterFont({
-  color: {
-    6: '$colorFocus',
-    7: '$color',
-  },
-  face: {
-    700: { normal: 'InterBold' },
-  },
-  letterSpacing: {
-    10: -3,
-    12: -4,
-    14: -5,
-    15: -6,
-    5: 2,
-    6: 1,
-    7: 0,
-    8: -1,
-    9: -2,
-  },
-  size: {
-    6: 15,
-  },
-  transform: {
-    6: 'uppercase',
-    7: 'none',
-  },
-  weight: {
-    6: '400',
-    7: '700',
-  },
-});
-
-const bodyFont = createInterFont(
-  {
-    face: {
-      700: { normal: 'InterBold' },
-    },
-  },
-  {
-    sizeLineHeight: (size) => Math.round(size * 1.1 + (size > 20 ? 10 : 10)),
-    sizeSize: (size) => Math.round(size * 1.1),
-  },
-);
+const headingFont = createInterFont();
+const bodyFont = createInterFont();
 
 const config = createTamagui({
   animations,
-  defaultTheme: 'light',
+  defaultTheme: 'dark',
   fonts: {
     body: bodyFont,
     heading: headingFont,
   },
-  media: {
+  media: createMedia({
     gtLg: { minWidth: 1280 + 1 },
     gtMd: { minWidth: 1020 + 1 },
     gtSm: { minWidth: 800 + 1 },
@@ -71,7 +31,7 @@ const config = createTamagui({
     xl: { maxWidth: 1420 },
     xs: { maxWidth: 660 },
     xxl: { maxWidth: 1600 },
-  },
+  }),
   shorthands,
   shouldAddPrefersColorThemes: false,
   themeClassNameOnRoot: false,

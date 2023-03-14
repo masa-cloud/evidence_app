@@ -23,7 +23,7 @@ import {
 } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import { _HEIGHT, useColors, width } from '~/lib/constants';
+import { useColors, width } from '~/lib/constants';
 import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
 import {
   addAsyncBrotherNote,
@@ -322,7 +322,6 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
             enterStyle={{ o: 0 }}
             exitStyle={{ o: 0 }}
           />
-
           <Dialog.Content
             bordered
             elevate
@@ -343,15 +342,16 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
           >
             <YStack
               animation={'bouncy'}
+              fullscreen
               {...position}
-              // h={_HEIGHT * ((snapPointHeight[snapPointNumber] ?? 95) * 0.01)}
-              h={_HEIGHT}
               backgroundColor="transparent"
+              alignItems="stretch"
             >
               <Stack
+                animation={'bouncy'}
                 flexBasis={'auto'}
                 flexGrow={1}
-                flexShrink={1}
+                flexShrink={0}
                 backgroundColor="transparent"
                 w={'100%'}
               >
@@ -373,12 +373,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                   }}
                 />
               </Stack>
-              <XStack
-                flexBasis={44}
-                flexGrow={0}
-                flexShrink={0}
-                alignItems="center"
-              >
+              <XStack animation={'bouncy'} h={44} alignItems="center">
                 <RichToolbar
                   style={styles.richBar}
                   flatContainerStyle={styles.flatStyle}
@@ -421,11 +416,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                   />
                 </Dialog.Close>
               </XStack>
-              <Stack
-                flexBasis={keyboardHeight + 55}
-                flexGrow={0}
-                flexShrink={0}
-              />
+              <Stack backgroundColor="transparent" h={keyboardHeight} />
             </YStack>
             <Unspaced>
               <Dialog.Close

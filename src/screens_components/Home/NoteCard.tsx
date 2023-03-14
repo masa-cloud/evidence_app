@@ -1,14 +1,14 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { FlatList } from '@stream-io/flat-list-mvcp';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
-import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
+import { updateFucusId } from '~/slices/focusNoteSlice';
 import {
   addAsyncEmoji,
   updateAsyncEmoji,
@@ -35,7 +35,7 @@ export const NoteCard = ({
 }: NoteCardProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   // reducer.
-  const { focusNote } = useSelector(selectFocusNote);
+  // const { focusNote } = useSelector(selectFocusNote);
   // state
   const [title, setTitle] = useState<string>(note.title);
   const [descriptionHeight, setDescriptionHeight] = useState<number>(48);
@@ -44,16 +44,17 @@ export const NoteCard = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // ref
   // memo
-  const thisNoteFocus = useMemo(
-    () => focusNote.focusId === note.id,
-    [focusNote.focusId, note.id],
-  );
+  // const thisNoteFocus = useMemo(
+  //   () => focusNote.focusId === note.id,
+  //   [focusNote.focusId, note.id],
+  // );
   // custom hook
   const { colors } = useColors();
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
-    descriptionHeight: thisNoteFocus
-      ? descriptionHeight + 50
-      : descriptionHeight,
+    // descriptionHeight: thisNoteFocus
+    // ? descriptionHeight + 50
+    // : descriptionHeight,
+    descriptionHeight: descriptionHeight + 50,
     expanded,
     ids,
     level: note.level,

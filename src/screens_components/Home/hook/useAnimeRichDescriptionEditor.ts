@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { _HEIGHT } from '~/lib/constants';
 
 type useAnimeRichDescriptionEditorReturn = {
   position:
@@ -23,12 +24,12 @@ export const useAnimeRichDescriptionEditor = (
 
 const positions = [
   {
-    scaleY: 0.8,
+    height: _HEIGHT * 0.8,
   },
   {
-    scaleY: 0.95,
+    height: _HEIGHT * 0.95,
   },
   {
-    scaleY: 0.65,
+    height: _HEIGHT * 0.65,
   },
 ];

@@ -44,6 +44,19 @@ type RichDescriptionDialogProps = {
 
 export const snapPointHeight: [number, number, number] = [80, 95, 65];
 
+export const actionList = [
+  actions.insertImage,
+  actions.checkboxList,
+  actions.insertBulletsList,
+  actions.insertOrderedList,
+  actions.insertLink,
+  actions.setItalic,
+  actions.setUnderline,
+  actions.undo,
+  actions.redo,
+  actions.keyboard,
+] as string[];
+
 export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
   (props: RichDescriptionDialogProps) => {
     const richText = useRef<RichEditor | null>();
@@ -98,7 +111,6 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
     const onKeyboardDidHide = useCallback((): void => {
       setKeyboardHeight(0);
     }, []);
-    const scrollRef = useRef();
     useFocusEffect(
       useCallback(() => {
         const didShowSubscription = Keyboard.addListener(
@@ -116,10 +128,6 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []),
     );
-    const handleCursorPosition = useCallback((offsetY: number) => {
-      // Positioning scroll bar
-      scrollRef?.current?.scrollTo({ animated: true, y: offsetY - 30 });
-    }, []);
 
     return (
       <Dialog modal>
@@ -223,6 +231,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                             await dispatch(
                               deleteAsyncNote({
                                 id: props.note.id,
+                                ids: props.ids,
                               }),
                             );
                           })();
@@ -278,6 +287,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                                   await dispatch(
                                     deleteAsyncNote({
                                       id: props.note.id,
+                                      ids: props.ids,
                                     }),
                                   );
                                 })();
@@ -362,7 +372,6 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                   onChange={(description) => {
                     setDraftDescription(description);
                   }}
-                  onCursorPosition={handleCursorPosition}
                   style={styles.richEditor}
                   editorStyle={{
                     backgroundColor: 'transparent',
@@ -383,23 +392,13 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                   unselectedButtonStyle={styles.richToolBarIcon}
                   selectedButtonStyle={styles.richToolBarIcon}
                   disabledButtonStyle={styles.richToolBarIcon}
-                  iconSize={28}
-                  actions={[
-                    actions.setBold,
-                    actions.setItalic,
-                    actions.setStrikethrough,
-                    actions.insertLink,
-                    actions.insertOrderedList,
-                    actions.insertBulletsList,
-                    actions.blockquote,
-                    actions.code,
-                    // TODO:不要かなー
-                    // actions.checkboxList,
-                    // actions.indent,
-                    // actions.outdent,
-                    // TODO
-                    // actions.insertImage,
-                  ]}
+                  actions={actionList}
+                  // TODO:不要かなー
+                  // actions.checkboxList,
+                  // actions.indent,
+                  // actions.outdent,
+                  // TODO
+                  // actions.insertImage,
                 />
                 <Dialog.Close
                   m={0}
@@ -461,6 +460,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   richToolBarIcon: {
+    fontSize: 28,
     width: 40,
   },
 });

@@ -39,21 +39,6 @@ export const HomeHeader = (): JSX.Element => {
     >
       <Ionicons name="ios-menu-sharp" size={30} color={colors.text} />
       <XStack alignItems="center" justifyContent="space-between">
-        <MaterialIcons
-          name="delete"
-          onPress={() => {
-            void (async () => {
-              await dispatch(
-                deleteAsyncNote({
-                  id: focusNote.focusId,
-                }),
-              );
-            })();
-          }}
-          style={{ marginHorizontal: 8 }}
-          size={30}
-          color={colors.text}
-        />
         <Ionicons
           name="search-sharp"
           style={{ marginHorizontal: 8 }}
@@ -67,42 +52,6 @@ export const HomeHeader = (): JSX.Element => {
           size={30}
           color={colors.text}
         />
-        <TouchableOpacity
-          onPress={() => {
-            void (async () => {
-              await dispatch(
-                addAsyncBrotherNote({
-                  focusLevel: focusNote.level,
-                  ids: focusNote.ids,
-                  orderNumber: focusNote.orderNumber,
-                  parentId: focusNote.parentId,
-                }),
-              );
-            })();
-          }}
-        >
-          <Stack mx={8}>
-            <Image height={24} width={24} src={Images.plusPare} />
-          </Stack>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            void (async () => {
-              await dispatch(
-                addAsyncChildNote({
-                  id: focusNote.focusId,
-                  childrenLength: focusNote.focusChildrenLength,
-                  focusLevel: focusNote.level,
-                  ids: focusNote.ids,
-                }),
-              );
-            })();
-          }}
-        >
-          <Stack mx={8}>
-            <Image height={24} width={24} src={Images.plusChild} />
-          </Stack>
-        </TouchableOpacity>
       </XStack>
     </XStack>
   );

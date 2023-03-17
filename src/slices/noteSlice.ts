@@ -20,12 +20,6 @@ type State = {
   notes: Note[];
 };
 
-// type orderIds = {
-//   from: number;
-//   ids: string[];
-//   to: number;
-// };
-
 const initialState: State = {
   notes: [],
 };
@@ -168,8 +162,8 @@ const updateAsyncNote = createAsyncThunk<
 }); // === END UPDATE ===
 // === START DELETE ===
 const deleteAsyncNote = createAsyncThunk<
-  { deletedNote: Note },
-  { id: string },
+  { deletedNote: Note; ids: string[] },
+  { id: string; ids: string[] },
   {
     rejectValue: string;
     state: { notes: State };
@@ -179,7 +173,7 @@ const deleteAsyncNote = createAsyncThunk<
     throw error;
   });
   if (notes) {
-    return notes;
+    return { ...notes, ids: focusData.ids };
   } else {
     throw new Error('error addAsyncChildNote');
   }
@@ -371,7 +365,6 @@ export const noteSlice = createSlice({
               noteTitleUpdate(parentNote.children, loopCount - 1, parentNote);
           }
         };
-        console.log('action.payload', action.payload, loopCount);
         notes && noteTitleUpdate(notes, loopCount);
       })
       .addCase(updateAsyncNote.fulfilled, (state, action) => {
@@ -405,19 +398,36 @@ export const noteSlice = createSlice({
         };
         if (note !== undefined) updateStoreNote(note, loopCount);
       }) // === END UPDATE ===
-      // === START CREATE ===
+      // === START DELETE ===
       .addCase(deleteAsyncNote.fulfilled, (state, action) => {
-        // TODO:ロードの完了有無追加
-        // state.status = 'idle';
-        // state.notes = action.payload;
-        state.notes = state.notes.filter(
-          (note) => note.id !== action.payload.deletedNote.id,
-        );
-      }); // == END CREATE ===
+        const ids = action.payload.ids;
+        const targetId = action.payload.deletedNote.id;
+        findNoteAndRemove(state.notes, ids, targetId);
+      }); // == END DELETE ===
   },
   initialState,
   reducers: {},
 });
+
+const findNoteAndRemove = (
+  notes: Array<WritableDraft<Note>>,
+  ids: string[],
+  targetId: string,
+  depth: number = 0,
+): void => {
+  if (depth === ids.length - 1) {
+    const index = notes.findIndex((note) => note.id === targetId);
+    if (index !== -1) {
+      notes.splice(index, 1);
+    }
+    return;
+  }
+
+  const note = notes.find((note) => note.id === ids[depth]);
+  if (note?.children) {
+    findNoteAndRemove(note.children, ids, targetId, depth + 1);
+  }
+};
 
 // const { updateOrder } = noteSlice.actions;
 

@@ -1,8 +1,8 @@
 import React, { Suspense, useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
+  OpacityDecorator,
   RenderItemParams,
-  ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner, Stack, XStack } from 'tamagui';
@@ -22,7 +22,7 @@ export const SideTree = ({
   onNoteNavigate,
 }: {
   notes: Note[];
-  onNoteNavigate: (height: number) => void;
+  onNoteNavigate: (orders: number[]) => void;
 }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useColors();
@@ -32,15 +32,17 @@ export const SideTree = ({
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
-        <ScaleDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={isActive}>
-            <SideTreeItem
-              onNoteNavigate={onNoteNavigate}
-              note={item}
-              ids={[item?.id ?? '']}
-            />
-          </TouchableOpacity>
-        </ScaleDecorator>
+        <Stack onLayout={(event) => console.log(event.nativeEvent.layout)}>
+          <OpacityDecorator>
+            <TouchableOpacity onLongPress={drag} disabled={isActive}>
+              <SideTreeItem
+                onNoteNavigate={onNoteNavigate}
+                note={item}
+                ids={[item?.id ?? '']}
+              />
+            </TouchableOpacity>
+          </OpacityDecorator>
+        </Stack>
       );
     },
     [onNoteNavigate],
@@ -97,10 +99,12 @@ export const SideTree = ({
                 void updateOrder();
               }
             }}
-            extraData={notes}
+            // TODO:不要だったらそれでいい
+            // extraData={notes}
             keyExtractor={(item, index) =>
               `side-tree-${item?.id ?? index}-${index}`
             }
+            // getItemLayout={getItemLayout}
             renderItem={renderItem}
           />
         </Stack>

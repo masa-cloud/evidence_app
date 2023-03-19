@@ -1,13 +1,19 @@
-// import { useFocusEffect } from '@react-navigation/native';
-import { FlatList } from '@stream-io/flat-list-mvcp';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { FC, useCallback, useRef } from 'react';
 import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
+import DraggableFlatList, {
+  OpacityDecorator,
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import { fetchAsyncNotes, selectNote } from '~/slices/noteSlice';
+import {
+  fetchAsyncNotes,
+  selectNote,
+  updateAsyncNoteOrder,
+} from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -15,21 +21,13 @@ import { HomeHeader } from './HomeHeader';
 import { NoteCard } from './NoteCard';
 import { SideTree } from './SideTree';
 
-// type HomeScreenNavigationProps = NativeStackNavigationProp<
-//   HomeTabParamList,
-//   'HomeScreen'
-// >;
-
-// type Props = {
-//   navigation: HomeScreenNavigationProps;
-// };
-
 /** @package */
 export const Home: FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
+  const flatListChildRef = useRef<any>(undefined);
 
   useFocusEffect(
     useCallback(() => {
@@ -46,22 +44,27 @@ export const Home: FC = () => {
     }, [dispatch]),
   );
 
-  // const getOneTodo = async (): Promise<void> => {
-  //   // Query using a parameter
-  //   const oneTodo = await API.graphql({
-  //     query: queries.getTodo,
-  //     variables: { id: '246fe283-2c58-4459-8358-ee0ece37a71e' },
-  //   });
-  //   console.log(oneTodo);
-  // };
-
-  const onPress = (height: number): void => {
-    flatListRef.current.scrollToOffset({ animated: true, offset: height });
+  // TODO: 子要素もスクロールできるようにする。
+  const onNoteNavigate = (orders: number[]): void => {
+    flatListRef?.current?.scrollToIndex({ animated: true, index: orders[0] });
   };
 
-  const renderItem = useCallback(({ item }: { item: Note }): JSX.Element => {
-    return <NoteCard note={item} ids={[item.id]} />;
-  }, []);
+  const renderItem = useCallback(
+    ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
+      return (
+        <OpacityDecorator>
+          <TouchableOpacity onLongPress={drag} disabled={isActive}>
+            <NoteCard
+              note={item}
+              ids={[item.id]}
+              flatListChildRef={flatListChildRef}
+            />
+          </TouchableOpacity>
+        </OpacityDecorator>
+      );
+    },
+    [],
+  );
 
   // TODO:データが無い時のハンドリング
   // if ( notes.length === 0 ) return <></>
@@ -74,16 +77,36 @@ export const Home: FC = () => {
         style={{ height: '100%', width: '100%' }}
       >
         <HomeHeader />
-        <SideTree notes={notes} onNoteNavigate={onPress} />
+        <SideTree notes={notes} onNoteNavigate={onNoteNavigate} />
         <TouchableOpacity
           onPress={() => router.push('/MyPageScreen')}
         ></TouchableOpacity>
         <Stack h={60} />
         {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
-        <FlatList
+        <DraggableFlatList
           data={notes}
           ref={flatListRef}
-          extraData={flatListRef}
+          onDragEnd={({ data, from, to }) => {
+            const id = data[to]?.id;
+            if (id !== undefined) {
+              const updateOrder = async (): Promise<void> => {
+                try {
+                  await dispatch(
+                    updateAsyncNoteOrder({
+                      ids: [id],
+                      isIncreased: from > to,
+                      parentId: data[to]?.parentId,
+                      targetOrderNumber: to,
+                    }),
+                  );
+                } catch (e) {
+                  console.log({ e });
+                  // Handle error
+                }
+              };
+              void updateOrder();
+            }
+          }}
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />

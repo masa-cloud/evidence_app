@@ -384,7 +384,11 @@ export const noteSlice = createSlice({
               note.orderNumber = updatedNote.orderNumber;
             if (updateNoteData.description)
               note.description = updatedNote.description;
-            if (updateNoteData.expanded) note.expanded = updatedNote.expanded;
+            if (
+              updateNoteData.expanded !== undefined ||
+              updateNoteData.expanded !== null
+            )
+              note.expanded = updatedNote.expanded;
             if (updateNoteData.title) note.title = updatedNote.title;
           } else {
             const minusLoopCount = loopCount - 1;

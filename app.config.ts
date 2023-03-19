@@ -15,8 +15,10 @@ export default {
     },
     icon: 'src/assets/images/icon.png',
     ios: {
+      jsEngine: 'jsc',
       supportsTablet: true,
     },
+    jsEngine: 'hermes',
     orientation: 'portrait',
     plugins: ['expo-localization'],
     scheme: 'myapp',

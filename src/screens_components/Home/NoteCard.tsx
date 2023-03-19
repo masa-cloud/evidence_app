@@ -1,10 +1,13 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
-import { FlatList } from '@stream-io/flat-list-mvcp';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
+import DraggableFlatList, {
+  OpacityDecorator,
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
 import { useDispatch } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
-import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/types';
+import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/src/types';
 import { Stack, Text, TextArea, XStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
@@ -13,6 +16,7 @@ import {
   addAsyncEmoji,
   updateAsyncEmoji,
   updateAsyncNote,
+  updateAsyncNoteOrder,
 } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
@@ -22,6 +26,7 @@ import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 import { RichDescriptionDialog } from './RichDescriptionDialog';
 
 export type NoteCardProps = {
+  flatListChildRef: React.MutableRefObject<any>;
   ids: string[];
   note: Note;
   parentExpanded?: boolean;
@@ -29,6 +34,7 @@ export type NoteCardProps = {
 
 /** @package */
 export const NoteCard = ({
+  flatListChildRef,
   ids,
   note,
   parentExpanded = true,
@@ -60,21 +66,25 @@ export const NoteCard = ({
     level: note.level,
   });
   const { position } = useAnimeExpandedRotate(expanded);
+
   const renderItem = useCallback(
-    ({ item }: { item: Note }): JSX.Element => {
+    ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
-        <NoteCard
-          note={item}
-          ids={[item.id, ...ids]}
-          parentExpanded={expanded}
-        />
+        <OpacityDecorator>
+          <TouchableOpacity onLongPress={drag} disabled={isActive}>
+            <NoteCard
+              note={item}
+              flatListChildRef={flatListChildRef}
+              ids={[item.id, ...ids]}
+              parentExpanded={expanded}
+            />
+          </TouchableOpacity>
+        </OpacityDecorator>
       );
     },
-    [ids, expanded],
+    [flatListChildRef, ids, expanded],
   );
-  useEffect(() => {
-    console.warn({ descriptionHeight });
-  }, [descriptionHeight]);
+
   const handlePick = useCallback(
     (emojiObject: EmojiType): void => {
       // setEmoji(emojiObject.emoji)
@@ -154,8 +164,30 @@ export const NoteCard = ({
     if (note.children !== undefined) {
       const NoteChild = note.children;
       return (
-        <FlatList
+        <DraggableFlatList
           data={NoteChild}
+          ref={flatListChildRef}
+          onDragEnd={({ data, from, to }) => {
+            const id = data[to]?.id;
+            if (id !== undefined) {
+              const updateOrder = async (): Promise<void> => {
+                try {
+                  await dispatch(
+                    updateAsyncNoteOrder({
+                      ids: [id, ...ids],
+                      isIncreased: from > to,
+                      parentId: data[to]?.parentId,
+                      targetOrderNumber: to,
+                    }),
+                  );
+                } catch (e) {
+                  console.log({ e });
+                  // Handle error
+                }
+              };
+              void updateOrder();
+            }
+          }}
           keyExtractor={(item, index) => `child-item-${item.id}-${index}`}
           renderItem={renderItem}
         />
@@ -163,7 +195,7 @@ export const NoteCard = ({
     } else {
       return <></>;
     }
-  }, [note.children, renderItem]);
+  }, [dispatch, note.children, renderItem]);
 
   if (!parentExpanded) {
     return <></>;
@@ -171,7 +203,10 @@ export const NoteCard = ({
 
   return (
     <>
-      <Stack focusStyle={styles.focusNoteStyle}>
+      <Stack
+        onLayout={(event) => console.log(event.nativeEvent.layout)}
+        focusStyle={styles.focusNoteStyle}
+      >
         <Stack
           // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
           onTouchStart={() => {
@@ -224,7 +259,7 @@ export const NoteCard = ({
                     await dispatch(
                       updateAsyncNote({
                         ids,
-                        updateNoteData: { id: ids[0] ?? 'aaa', title },
+                        updateNoteData: { id: ids[0] ?? '', title },
                       }),
                     );
                   })();

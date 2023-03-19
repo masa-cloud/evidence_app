@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
+  OpacityDecorator,
   RenderItemParams,
-  ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 
 const NUM_ITEMS = 10;
@@ -50,7 +50,7 @@ export function MyPage(): JSX.Element {
     item,
   }: RenderItemParams<Item>): JSX.Element => {
     return (
-      <ScaleDecorator>
+      <OpacityDecorator>
         <TouchableOpacity
           onLongPress={drag}
           disabled={isActive}
@@ -61,7 +61,7 @@ export function MyPage(): JSX.Element {
         >
           <Text style={styles.text}>{item.label}</Text>
         </TouchableOpacity>
-      </ScaleDecorator>
+      </OpacityDecorator>
     );
   };
 

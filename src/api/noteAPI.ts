@@ -272,8 +272,6 @@ export const updateNoteOrdersApi = async ({
 }): Promise<void> => {
   // const orderChange = isIncreased ? -1 : 1
   const promises = deleteNote.map((item, index) => {
-    // const targetNote = ids[0] === item.id
-    console.log(item.title, item.id, item.orderNumber);
     return API.graphql({
       query: updateNote,
       variables: {

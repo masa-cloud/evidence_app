@@ -4,11 +4,7 @@ import React, { FC, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { Button, Spinner } from 'tamagui';
 
-import {
-  CognitoError,
-  ValidationPasswordInput,
-  ValidationTextInput,
-} from '~/components/Form';
+import { CognitoError, ValidationPasswordInput, ValidationTextInput } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
 import { signUpSchema } from '~/schema/schema';
 
@@ -35,13 +31,8 @@ export const SignUp: FC<Props> = (props) => {
     resolver: yupResolver(signUpSchema),
   });
   const [error, setError] = useState<string | React.ReactNode>('');
-  const onError: SubmitErrorHandler<SignUpInput> = (errors: any, e: any) =>
-    console.log(errors, e);
-  const handleSignUp: SubmitHandler<SignUpInput> = async ({
-    confirmPassword,
-    email,
-    password,
-  }) => {
+  const onError: SubmitErrorHandler<SignUpInput> = (errors: any, e: any) => console.log(errors, e);
+  const handleSignUp: SubmitHandler<SignUpInput> = async ({ confirmPassword, email, password }) => {
     if (password !== confirmPassword) {
       return;
     }

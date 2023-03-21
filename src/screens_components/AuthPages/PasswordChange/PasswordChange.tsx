@@ -17,9 +17,7 @@ type PasswordChangeInput = {
 };
 
 type Props = {
-  setPasswordChangeState: React.Dispatch<
-    React.SetStateAction<PasswordChangeState>
-  >;
+  setPasswordChangeState: React.Dispatch<React.SetStateAction<PasswordChangeState>>;
 };
 
 /** @package */
@@ -32,15 +30,8 @@ export const PasswordChange: FC<Props> = (props) => {
     resolver: yupResolver(passwordChangeSchema),
   });
   const [error, setError] = useState<string | React.ReactNode>('');
-  const onError: SubmitErrorHandler<PasswordChangeInput> = (
-    errors: any,
-    e: any,
-  ) => console.log(errors, e);
-  const handleSignUp: SubmitHandler<PasswordChangeInput> = async ({
-    confirmNewPassword,
-    newPassword,
-    password,
-  }) => {
+  const onError: SubmitErrorHandler<PasswordChangeInput> = (errors: any, e: any) => console.log(errors, e);
+  const handleSignUp: SubmitHandler<PasswordChangeInput> = async ({ confirmNewPassword, newPassword, password }) => {
     if (newPassword !== confirmNewPassword) {
       return;
     }

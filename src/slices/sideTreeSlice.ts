@@ -32,10 +32,7 @@ export const sideTreeSlice = createSlice({
   name: 'sideTree',
   initialState,
   reducers: {
-    updatePosition: (
-      state,
-      action: PayloadAction<Required<Pick<State, 'position'>>>,
-    ) => {
+    updatePosition: (state, action: PayloadAction<Required<Pick<State, 'position'>>>) => {
       state.position = action.payload.position;
     },
   },

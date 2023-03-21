@@ -7,11 +7,7 @@ import { AlertDialog, Button, Image, Stack, XStack, YStack } from 'tamagui';
 import { Images } from '~/assets/images';
 import { useColors } from '~/lib/constants';
 import { selectFocusNote } from '~/slices/focusNoteSlice';
-import {
-  addAsyncBrotherNote,
-  addAsyncChildNote,
-  deleteAsyncNote,
-} from '~/slices/noteSlice';
+import { addAsyncBrotherNote, addAsyncChildNote, deleteAsyncNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
 /** @package */
@@ -30,35 +26,30 @@ export const ScrollDownNoteMenu = ({
     <XStack
       animation={'bouncy'}
       pos="absolute"
-      bottom={8}
-      left={'5%'}
+      b={8}
+      l={'5%'}
       h={60}
+      o={1}
       enterStyle={{
-        backgroundColor: colors.text,
-        opacity: 0.5,
+        bg: colors.text,
+        o: 0.5,
       }}
-      opacity={1}
       scale={1}
       y={0}
-      zIndex="1"
-      alignItems="center"
-      shadowColor={colors.primary}
-      shadowOffset={{
+      zi="1"
+      ai="center"
+      shac={colors.primary}
+      shof={{
         height: 3,
         width: 0,
       }}
-      shadowRadius={6}
-      borderRadius={32}
+      shar={6}
+      br={32}
       w={'90%'}
-      backgroundColor={colors.primary}
-      justifyContent="space-between"
+      bg={colors.primary}
+      jc="space-between"
     >
-      <XStack
-        flex={1}
-        mx={20}
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <XStack f={1} mx={20} ai="center" jc="space-between">
         <AlertDialog native>
           <AlertDialog.Trigger asChild>
             <MaterialIcons
@@ -74,19 +65,13 @@ export const ScrollDownNoteMenu = ({
               }}
               name="delete"
               pt={4}
-              alignItems="center"
+              ai="center"
               size={36}
               color={colors.text}
             />
           </AlertDialog.Trigger>
           <AlertDialog.Portal>
-            <AlertDialog.Overlay
-              key="overlay"
-              animation="bouncy"
-              o={0.5}
-              enterStyle={{ o: 0 }}
-              exitStyle={{ o: 0 }}
-            />
+            <AlertDialog.Overlay key="overlay" animation="bouncy" o={0.5} enterStyle={{ o: 0 }} exitStyle={{ o: 0 }} />
             <AlertDialog.Content
               bordered
               elevate
@@ -99,19 +84,16 @@ export const ScrollDownNoteMenu = ({
                   },
                 },
               ]}
-              enterStyle={{ opacity: 0, scale: 0.9, x: 0, y: -20 }}
-              exitStyle={{ opacity: 0, scale: 0.95, x: 0, y: 10 }}
+              enterStyle={{ o: 0, scale: 0.9, x: 0, y: -20 }}
+              exitStyle={{ o: 0, scale: 0.95, x: 0, y: 10 }}
               x={0}
               scale={1}
-              opacity={1}
+              o={1}
               y={0}
             >
               <YStack space>
                 <AlertDialog.Title>ヒント</AlertDialog.Title>
-                <AlertDialog.Description>
-                  ゴミ箱アイコンを長押しすると、選択された項目を削除します。
-                </AlertDialog.Description>
-
+                <AlertDialog.Description>ゴミ箱アイコンを長押しすると、選択された項目を削除します。</AlertDialog.Description>
                 <XStack space="$3" jc="flex-end">
                   <AlertDialog.Cancel asChild>
                     <Button>キャンセル</Button>
@@ -138,43 +120,30 @@ export const ScrollDownNoteMenu = ({
         </AlertDialog>
         <Stack
           style={orderedList && { backgroundColor: colors.secondary }}
-          borderRadius={40}
+          br={40}
           h={44}
           w={44}
-          alignItems="center"
-          justifyContent="center"
+          ai="center"
+          jc="center"
           rotate="90deg"
-          onPress={() =>
-            orderedList ? setOrderedList(false) : setOrderedList(true)
-          }
+          onPress={() => (orderedList ? setOrderedList(false) : setOrderedList(true))}
         >
           <Octicons name="arrow-switch" size={36} color={colors.text} />
         </Stack>
-        <YStack position="relative" h={80} alignItems={'center'} px={20}>
+        <YStack pos="relative" h={80} ai={'center'} px={20}>
+          <Stack pos="absolute" scaleX={1.1} rotate="45deg" t={8} h={64} w={64} jc={'center'} ai={'center'} br={20} bg={colors.primary} />
           <Stack
-            position="absolute"
-            scaleX={1.1}
-            rotate="45deg"
-            t={8}
-            h={64}
-            w={64}
-            justifyContent={'center'}
-            alignItems={'center'}
-            borderRadius={20}
-            backgroundColor={colors.primary}
-          ></Stack>
-          <Stack
-            position="absolute"
+            pos="absolute"
             translateY={50}
             translateX={-50}
             rotate="45deg"
             t={14}
             h={52}
             w={52}
-            justifyContent={'center'}
-            alignItems={'center'}
-            borderRadius={20}
-            backgroundColor={colors.secondary}
+            jc={'center'}
+            ai={'center'}
+            br={20}
+            bg={colors.secondary}
           >
             <Stack rotate="-45deg">
               <Ionicons name="book" size={32} color={colors.text} />
@@ -195,7 +164,7 @@ export const ScrollDownNoteMenu = ({
             })();
           }}
         >
-          <Stack h={36} w={36} alignItems={'center'}>
+          <Stack h={36} w={36} ai={'center'}>
             <Image height={32} width={32} src={Images.plusPare} />
           </Stack>
         </TouchableOpacity>
@@ -213,7 +182,7 @@ export const ScrollDownNoteMenu = ({
             })();
           }}
         >
-          <Stack h={36} w={36} alignItems={'center'}>
+          <Stack h={36} w={36} ai={'center'}>
             <Image height={32} width={32} src={Images.plusChild} />
           </Stack>
         </TouchableOpacity>

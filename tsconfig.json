@@ -24,13 +24,5 @@
       }
     ]
   },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js",
-    "./ios/*",
-    "./android/*",
-    "./hasky/*"
-  ]
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "./ios/*", "./android/*", "./hasky/*"]
 }

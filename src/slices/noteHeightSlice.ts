@@ -20,10 +20,7 @@ export const noteHeightSlice = createSlice({
   name: 'noteHeights',
   initialState,
   reducers: {
-    updateContentsHeight: (
-      state,
-      action: PayloadAction<Required<Omit<noteHeight, 'height'>>>,
-    ) => {
+    updateContentsHeight: (state, action: PayloadAction<Required<Omit<noteHeight, 'height'>>>) => {
       const updateNoteHeight = state.noteHeights.find((noteHeight) => {
         return noteHeight.id === action.payload.id;
       });
@@ -37,10 +34,7 @@ export const noteHeightSlice = createSlice({
         });
       }
     },
-    updateHeight: (
-      state,
-      action: PayloadAction<Required<Omit<noteHeight, 'contentsHeight'>>>,
-    ) => {
+    updateHeight: (state, action: PayloadAction<Required<Omit<noteHeight, 'contentsHeight'>>>) => {
       const updateNoteHeight = state.noteHeights.find((noteHeight) => {
         return noteHeight.id === action.payload.id;
       });

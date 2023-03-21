@@ -59,11 +59,9 @@ const addAsyncBrotherNote = createAsyncThunk<
     state: { notes: State };
   }
 >('notes/addAsyncBrotherNote', async (focusNote) => {
-  const newBrotherNotes = await createBrotherNoteApi({ ...focusNote }).catch(
-    (error) => {
-      throw error;
-    },
-  );
+  const newBrotherNotes = await createBrotherNoteApi({ ...focusNote }).catch((error) => {
+    throw error;
+  });
   if (newBrotherNotes) {
     return newBrotherNotes;
   } else {
@@ -79,11 +77,9 @@ const addAsyncChildNote = createAsyncThunk<
     state: { notes: State };
   }
 >('notes/addAsyncChildNote', async (focusData) => {
-  const newChildNote = await createChildNoteApi({ ...focusData }).catch(
-    (error) => {
-      throw error;
-    },
-  );
+  const newChildNote = await createChildNoteApi({ ...focusData }).catch((error) => {
+    throw error;
+  });
   if (newChildNote) {
     return newChildNote;
   } else {
@@ -114,12 +110,9 @@ const updateAsyncNoteOrder = createAsyncThunk<
     rejectValue: string;
     state: { notes: State };
   }
->(
-  'notes/updateAsyncNoteOrder',
-  async ({ ids, isIncreased, parentId, targetOrderNumber }) => {
-    return { ids, targetOrderNumber };
-  },
-);
+>('notes/updateAsyncNoteOrder', async ({ ids, isIncreased, parentId, targetOrderNumber }) => {
+  return { ids, targetOrderNumber };
+});
 
 const updateAsyncEmoji = createAsyncThunk<
   { ids: string[]; updatedEmoji: FetchEmoji },
@@ -187,19 +180,14 @@ export const noteSlice = createSlice({
         const loopCount = action.payload.ids.length - 1;
         const ids = action.payload.ids;
         const note = state.notes.find((note) => note.id === ids[loopCount]);
-        const createStoreEmoji = (
-          note: WritableDraft<Note>,
-          loopCount: number,
-        ): void => {
+        const createStoreEmoji = (note: WritableDraft<Note>, loopCount: number): void => {
           if (loopCount === 0) {
             const newEmoji = action.payload.newEmoji;
             note.emoji = newEmoji;
           } else {
             const minusLoopCount = loopCount - 1;
             if (note.children) {
-              const childNote = note.children.find(
-                (note) => note.id === ids[minusLoopCount],
-              );
+              const childNote = note.children.find((note) => note.id === ids[minusLoopCount]);
               childNote && createStoreEmoji(childNote, minusLoopCount);
             }
           }
@@ -209,51 +197,28 @@ export const noteSlice = createSlice({
       .addCase(addAsyncBrotherNote.fulfilled, (state, action) => {
         const loopCount: number = action.payload.ids.length - 1;
         const ids: string[] = action.payload.ids;
-        const notes: WritableDraft<Note> | undefined = state.notes.find(
-          (note) => note.id === ids[loopCount],
-        );
-        const orderUpdateNote = (
-          orderChangeNote: Array<WritableDraft<Note>>,
-        ): void => {
+        const notes: WritableDraft<Note> | undefined = state.notes.find((note) => note.id === ids[loopCount]);
+        const orderUpdateNote = (orderChangeNote: Array<WritableDraft<Note>>): void => {
           for (const note of orderChangeNote) {
             note.orderNumber = note.orderNumber + 1;
           }
         };
-        const addNote = (
-          parentNote: WritableDraft<Note>,
-          loopCount: number,
-        ): void => {
+        const addNote = (parentNote: WritableDraft<Note>, loopCount: number): void => {
           if (loopCount === 1) {
             if (parentNote.children) {
-              const orderChangeNote = parentNote.children.filter(
-                (note) =>
-                  note !== null &&
-                  note.orderNumber >= action.payload.orderNumber + 1,
-              );
-              parentNote.children.splice(
-                action.payload.orderNumber + 1,
-                0,
-                action.payload.newNote,
-              );
+              const orderChangeNote = parentNote.children.filter((note) => note !== null && note.orderNumber >= action.payload.orderNumber + 1);
+              parentNote.children.splice(action.payload.orderNumber + 1, 0, action.payload.newNote);
               orderUpdateNote(orderChangeNote);
             }
           }
           if (parentNote.children) {
-            const childNote = parentNote.children.find(
-              (note) => note?.id === ids[loopCount - 1],
-            );
+            const childNote = parentNote.children.find((note) => note?.id === ids[loopCount - 1]);
             childNote && addNote(childNote, loopCount - 1);
           }
         };
         if (loopCount === 0) {
-          const orderChangeNote = state.notes.filter(
-            (note) => note.orderNumber >= action.payload.orderNumber + 1,
-          );
-          state.notes.splice(
-            action.payload.orderNumber + 1,
-            0,
-            action.payload.newNote,
-          );
+          const orderChangeNote = state.notes.filter((note) => note.orderNumber >= action.payload.orderNumber + 1);
+          state.notes.splice(action.payload.orderNumber + 1, 0, action.payload.newNote);
           orderUpdateNote(orderChangeNote);
         } else {
           notes && addNote(notes, loopCount);
@@ -262,13 +227,8 @@ export const noteSlice = createSlice({
       .addCase(addAsyncChildNote.fulfilled, (state, action) => {
         const loopCount: number = action.payload.ids.length - 1;
         const ids: string[] = action.payload.ids;
-        const notes: WritableDraft<Note> | undefined = state.notes.find(
-          (note) => note.id === ids[loopCount],
-        );
-        const noteDescriptionUpdate = (
-          targetNotes: WritableDraft<Note>,
-          loopCount: number,
-        ): void => {
+        const notes: WritableDraft<Note> | undefined = state.notes.find((note) => note.id === ids[loopCount]);
+        const noteDescriptionUpdate = (targetNotes: WritableDraft<Note>, loopCount: number): void => {
           if (loopCount === 0) {
             if (targetNotes.children) {
               targetNotes.children.push(action.payload.newNote);
@@ -278,12 +238,8 @@ export const noteSlice = createSlice({
           }
           // childrenがある場合と無い場合で分ける
           if (targetNotes) {
-            const childNote = targetNotes.children?.find(
-              (note) => note?.id === ids[loopCount - 1],
-            );
-            childNote !== null &&
-              childNote !== undefined &&
-              noteDescriptionUpdate(childNote, loopCount - 1);
+            const childNote = targetNotes.children?.find((note) => note?.id === ids[loopCount - 1]);
+            childNote !== null && childNote !== undefined && noteDescriptionUpdate(childNote, loopCount - 1);
           }
           // childrenがある場合と無い場合で分ける
         };
@@ -304,19 +260,14 @@ export const noteSlice = createSlice({
         const loopCount = action.payload.ids.length - 1;
         const ids = action.payload.ids;
         const note = state.notes.find((note) => note.id === ids[loopCount]);
-        const updateStoreEmoji = (
-          note: WritableDraft<Note>,
-          loopCount: number,
-        ): void => {
+        const updateStoreEmoji = (note: WritableDraft<Note>, loopCount: number): void => {
           if (loopCount === 0) {
             const updateEmoji = action.payload.updatedEmoji;
             note.emoji = updateEmoji;
           } else {
             const minusLoopCount = loopCount - 1;
             if (note.children) {
-              const childNote = note.children.find(
-                (note) => note.id === ids[minusLoopCount],
-              );
+              const childNote = note.children.find((note) => note.id === ids[minusLoopCount]);
               childNote && updateStoreEmoji(childNote, minusLoopCount);
             }
           }
@@ -333,16 +284,10 @@ export const noteSlice = createSlice({
           parentNote?: WritableDraft<Note>,
         ): Promise<void> => {
           if (loopCount === 0) {
-            const deleteNote = targetNote.filter(
-              (state) => state.id !== ids[0],
-            );
+            const deleteNote = targetNote.filter((state) => state.id !== ids[0]);
             const insertNote = targetNote.find((state) => state.id === ids[0]);
             if (insertNote !== undefined) {
-              deleteNote.splice(
-                action.payload.targetOrderNumber,
-                0,
-                insertNote,
-              );
+              deleteNote.splice(action.payload.targetOrderNumber, 0, insertNote);
               if (parentNote) {
                 parentNote.children = deleteNote;
                 await updateNoteOrdersApi({
@@ -361,8 +306,7 @@ export const noteSlice = createSlice({
             }
           } else {
             const parentNote = notes.find((note) => note.id === ids[loopCount]);
-            parentNote?.children &&
-              noteTitleUpdate(parentNote.children, loopCount - 1, parentNote);
+            parentNote?.children && noteTitleUpdate(parentNote.children, loopCount - 1, parentNote);
           }
         };
         notes && noteTitleUpdate(notes, loopCount);
@@ -371,31 +315,20 @@ export const noteSlice = createSlice({
         const loopCount = action.payload.ids.length - 1;
         const ids = action.payload.ids;
         const note = state.notes.find((note) => note.id === ids[loopCount]);
-        const updateStoreNote = (
-          note: WritableDraft<Note>,
-          loopCount: number,
-        ): void => {
+        const updateStoreNote = (note: WritableDraft<Note>, loopCount: number): void => {
           if (loopCount === 0) {
             // NOTE:childrenがないから？
             const updateNoteData = action.payload.updateNoteData;
             const updatedNote = action.payload.updatedNote;
             if (updateNoteData.title) note.title = updatedNote.title;
-            if (updateNoteData.orderNumber)
-              note.orderNumber = updatedNote.orderNumber;
-            if (updateNoteData.description)
-              note.description = updatedNote.description;
-            if (
-              updateNoteData.expanded !== undefined ||
-              updateNoteData.expanded !== null
-            )
-              note.expanded = updatedNote.expanded;
+            if (updateNoteData.orderNumber) note.orderNumber = updatedNote.orderNumber;
+            if (updateNoteData.description) note.description = updatedNote.description;
+            if (updateNoteData.expanded !== undefined || updateNoteData.expanded !== null) note.expanded = updatedNote.expanded;
             if (updateNoteData.title) note.title = updatedNote.title;
           } else {
             const minusLoopCount = loopCount - 1;
             if (note.children) {
-              const childNote = note.children.find(
-                (note) => note.id === ids[minusLoopCount],
-              );
+              const childNote = note.children.find((note) => note.id === ids[minusLoopCount]);
               childNote && updateStoreNote(childNote, minusLoopCount);
             }
           }
@@ -413,12 +346,7 @@ export const noteSlice = createSlice({
   reducers: {},
 });
 
-const findNoteAndRemove = (
-  notes: Array<WritableDraft<Note>>,
-  ids: string[],
-  targetId: string,
-  depth: number = 0,
-): void => {
+const findNoteAndRemove = (notes: Array<WritableDraft<Note>>, ids: string[], targetId: string, depth: number = 0): void => {
   if (depth === ids.length - 1) {
     const index = notes.findIndex((note) => note.id === targetId);
     if (index !== -1) {

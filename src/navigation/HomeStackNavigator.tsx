@@ -26,18 +26,9 @@ export const HomeStackScreen = (): JSX.Element => {
           headerShown: false,
         }}
       />
-      <HomeStack.Screen
-        name={RouteName.LogoutScreen}
-        component={LogoutScreen}
-      />
-      <HomeStack.Screen
-        name={RouteName.PasswordChangeScreen}
-        component={PasswordChangeScreen}
-      />
-      <HomeStack.Screen
-        name={RouteName.EmailChangeScreen}
-        component={EmailChangeScreen}
-      />
+      <HomeStack.Screen name={RouteName.LogoutScreen} component={LogoutScreen} />
+      <HomeStack.Screen name={RouteName.PasswordChangeScreen} component={PasswordChangeScreen} />
+      <HomeStack.Screen name={RouteName.EmailChangeScreen} component={EmailChangeScreen} />
     </HomeStack.Navigator>
   );
 };

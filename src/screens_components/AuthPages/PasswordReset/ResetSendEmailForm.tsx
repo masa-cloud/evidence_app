@@ -31,8 +31,7 @@ export const ResetSendEmailForm: FC<Props> = (props) => {
     resolver: yupResolver(passwordResetEmailSchema),
   });
   const [error, setError] = useState<string | React.ReactNode>('');
-  const onError: SubmitErrorHandler<EmailChangeInput> = (errors: any, e: any) =>
-    console.log(errors, e);
+  const onError: SubmitErrorHandler<EmailChangeInput> = (errors: any, e: any) => console.log(errors, e);
   const handleSignUp: SubmitHandler<EmailChangeInput> = async ({ email }) => {
     try {
       await Auth.forgotPassword(email);

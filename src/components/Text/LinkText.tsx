@@ -14,15 +14,7 @@ export const LinkText: FC<Props> = (props) => {
   const { colors } = useColors();
   return (
     <Stack alignItems="center">
-      <Text
-        onPress={props.onPress}
-        fontWeight="bold"
-        fontSize="16"
-        bbw={2}
-        bbc={colors.link}
-        mt={24}
-        color={colors.link}
-      >
+      <Text onPress={props.onPress} fontWeight="bold" fontSize="16" bbw={2} bbc={colors.link} mt={24} color={colors.link}>
         {props.children}
       </Text>
     </Stack>

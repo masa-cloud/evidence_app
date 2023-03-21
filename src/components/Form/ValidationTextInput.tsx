@@ -1,18 +1,6 @@
 import React from 'react';
-import {
-  Control,
-  Controller,
-  DeepMap,
-  FieldError,
-  FieldValues,
-} from 'react-hook-form';
-import {
-  StyleProp,
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-} from 'react-native';
+import { Control, Controller, DeepMap, FieldError, FieldValues } from 'react-hook-form';
+import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle } from 'react-native';
 import { Stack, Text } from 'tamagui';
 
 import { ErrorText } from '~/components/Text';
@@ -43,10 +31,7 @@ export const ValidationTextInput: React.FC<Props> = (props) => {
       control={props.control}
       name={props.type}
       defaultValue={props.defaultValue}
-      render={({
-        field: { name, onBlur, onChange, value },
-        formState: { errors },
-      }) => (
+      render={({ field: { name, onBlur, onChange, value }, formState: { errors } }) => (
         <Stack mt={16}>
           <Text fontWeight="bold" color={colors.text}>
             {labelNameBox[props.type]} <Text color={colors.error}>必須</Text>
@@ -60,11 +45,7 @@ export const ValidationTextInput: React.FC<Props> = (props) => {
             autoCapitalize="none"
           />
           {/* バリエーションエラー表示 */}
-          {errors[name] != null && (
-            <ErrorText>
-              {(errors[name] as DeepMap<FieldValues, FieldError>)?.message}
-            </ErrorText>
-          )}
+          {errors[name] != null && <ErrorText>{(errors[name] as DeepMap<FieldValues, FieldError>)?.message}</ErrorText>}
         </Stack>
       )}
     />

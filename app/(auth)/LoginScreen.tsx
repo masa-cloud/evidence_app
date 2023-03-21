@@ -4,10 +4,7 @@ import React from 'react';
 import { HomeTabParamList } from '~/navigation/rootStackParamList';
 import { Login } from '~/screens_components/AuthPages/Login';
 
-export type LoginScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'LoginScreen'
->;
+export type LoginScreenNavigationProps = NativeStackNavigationProp<HomeTabParamList, 'LoginScreen'>;
 
 type Props = {
   navigation: LoginScreenNavigationProps;

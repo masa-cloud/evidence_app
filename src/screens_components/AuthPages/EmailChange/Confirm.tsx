@@ -30,12 +30,9 @@ export const Confirm: FC<Props> = (props) => {
   } = useForm<ConfirmInput>({
     resolver: yupResolver(confirmEmailChangeSchema),
   });
-  const onError: SubmitErrorHandler<ConfirmInput> = (errors: any, e: any) =>
-    console.log(errors, e);
+  const onError: SubmitErrorHandler<ConfirmInput> = (errors: any, e: any) => console.log(errors, e);
 
-  const confirmEmailChange: SubmitHandler<ConfirmInput> = async ({
-    certificationCode,
-  }) => {
+  const confirmEmailChange: SubmitHandler<ConfirmInput> = async ({ certificationCode }) => {
     try {
       await Auth.verifyCurrentUserAttributeSubmit('email', certificationCode);
       props.setEmailChangeState(EmailChangeState.Complete);

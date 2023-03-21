@@ -1,19 +1,7 @@
 import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
-import {
-  Control,
-  Controller,
-  DeepMap,
-  FieldError,
-  FieldValues,
-} from 'react-hook-form';
-import {
-  StyleProp,
-  StyleSheet,
-  TextInputProps,
-  TextStyle,
-  View,
-} from 'react-native';
+import { Control, Controller, DeepMap, FieldError, FieldValues } from 'react-hook-form';
+import { StyleProp, StyleSheet, TextInputProps, TextStyle, View } from 'react-native';
 import { Button, Input, Text } from 'tamagui';
 
 import { ErrorText } from '~/components/Text';
@@ -41,10 +29,7 @@ export const ValidationPasswordInput: React.FC<Props> = (props) => {
       control={props.control}
       name={props.type}
       defaultValue={props.defaultValue}
-      render={({
-        field: { name, onBlur, onChange, value },
-        formState: { errors },
-      }) => (
+      render={({ field: { name, onBlur, onChange, value }, formState: { errors } }) => (
         <View style={styles.marginTop}>
           <Text fontWeight="bold" color={colors.text}>
             {labelNameBox[props.type]} <Text color={colors.error}>必須</Text>
@@ -59,11 +44,7 @@ export const ValidationPasswordInput: React.FC<Props> = (props) => {
                 onBlur={onBlur}
                 onChangeText={onChange}
               />
-              <Button
-                onPress={() => setSecureTextEntry((prev) => !prev)}
-                size={8}
-                icon={secureTextEntry ? <Eye /> : <EyeOff />}
-              />
+              <Button onPress={() => setSecureTextEntry((prev) => !prev)} size={8} icon={secureTextEntry ? <Eye /> : <EyeOff />} />
               {/* <Icon
                 onPress={() => setSecureTextEntry((prev) => !prev)}
                 as={Ionicons}
@@ -74,11 +55,7 @@ export const ValidationPasswordInput: React.FC<Props> = (props) => {
               {/* バリエーションエラー表示 */}
             </View>
           </View>
-          {errors[name] != null && (
-            <ErrorText>
-              {(errors[name] as DeepMap<FieldValues, FieldError>)?.message}
-            </ErrorText>
-          )}
+          {errors[name] != null && <ErrorText>{(errors[name] as DeepMap<FieldValues, FieldError>)?.message}</ErrorText>}
         </View>
       )}
     />

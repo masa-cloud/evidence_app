@@ -3,10 +3,7 @@
 // this is an auto generated file. This will be overwritten
 
 export const createNote = /* GraphQL */ `
-  mutation CreateNote(
-    $input: CreateNoteInput!
-    $condition: ModelNoteConditionInput
-  ) {
+  mutation CreateNote($input: CreateNoteInput!, $condition: ModelNoteConditionInput) {
     createNote(input: $input, condition: $condition) {
       id
       title
@@ -39,10 +36,7 @@ export const createNote = /* GraphQL */ `
   }
 `;
 export const updateNote = /* GraphQL */ `
-  mutation UpdateNote(
-    $input: UpdateNoteInput!
-    $condition: ModelNoteConditionInput
-  ) {
+  mutation UpdateNote($input: UpdateNoteInput!, $condition: ModelNoteConditionInput) {
     updateNote(input: $input, condition: $condition) {
       id
       title
@@ -75,10 +69,7 @@ export const updateNote = /* GraphQL */ `
   }
 `;
 export const deleteNote = /* GraphQL */ `
-  mutation DeleteNote(
-    $input: DeleteNoteInput!
-    $condition: ModelNoteConditionInput
-  ) {
+  mutation DeleteNote($input: DeleteNoteInput!, $condition: ModelNoteConditionInput) {
     deleteNote(input: $input, condition: $condition) {
       id
       title
@@ -111,10 +102,7 @@ export const deleteNote = /* GraphQL */ `
   }
 `;
 export const createEmoji = /* GraphQL */ `
-  mutation CreateEmoji(
-    $input: CreateEmojiInput!
-    $condition: ModelEmojiConditionInput
-  ) {
+  mutation CreateEmoji($input: CreateEmojiInput!, $condition: ModelEmojiConditionInput) {
     createEmoji(input: $input, condition: $condition) {
       id
       name
@@ -124,10 +112,7 @@ export const createEmoji = /* GraphQL */ `
   }
 `;
 export const updateEmoji = /* GraphQL */ `
-  mutation UpdateEmoji(
-    $input: UpdateEmojiInput!
-    $condition: ModelEmojiConditionInput
-  ) {
+  mutation UpdateEmoji($input: UpdateEmojiInput!, $condition: ModelEmojiConditionInput) {
     updateEmoji(input: $input, condition: $condition) {
       id
       name
@@ -137,10 +122,7 @@ export const updateEmoji = /* GraphQL */ `
   }
 `;
 export const deleteEmoji = /* GraphQL */ `
-  mutation DeleteEmoji(
-    $input: DeleteEmojiInput!
-    $condition: ModelEmojiConditionInput
-  ) {
+  mutation DeleteEmoji($input: DeleteEmojiInput!, $condition: ModelEmojiConditionInput) {
     deleteEmoji(input: $input, condition: $condition) {
       id
       name
@@ -150,10 +132,7 @@ export const deleteEmoji = /* GraphQL */ `
   }
 `;
 export const createChildrenId = /* GraphQL */ `
-  mutation CreateChildrenId(
-    $input: CreateChildrenIdInput!
-    $condition: ModelChildrenIdConditionInput
-  ) {
+  mutation CreateChildrenId($input: CreateChildrenIdInput!, $condition: ModelChildrenIdConditionInput) {
     createChildrenId(input: $input, condition: $condition) {
       id
       childrenId
@@ -164,10 +143,7 @@ export const createChildrenId = /* GraphQL */ `
   }
 `;
 export const updateChildrenId = /* GraphQL */ `
-  mutation UpdateChildrenId(
-    $input: UpdateChildrenIdInput!
-    $condition: ModelChildrenIdConditionInput
-  ) {
+  mutation UpdateChildrenId($input: UpdateChildrenIdInput!, $condition: ModelChildrenIdConditionInput) {
     updateChildrenId(input: $input, condition: $condition) {
       id
       childrenId
@@ -178,10 +154,7 @@ export const updateChildrenId = /* GraphQL */ `
   }
 `;
 export const deleteChildrenId = /* GraphQL */ `
-  mutation DeleteChildrenId(
-    $input: DeleteChildrenIdInput!
-    $condition: ModelChildrenIdConditionInput
-  ) {
+  mutation DeleteChildrenId($input: DeleteChildrenIdInput!, $condition: ModelChildrenIdConditionInput) {
     deleteChildrenId(input: $input, condition: $condition) {
       id
       childrenId

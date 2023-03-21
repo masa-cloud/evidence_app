@@ -17,11 +17,8 @@ export const enum SignUpState {
 /** @package */
 export const SignUpPage: FC<Props> = (props) => {
   const [userName, setUserName] = useState<string>('');
-  const [signUpState, setSignUpState] = useState<SignUpState>(
-    SignUpState.SignUp,
-  );
+  const [signUpState, setSignUpState] = useState<SignUpState>(SignUpState.SignUp);
 
-  if (signUpState === SignUpState.Confirm)
-    return <ConfirmSignUp userName={userName} navigation={props.navigation} />;
+  if (signUpState === SignUpState.Confirm) return <ConfirmSignUp userName={userName} navigation={props.navigation} />;
   return <SignUp setSignUpState={setSignUpState} setUserName={setUserName} />;
 };

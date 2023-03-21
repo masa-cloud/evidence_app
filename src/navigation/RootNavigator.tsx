@@ -13,27 +13,12 @@ import { RootStackParamList } from './rootStackParamList';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export default function Navigation({
-  colorScheme,
-}: {
-  colorScheme: ColorSchemeName;
-}): JSX.Element {
+export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }): JSX.Element {
   return (
-    <NavigationContainer
-      linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? CustomDarkTheme : CustomTheme}
-    >
+    <NavigationContainer linking={LinkingConfiguration} theme={colorScheme === 'dark' ? CustomDarkTheme : CustomTheme}>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Root"
-          component={BottomTabNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="NotFoundScreen"
-          component={NotFoundScreen}
-          options={{ title: 'Oops!' }}
-        />
+        <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="NotFoundScreen" component={NotFoundScreen} options={{ title: 'Oops!' }} />
         <Stack.Group screenOptions={{ presentation: 'modal' }}>
           <Stack.Screen name="Modal" component={ModalScreen} />
         </Stack.Group>

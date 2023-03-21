@@ -9,13 +9,8 @@ type useAnimeRichDescriptionEditorReturn = {
     | undefined;
 };
 
-export const useAnimeRichDescriptionEditor = (
-  snapPointNumber: number,
-): useAnimeRichDescriptionEditorReturn => {
-  const position = useMemo(
-    () => positions[Number(snapPointNumber)],
-    [snapPointNumber],
-  );
+export const useAnimeRichDescriptionEditor = (snapPointNumber: number): useAnimeRichDescriptionEditorReturn => {
+  const position = useMemo(() => positions[Number(snapPointNumber)], [snapPointNumber]);
 
   return {
     position,

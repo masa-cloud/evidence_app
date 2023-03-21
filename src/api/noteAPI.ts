@@ -12,13 +12,7 @@ import {
   UpdateNoteInput,
 } from '~/API';
 import awsExports from '~/aws-exports';
-import {
-  createChildrenId,
-  createNote,
-  deleteNote,
-  updateEmoji,
-  updateNote,
-} from '~/graphql/mutations';
+import { createChildrenId, createNote, deleteNote, updateEmoji, updateNote } from '~/graphql/mutations';
 import { notesByOrderNumber } from '~/graphql/queries';
 import { FetchEmoji, Note } from '~/types/types';
 
@@ -91,8 +85,7 @@ export const createBrotherNoteApi = async (focusNote: {
       orderNumber: focusNote.orderNumber + 1,
       type: 'Note',
     };
-    focusNote.parentId &&
-      Object.assign(noteDetails, { parentId: focusNote.parentId });
+    focusNote.parentId && Object.assign(noteDetails, { parentId: focusNote.parentId });
     // parentId: focusNote.parentId ?? null,
     const newNote = (await API.graphql({
       query: createNote,
@@ -160,10 +153,7 @@ export const getFilterParentIdNotesApi = async ({
 }): Promise<Note[] | undefined> => {
   try {
     const levelFilter = {
-      and: [
-        { id: { eq: parentId } },
-        { orderNumber: { ge: targetOrderNumber } },
-      ],
+      and: [{ id: { eq: parentId } }, { orderNumber: { ge: targetOrderNumber } }],
     };
     const parentFilter = {
       level: { eq: 0 },
@@ -175,9 +165,7 @@ export const getFilterParentIdNotesApi = async ({
       data: {
         notesByOrderNumber: { items: notes },
       },
-    } = (await API.graphql(
-      graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }),
-    )) as {
+    } = (await API.graphql(graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }))) as {
       data: {
         notesByOrderNumber: { items: Note[] };
       };
@@ -190,12 +178,8 @@ export const getFilterParentIdNotesApi = async ({
   }
 };
 const getNotesChildrenApi = async (items: Note[]): Promise<Note[]> => {
-  const fetchedNoteChildren = async (
-    childrenIds: Array<{ childrenId: string }>,
-  ): Promise<Note[]> => {
-    const fetchIds = childrenIds
-      .filter(({ childrenId }) => typeof childrenId === 'string')
-      .map(({ childrenId }) => ({ id: { eq: childrenId } }));
+  const fetchedNoteChildren = async (childrenIds: Array<{ childrenId: string }>): Promise<Note[]> => {
+    const fetchIds = childrenIds.filter(({ childrenId }) => typeof childrenId === 'string').map(({ childrenId }) => ({ id: { eq: childrenId } }));
     const filter: ModelNoteFilterInput = {
       or: fetchIds,
     };
@@ -205,9 +189,7 @@ const getNotesChildrenApi = async (items: Note[]): Promise<Note[]> => {
       data: {
         notesByOrderNumber: { items: childNotes },
       },
-    } = (await API.graphql(
-      graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }),
-    )) as {
+    } = (await API.graphql(graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }))) as {
       data: {
         notesByOrderNumber: { items: Note[] };
       };
@@ -222,9 +204,7 @@ const getNotesChildrenApi = async (items: Note[]): Promise<Note[]> => {
           return { childrenId: idData?.childrenId as string };
         });
         const childNotes = await fetchedNoteChildren(childrenIds);
-        const isNestedNote = childNotes.some(
-          (childNote) => childNote.childrenIds?.items.length !== 0,
-        );
+        const isNestedNote = childNotes.some((childNote) => childNote.childrenIds?.items.length !== 0);
 
         if (isNestedNote) {
           note.children = await getNotesChildrenApi(childNotes);
@@ -246,9 +226,7 @@ export const getNotesApi = async (): Promise<Note[] | undefined> => {
       data: {
         notesByOrderNumber: { items: notes },
       },
-    } = (await API.graphql(
-      graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }),
-    )) as {
+    } = (await API.graphql(graphqlOperation(notesByOrderNumber, { filter, sortDirection, type }))) as {
       data: {
         notesByOrderNumber: { items: Note[] };
       };
@@ -265,11 +243,7 @@ export const getNotesApi = async (): Promise<Note[] | undefined> => {
   }
 }; // === END READ ===
 // === START UPDATE ===
-export const updateNoteOrdersApi = async ({
-  deleteNote,
-}: {
-  deleteNote: Array<WritableDraft<Note>>;
-}): Promise<void> => {
+export const updateNoteOrdersApi = async ({ deleteNote }: { deleteNote: Array<WritableDraft<Note>> }): Promise<void> => {
   // const orderChange = isIncreased ? -1 : 1
   const promises = deleteNote.map((item, index) => {
     return API.graphql({

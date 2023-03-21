@@ -38,12 +38,9 @@ export const EmailChange: FC<Props> = (props) => {
   } = useSelector(selectUser);
   const [error, setError] = useState<string | React.ReactNode>('');
   const dispatch: AppDispatch = useDispatch();
-  const onError: SubmitErrorHandler<EmailChangeInput> = (errors: any, e: any) =>
-    console.log(errors, e);
+  const onError: SubmitErrorHandler<EmailChangeInput> = (errors: any, e: any) => console.log(errors, e);
 
-  const handleSignUp: SubmitHandler<EmailChangeInput> = async ({
-    newEmail,
-  }) => {
+  const handleSignUp: SubmitHandler<EmailChangeInput> = async ({ newEmail }) => {
     try {
       const user = await Auth.currentAuthenticatedUser();
       await Auth.updateUserAttributes(user, {

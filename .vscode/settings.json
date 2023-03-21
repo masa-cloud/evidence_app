@@ -8,10 +8,7 @@
     "amplify/backend/amplify-meta.json": true,
     "amplify/backend/awscloudformation": true
   },
-  "editor.codeActionsOnSave": [
-    "source.addMissingImports",
-    "source.fixAll.eslint"
-  ],
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll.eslint"],
   "tailwindCSS.experimental.classRegex": ["tw\\('([^')]*)"],
-  "cSpell.words": ["tamagui", "Unspaced"]
+  "cSpell.words": ["btrr", "Ionicons", "shac", "shar", "shof", "tamagui", "Unspaced"]
 }

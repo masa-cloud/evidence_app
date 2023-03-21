@@ -4,10 +4,7 @@
  */
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import {
-  CompositeScreenProps,
-  NavigatorScreenParams,
-} from '@react-navigation/native';
+import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 declare global {
@@ -67,17 +64,14 @@ export enum RouteName {
   Root = 'Root',
 }
 
-export type RootStackScreenProps<T extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, T>;
+export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;
 
-export type HomeTabScreenProps<T extends keyof HomeTabParamList> =
-  CompositeScreenProps<
-    BottomTabScreenProps<HomeTabParamList, T>,
-    RootStackScreenProps<keyof RootStackParamList>
-  >;
+export type HomeTabScreenProps<T extends keyof HomeTabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<HomeTabParamList, T>,
+  RootStackScreenProps<keyof RootStackParamList>
+>;
 
-export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
-  CompositeScreenProps<
-    BottomTabScreenProps<BottomTabParamList, Screen>,
-    NativeStackScreenProps<RootStackParamList>
-  >;
+export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<BottomTabParamList, Screen>,
+  NativeStackScreenProps<RootStackParamList>
+>;

@@ -7,11 +7,7 @@ import { Text } from 'tamagui';
 
 import { PasswordResetScreenNavigationProps } from '~/../app/(auth)/PasswordResetScreen';
 import { Button } from '~/components/Button';
-import {
-  CognitoError,
-  ValidationPasswordInput,
-  ValidationTextInput,
-} from '~/components/Form';
+import { CognitoError, ValidationPasswordInput, ValidationTextInput } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
 import { passwordResetFormSchema } from '~/schema/schema';
 
@@ -41,15 +37,9 @@ export const PasswordResetForm: FC<Props> = (props) => {
   } = useForm<ConfirmInput>({
     resolver: yupResolver(passwordResetFormSchema),
   });
-  const onError: SubmitErrorHandler<ConfirmInput> = (errors: any, e: any) =>
-    console.log(errors, e);
+  const onError: SubmitErrorHandler<ConfirmInput> = (errors: any, e: any) => console.log(errors, e);
 
-  const confirmEmailChange: SubmitHandler<ConfirmInput> = async ({
-    certificationCode,
-    confirmPassword,
-    email,
-    password,
-  }) => {
+  const confirmEmailChange: SubmitHandler<ConfirmInput> = async ({ certificationCode, confirmPassword, email, password }) => {
     try {
       if (password !== confirmPassword) {
         return;

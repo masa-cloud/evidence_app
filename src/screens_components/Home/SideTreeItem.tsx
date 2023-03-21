@@ -1,19 +1,12 @@
 import { SimpleLineIcons } from '@expo/vector-icons';
 import React, { useCallback } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import DraggableFlatList, {
-  OpacityDecorator,
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
+import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import { Circle, Stack, Text, XStack } from 'tamagui';
 
 import { useColors, width } from '~/lib/constants';
-import {
-  selectNote,
-  updateAsyncNote,
-  updateAsyncNoteOrder,
-} from '~/slices/noteSlice';
+import { selectNote, updateAsyncNote, updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -28,13 +21,7 @@ export type SieTreeItemProps = {
 };
 
 /** @package */
-export const SideTreeItem = ({
-  ids,
-  note,
-  onNoteNavigate,
-  orderNumbers,
-  parentExpanded = true,
-}: SieTreeItemProps): JSX.Element => {
+export const SideTreeItem = ({ ids, note, onNoteNavigate, orderNumbers, parentExpanded = true }: SieTreeItemProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useColors();
   // customHook
@@ -50,11 +37,7 @@ export const SideTreeItem = ({
               note={item}
               onNoteNavigate={onNoteNavigate}
               ids={[item.id, ...ids]}
-              orderNumbers={
-                orderNumbers !== undefined
-                  ? [...orderNumbers, note.orderNumber]
-                  : [note.orderNumber]
-              }
+              orderNumbers={orderNumbers !== undefined ? [...orderNumbers, note.orderNumber] : [note.orderNumber]}
               parentExpanded={note?.expanded ?? false}
             />
           </TouchableOpacity>
@@ -104,17 +87,9 @@ export const SideTreeItem = ({
   const Emoji = (): JSX.Element => {
     return (
       <>
-        <Stack
-          h={24}
-          w={24}
-          borderRadius={4}
-          backgroundColor={
-            note.emoji !== undefined ? colors.text : 'transparent'
-          }
-          mr={4}
-        >
+        <Stack h={24} w={24} br={4} bg={note.emoji !== undefined ? colors.text : 'transparent'} mr={4}>
           {note.emoji?.name.length ? (
-            <Text textAlign="center" fontSize="lg" lineHeight="24">
+            <Text ta="center" fos="lg" lh="24">
               {note.emoji?.name}
             </Text>
           ) : (
@@ -132,29 +107,16 @@ export const SideTreeItem = ({
   }
 
   return (
-    <Stack
-      w={(width / 4) * 3 - note.level * 10}
-      pl={note.level ? 24 : 8}
-      pr={2}
-      borderWidth={2}
-      borderColor={colors.primary}
-      borderRadius={8}
-    >
+    <Stack w={(width / 4) * 3 - note.level * 10} pl={note.level ? 24 : 8} pr={2} bw={2} boc={colors.primary} br={8}>
       <XStack
-        position="relative"
-        alignItems="center"
-        justifyContent="space-between"
-        backgroundColor={colors.primary}
-        py={2}
-        onPress={() =>
-          onNoteNavigate(
-            orderNumbers !== undefined
-              ? [...orderNumbers, note.orderNumber]
-              : [note.orderNumber],
-          )
-        }
-        pressStyle={{ opacity: 0.7, scale: 0.9 }}
         animation="bouncy"
+        pressStyle={{ opacity: 0.7, scale: 0.9 }}
+        onPress={() => onNoteNavigate(orderNumbers !== undefined ? [...orderNumbers, note.orderNumber] : [note.orderNumber])}
+        pos="relative"
+        ai="center"
+        jc="space-between"
+        bg={colors.primary}
+        py={2}
       >
         <XStack alignItems="center" f={1}>
           <Emoji />
@@ -187,7 +149,7 @@ export const SideTreeItem = ({
                 }}
                 name="arrow-up"
                 size={20}
-                color={colors.text}
+                col={colors.text}
                 px={12 - 4 * (note.level + 1)}
               />
             </Stack>

@@ -32,16 +32,12 @@ export const focusNoteSlice = createSlice({
   name: 'focusNote',
   initialState,
   reducers: {
-    updateFucusId: (
-      state,
-      action: PayloadAction<Omit<focusNote, 'levelStock'>>,
-    ) => {
+    updateFucusId: (state, action: PayloadAction<Omit<focusNote, 'levelStock'>>) => {
       // TODO:最初押したやつが反映されるよに！
       if (state.focusNote.levelStock === 0) {
         state.focusNote.focusId = action.payload.focusId;
         state.focusNote.levelStock = action.payload.level;
-        state.focusNote.focusChildrenLength =
-          action.payload.focusChildrenLength;
+        state.focusNote.focusChildrenLength = action.payload.focusChildrenLength;
         state.focusNote.level = action.payload.level;
         state.focusNote.orderNumber = action.payload.orderNumber;
         state.focusNote.ids = action.payload.ids;

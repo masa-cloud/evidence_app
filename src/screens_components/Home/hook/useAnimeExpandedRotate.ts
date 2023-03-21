@@ -8,9 +8,7 @@ type useAnimeExpandedRotateReturn = {
     | undefined;
 };
 
-export const useAnimeExpandedRotate = (
-  expanded: boolean,
-): useAnimeExpandedRotateReturn => {
+export const useAnimeExpandedRotate = (expanded: boolean): useAnimeExpandedRotateReturn => {
   const position = useMemo(() => positions[Number(expanded)], [expanded]);
 
   return {

@@ -8,11 +8,7 @@ import { Stack, Text } from 'tamagui';
 
 import { LoginScreenNavigationProps } from '~/../app/(auth)/LoginScreen';
 import { Button } from '~/components/Button';
-import {
-  CognitoError,
-  ValidationPasswordInput,
-  ValidationTextInput,
-} from '~/components/Form';
+import { CognitoError, ValidationPasswordInput, ValidationTextInput } from '~/components/Form';
 import { PageContainer } from '~/components/PageContainer';
 import { LinkText } from '~/components/Text';
 import { useColors } from '~/lib/constants';
@@ -44,13 +40,9 @@ export const LoginDialog: FC<Props> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
 
-  const onError: SubmitErrorHandler<LoginInput> = (errors: any, e: any) =>
-    console.log(errors, e);
+  const onError: SubmitErrorHandler<LoginInput> = (errors: any, e: any) => console.log(errors, e);
 
-  const handleLogin: SubmitHandler<LoginInput> = async ({
-    email,
-    password,
-  }) => {
+  const handleLogin: SubmitHandler<LoginInput> = async ({ email, password }) => {
     try {
       dispatch(login(await Auth.signIn({ password, username: email })));
       setError('');
@@ -83,18 +75,10 @@ export const LoginDialog: FC<Props> = (props) => {
         ログイン
       </Button>
       <Stack py={4} />
-      <Button
-        onPress={() => props.navigation.navigate(RouteName.SignUpScreen)}
-        isWhite={true}
-        isNoneMarginTop={true}
-      >
+      <Button onPress={() => props.navigation.navigate(RouteName.SignUpScreen)} isWhite={true} isNoneMarginTop={true}>
         新規登録
       </Button>
-      <LinkText
-        onPress={() => props.navigation.navigate(RouteName.PasswordResetScreen)}
-      >
-        パスワードをお忘れの方
-      </LinkText>
+      <LinkText onPress={() => props.navigation.navigate(RouteName.PasswordResetScreen)}>パスワードをお忘れの方</LinkText>
     </PageContainer>
   );
 };

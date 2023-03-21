@@ -16,10 +16,8 @@ export const enum PasswordChangeState {
 
 /** @package */
 export const PasswordChangePage: FC<Props> = (props) => {
-  const [passwordChangeState, setPasswordChangeState] =
-    useState<PasswordChangeState>(PasswordChangeState.PasswordChange);
+  const [passwordChangeState, setPasswordChangeState] = useState<PasswordChangeState>(PasswordChangeState.PasswordChange);
 
-  if (passwordChangeState === PasswordChangeState.Complete)
-    return <Complete navigation={props.navigation} />;
+  if (passwordChangeState === PasswordChangeState.Complete) return <Complete navigation={props.navigation} />;
   return <PasswordChange setPasswordChangeState={setPasswordChangeState} />;
 };

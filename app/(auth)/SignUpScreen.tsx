@@ -4,10 +4,7 @@ import React from 'react';
 import { HomeTabParamList } from '~/navigation/rootStackParamList';
 import { SignUpPage } from '~/screens_components/AuthPages/SignUp';
 
-export type SignUpScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'SignUpScreen'
->;
+export type SignUpScreenNavigationProps = NativeStackNavigationProp<HomeTabParamList, 'SignUpScreen'>;
 
 type Props = {
   navigation: SignUpScreenNavigationProps;

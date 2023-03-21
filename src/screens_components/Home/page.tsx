@@ -1,27 +1,14 @@
 import { Entypo } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { FC, useCallback, useRef, useState } from 'react';
-import {
-  ImageBackground,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
-import DraggableFlatList, {
-  OpacityDecorator,
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
+import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, TouchableOpacity } from 'react-native';
+import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
 import { useColors } from '~/lib/constants';
-import {
-  fetchAsyncNotes,
-  selectNote,
-  updateAsyncNoteOrder,
-} from '~/slices/noteSlice';
+import { fetchAsyncNotes, selectNote, updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -41,9 +28,7 @@ export const Home: FC = () => {
   const [showElement, setShowElement] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
-  const handleScroll = (
-    event: NativeSyntheticEvent<NativeScrollEvent>,
-  ): void => {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>): void => {
     const currentScrollY = event.nativeEvent.contentOffset.y;
 
     if (currentScrollY < scrollY && !showElement) {
@@ -79,10 +64,7 @@ export const Home: FC = () => {
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <OpacityDecorator>
-          <TouchableOpacity
-            onLongPress={drag}
-            disabled={!orderedList || isActive}
-          >
+          <TouchableOpacity onLongPress={drag} disabled={!orderedList || isActive}>
             <NoteCard note={item} ids={[item.id]} orderedList={orderedList} />
           </TouchableOpacity>
         </OpacityDecorator>
@@ -95,49 +77,34 @@ export const Home: FC = () => {
   // if ( notes.length === 0 ) return <></>
   return (
     <SafeAreaView>
-      <ImageBackground
-        source={Images.background}
-        resizeMode="cover"
-        style={{ height: '100%', width: '100%' }}
-      >
+      <ImageBackground source={Images.background} resizeMode="cover" style={{ height: '100%', width: '100%' }}>
         <Stack
-          pos="absolute"
-          pressStyle={{ scale: 0.9 }}
           animation="bouncy"
-          bottom={80}
-          right="8.5%"
-          zIndex={100}
+          pressStyle={{ scale: 0.9 }}
           onPress={() => setShowElement((prevShowElement) => !prevShowElement)}
+          pos="absolute"
+          b={80}
+          r="8.5%"
+          zi={100}
         >
           <Stack
-            position="absolute"
-            borderRadius={50}
-            backgroundColor={showElement ? colors.text : colors.primary}
+            pos="absolute"
+            br={50}
+            bg={showElement ? colors.text : colors.primary}
             t={-5}
             l={-6}
             h={52}
             w={52}
-            shadowColor={colors.primary}
-            shadowOffset={{
+            shac={colors.primary}
+            shof={{
               height: 3,
               width: 0,
             }}
-            shadowRadius={4}
+            shar={4}
           />
-          <Entypo
-            name="cycle"
-            size={40}
-            color={showElement ? colors.primary : colors.text}
-          />
+          <Entypo name="cycle" size={40} color={showElement ? colors.primary : colors.text} />
         </Stack>
-        {showElement ? (
-          <ScrollUpGlobalMenu />
-        ) : (
-          <ScrollDownNoteMenu
-            setOrderedList={setOrderedList}
-            orderedList={orderedList}
-          />
-        )}
+        {showElement ? <ScrollUpGlobalMenu /> : <ScrollDownNoteMenu setOrderedList={setOrderedList} orderedList={orderedList} />}
         <SideTree notes={notes} onNoteNavigate={onNoteNavigate} />
         <DraggableFlatList
           data={notes}

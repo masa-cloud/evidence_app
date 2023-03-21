@@ -4,10 +4,7 @@ import React from 'react';
 import { HomeTabParamList } from '~/navigation/rootStackParamList';
 import { Home } from '~/screens_components/Home';
 
-type HomeScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'HomeScreen'
->;
+type HomeScreenNavigationProps = NativeStackNavigationProp<HomeTabParamList, 'HomeScreen'>;
 
 type Props = {
   navigation: HomeScreenNavigationProps;

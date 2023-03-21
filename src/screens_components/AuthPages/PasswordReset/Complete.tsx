@@ -17,9 +17,7 @@ export const Complete: FC<Props> = (props) => {
   return (
     <PageContainer title="パスワード変更完了">
       <Text style={styles.text}>パスワード変更が完了が完了いたしました。</Text>
-      <Button onPress={() => props.navigation.navigate(RouteName.LoginScreen)}>
-        ログインへ
-      </Button>
+      <Button onPress={() => props.navigation.navigate(RouteName.LoginScreen)}>ログインへ</Button>
     </PageContainer>
   );
 };

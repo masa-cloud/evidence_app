@@ -36,20 +36,8 @@ export const getNote = /* GraphQL */ `
   }
 `;
 export const listNotes = /* GraphQL */ `
-  query ListNotes(
-    $id: ID
-    $filter: ModelNoteFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listNotes(
-      id: $id
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection
-    ) {
+  query ListNotes($id: ID, $filter: ModelNoteFilterInput, $limit: Int, $nextToken: String, $sortDirection: ModelSortDirection) {
+    listNotes(id: $id, filter: $filter, limit: $limit, nextToken: $nextToken, sortDirection: $sortDirection) {
       items {
         id
         title
@@ -94,11 +82,7 @@ export const getEmoji = /* GraphQL */ `
   }
 `;
 export const listEmojis = /* GraphQL */ `
-  query ListEmojis(
-    $filter: ModelEmojiFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
+  query ListEmojis($filter: ModelEmojiFilterInput, $limit: Int, $nextToken: String) {
     listEmojis(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
@@ -122,11 +106,7 @@ export const getChildrenId = /* GraphQL */ `
   }
 `;
 export const listChildrenIds = /* GraphQL */ `
-  query ListChildrenIds(
-    $filter: ModelChildrenIdFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
+  query ListChildrenIds($filter: ModelChildrenIdFilterInput, $limit: Int, $nextToken: String) {
     listChildrenIds(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
@@ -148,14 +128,7 @@ export const notesByOrderNumber = /* GraphQL */ `
     $limit: Int
     $nextToken: String
   ) {
-    notesByOrderNumber(
-      type: $type
-      orderNumber: $orderNumber
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
+    notesByOrderNumber(type: $type, orderNumber: $orderNumber, sortDirection: $sortDirection, filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         title

@@ -4,10 +4,7 @@ import React from 'react';
 import { HomeTabParamList } from '~/navigation/rootStackParamList';
 import { PasswordChangePage } from '~/screens_components/AuthPages/PasswordChange';
 
-export type PasswordChangeScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'PasswordChangeScreen'
->;
+export type PasswordChangeScreenNavigationProps = NativeStackNavigationProp<HomeTabParamList, 'PasswordChangeScreen'>;
 
 type Props = {
   navigation: PasswordChangeScreenNavigationProps;

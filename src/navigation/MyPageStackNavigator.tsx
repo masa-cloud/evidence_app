@@ -8,10 +8,7 @@ const MyPageStack = createNativeStackNavigator();
 export const MyPageStackScreen = (): JSX.Element => {
   return (
     <MyPageStack.Navigator>
-      <MyPageStack.Screen
-        name={RouteName.MyPageScreen}
-        component={MyPageScreen}
-      />
+      <MyPageStack.Screen name={RouteName.MyPageScreen} component={MyPageScreen} />
     </MyPageStack.Navigator>
   );
 };

@@ -12,13 +12,8 @@ type Props = {
 /** @package */
 export const Complete: FC<Props> = (props) => {
   return (
-    <PageContainer
-      title="パスワード変更完了"
-      description="パスワード変更が完了いたしました。トップページに戻ってください"
-    >
-      <Button onPress={() => props.navigation.navigate(RouteName.HomeScreen)}>
-        トップページに戻る
-      </Button>
+    <PageContainer title="パスワード変更完了" description="パスワード変更が完了いたしました。トップページに戻ってください">
+      <Button onPress={() => props.navigation.navigate(RouteName.HomeScreen)}>トップページに戻る</Button>
     </PageContainer>
   );
 };

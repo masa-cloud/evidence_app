@@ -29,18 +29,14 @@ const cognitoPassword = (name: string, field: string): any[] => [
     .string()
     .label(name)
     .required(`${name}が入力されていません`)
-    .test(
-      'ensure_to_have_text',
-      '',
-      (confirmPassword, { createError, parent }) => {
-        if (confirmPassword !== parent[field]) {
-          return createError({
-            message: `${name}が一致しません。`,
-          });
-        }
-        return true;
-      },
-    ),
+    .test('ensure_to_have_text', '', (confirmPassword, { createError, parent }) => {
+      if (confirmPassword !== parent[field]) {
+        return createError({
+          message: `${name}が一致しません。`,
+        });
+      }
+      return true;
+    }),
 ];
 
 const certificationCode: any = yup
@@ -49,10 +45,7 @@ const certificationCode: any = yup
   .required('認証コードが入力されていません。');
 
 const [password, confirmPassword] = cognitoPassword('パスワード', 'password');
-const [newPassword, confirmNewPassword] = cognitoPassword(
-  '新しいパスワード',
-  'newPassword',
-);
+const [newPassword, confirmNewPassword] = cognitoPassword('新しいパスワード', 'newPassword');
 
 export const signUpSchema = yup
   .object()

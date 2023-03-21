@@ -29,12 +29,9 @@ export const ConfirmSignUp: FC<Props> = (props) => {
   } = useForm<ConfirmInput>({
     resolver: yupResolver(confirmSignUpSchema),
   });
-  const onError: SubmitErrorHandler<ConfirmInput> = (errors: any, e: any) =>
-    console.log(errors, e);
+  const onError: SubmitErrorHandler<ConfirmInput> = (errors: any, e: any) => console.log(errors, e);
 
-  const confirmSignUp: SubmitHandler<ConfirmInput> = async ({
-    certificationCode,
-  }) => {
+  const confirmSignUp: SubmitHandler<ConfirmInput> = async ({ certificationCode }) => {
     try {
       await Auth.confirmSignUp(props.userName, certificationCode);
       setError('');

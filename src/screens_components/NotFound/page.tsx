@@ -6,10 +6,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { PageContainer } from '~/components/PageContainer';
 import { RootStackParamList } from '~/navigation/rootStackParamList';
 
-type NotFoundScreenNavigationProps = NativeStackNavigationProp<
-  RootStackParamList,
-  'NotFoundScreen'
->;
+type NotFoundScreenNavigationProps = NativeStackNavigationProp<RootStackParamList, 'NotFoundScreen'>;
 
 type Props = {
   navigation: NotFoundScreenNavigationProps;

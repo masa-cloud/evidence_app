@@ -27,15 +27,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: [
-    'react',
-    'react-hooks',
-    'sort-keys-custom-order',
-    'simple-import-sort',
-    'import',
-    'import-access',
-    'unused-imports',
-  ],
+  plugins: ['react', 'react-hooks', 'sort-keys-custom-order', 'simple-import-sort', 'import', 'import-access', 'unused-imports'],
   rules: {
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',

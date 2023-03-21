@@ -4,10 +4,7 @@ import React from 'react';
 import { HomeTabParamList } from '~/navigation/rootStackParamList';
 import { EmailChangePage } from '~/screens_components/AuthPages/EmailChange';
 
-type EmailChangeScreenNavigationProps = NativeStackNavigationProp<
-  HomeTabParamList,
-  'EmailChangeScreen'
->;
+type EmailChangeScreenNavigationProps = NativeStackNavigationProp<HomeTabParamList, 'EmailChangeScreen'>;
 
 type Props = {
   navigation: EmailChangeScreenNavigationProps;

@@ -19,24 +19,10 @@ export const enum PasswordResetState {
 /** @package */
 export const PasswordResetPage: FC<Props> = (props) => {
   const [userName, setUserName] = useState<string>('');
-  const [emailChangeState, setEmailChangeState] = useState<PasswordResetState>(
-    PasswordResetState.ResetSendEmailForm,
-  );
+  const [emailChangeState, setEmailChangeState] = useState<PasswordResetState>(PasswordResetState.ResetSendEmailForm);
 
-  if (emailChangeState === PasswordResetState.Complete)
-    return <Complete userName={userName} navigation={props.navigation} />;
+  if (emailChangeState === PasswordResetState.Complete) return <Complete userName={userName} navigation={props.navigation} />;
   if (emailChangeState === PasswordResetState.PasswordResetForm)
-    return (
-      <PasswordResetForm
-        setEmailChangeState={setEmailChangeState}
-        userName={userName}
-        navigation={props.navigation}
-      />
-    );
-  return (
-    <ResetSendEmailForm
-      setEmailChangeState={setEmailChangeState}
-      setUserName={setUserName}
-    />
-  );
+    return <PasswordResetForm setEmailChangeState={setEmailChangeState} userName={userName} navigation={props.navigation} />;
+  return <ResetSendEmailForm setEmailChangeState={setEmailChangeState} setUserName={setUserName} />;
 };

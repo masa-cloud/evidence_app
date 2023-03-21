@@ -132,9 +132,7 @@ export const onDeleteEmoji = /* GraphQL */ `
   }
 `;
 export const onCreateChildrenId = /* GraphQL */ `
-  subscription OnCreateChildrenId(
-    $filter: ModelSubscriptionChildrenIdFilterInput
-  ) {
+  subscription OnCreateChildrenId($filter: ModelSubscriptionChildrenIdFilterInput) {
     onCreateChildrenId(filter: $filter) {
       id
       childrenId
@@ -145,9 +143,7 @@ export const onCreateChildrenId = /* GraphQL */ `
   }
 `;
 export const onUpdateChildrenId = /* GraphQL */ `
-  subscription OnUpdateChildrenId(
-    $filter: ModelSubscriptionChildrenIdFilterInput
-  ) {
+  subscription OnUpdateChildrenId($filter: ModelSubscriptionChildrenIdFilterInput) {
     onUpdateChildrenId(filter: $filter) {
       id
       childrenId
@@ -158,9 +154,7 @@ export const onUpdateChildrenId = /* GraphQL */ `
   }
 `;
 export const onDeleteChildrenId = /* GraphQL */ `
-  subscription OnDeleteChildrenId(
-    $filter: ModelSubscriptionChildrenIdFilterInput
-  ) {
+  subscription OnDeleteChildrenId($filter: ModelSubscriptionChildrenIdFilterInput) {
     onDeleteChildrenId(filter: $filter) {
       id
       childrenId

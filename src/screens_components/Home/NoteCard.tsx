@@ -1,14 +1,7 @@
-import {
-  AntDesign,
-  MaterialCommunityIcons,
-  SimpleLineIcons,
-} from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import React, { useCallback, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
-import DraggableFlatList, {
-  OpacityDecorator,
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
+import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/src/types';
@@ -16,12 +9,7 @@ import { Stack, Text, XStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
 import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
-import {
-  addAsyncEmoji,
-  updateAsyncEmoji,
-  updateAsyncNote,
-  updateAsyncNoteOrder,
-} from '~/slices/noteSlice';
+import { addAsyncEmoji, updateAsyncEmoji, updateAsyncNote, updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -38,12 +26,7 @@ export type NoteCardProps = {
 };
 
 /** @package */
-export const NoteCard = ({
-  ids,
-  note,
-  orderedList,
-  parentExpanded = true,
-}: NoteCardProps): JSX.Element => {
+export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: NoteCardProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   // reducer.
   const { focusNote } = useSelector(selectFocusNote);
@@ -52,12 +35,6 @@ export const NoteCard = ({
   const [emoji, setEmoji] = useState<string | undefined>(note.emoji?.name);
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  // ref
-  // memo
-  // const thisNoteFocus = useMemo(
-  //   () => focusNote.focusId === note.id,
-  //   [focusNote.focusId, note.id],
-  // );
   // custom hook
   const { colors } = useColors();
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
@@ -72,16 +49,8 @@ export const NoteCard = ({
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <OpacityDecorator>
-          <TouchableOpacity
-            onLongPress={drag}
-            disabled={!orderedList || isActive}
-          >
-            <NoteCard
-              note={item}
-              orderedList={orderedList}
-              ids={[item.id, ...ids]}
-              parentExpanded={expanded}
-            />
+          <TouchableOpacity onLongPress={drag} disabled={!orderedList || isActive}>
+            <NoteCard note={item} orderedList={orderedList} ids={[item.id, ...ids]} parentExpanded={expanded} />
           </TouchableOpacity>
         </OpacityDecorator>
       );
@@ -135,11 +104,11 @@ export const NoteCard = ({
               emoji
                 ? {}
                 : {
-                    opacity: 0,
+                    o: 0,
                     x: -40,
                   }
             }
-            opacity={1}
+            o={1}
             x={0}
             animation="bouncy"
             onPress={() => setIsOpen(true)}
@@ -147,68 +116,31 @@ export const NoteCard = ({
             w={44}
             justifyContent="center"
           >
-            <Stack
-              h={28}
-              w={28}
-              borderRadius={4}
-              backgroundColor={colors.text}
-              focusStyle={{ backgroundColor: '#c1d4f0' }}
-              mr={8}
-            >
+            <Stack focusStyle={{ bg: '#c1d4f0' }} h={28} w={28} br={4} bg={colors.text} mr={8}>
               {emoji ? (
-                <Text textAlign="center" fos={22} lineHeight="28">
+                <Text ta="center" fos={22} lh="28">
                   {emoji}
                 </Text>
               ) : (
-                <AntDesign
-                  name="plus"
-                  size={24}
-                  color={colors.primary}
-                  style={{ lineHeight: 26, textAlign: 'center' }}
-                />
+                <AntDesign name="plus" size={24} color={colors.primary} style={{ lineHeight: 26, textAlign: 'center' }} />
               )}
             </Stack>
           </Stack>
         ) : (
           !!emoji && (
-            <Stack
-              onPress={() => setIsOpen(true)}
-              pl={8}
-              h={44}
-              w={44}
-              justifyContent="center"
-            >
-              <Stack
-                h={28}
-                w={28}
-                borderRadius={4}
-                backgroundColor={colors.text}
-                focusStyle={{ backgroundColor: '#c1d4f0' }}
-                mr={8}
-              >
-                <Text textAlign="center" fos={22} lineHeight="28">
+            <Stack onPress={() => setIsOpen(true)} pl={8} h={44} w={44} justifyContent="center">
+              <Stack focusStyle={{ bg: '#c1d4f0' }} h={28} w={28} br={4} bg={colors.text} mr={8}>
+                <Text ta="center" fos={22} lh="28">
                   {emoji}
                 </Text>
               </Stack>
             </Stack>
           )
         )}
-        <EmojiPicker
-          onEmojiSelected={handlePick}
-          open={isOpen}
-          onClose={() => setIsOpen(false)}
-        />
+        <EmojiPicker onEmojiSelected={handlePick} open={isOpen} onClose={() => setIsOpen(false)} />
       </>
     );
-  }, [
-    focusNote.focusId,
-    note.id,
-    colors.text,
-    colors.primary,
-    emoji,
-    handlePick,
-    isOpen,
-  ]);
+  }, [focusNote.focusId, note.id, colors.text, colors.primary, emoji, handlePick, isOpen]);
 
   const NoteChildCard = useCallback((): JSX.Element => {
     if (note.children !== undefined) {
@@ -269,18 +201,11 @@ export const NoteCard = ({
       mb={8}
       ml={8}
       mr={2}
-      borderWidth={2}
-      borderColor={colors.primary}
-      borderRadius={8}
+      bw={2}
+      boc={colors.primary}
+      br={8}
     >
-      <XStack
-        position="relative"
-        alignItems="center"
-        justifyContent="space-between"
-        backgroundColor={colors.primary}
-        pt={4}
-        pb={5}
-      >
+      <XStack pos="relative" ai="center" jc="space-between" bg={colors.primary} pt={4} pb={5}>
         <XStack alignItems="center" f={1}>
           {/* TODO:絵文字の箇所型など修正 */}
           <Emoji />
@@ -288,57 +213,43 @@ export const NoteCard = ({
         </XStack>
         {orderedList && (
           <Stack
-            px={10}
-            py={10}
+            animation="bouncy"
             enterStyle={{
-              opacity: 0,
+              o: 0,
               y: -40,
             }}
-            opacity={1}
-            y={0}
-            borderRadius={40}
-            style={
-              focusNote.focusId === note.id && {
-                backgroundColor: colors.secondary,
-              }
-            }
             pressStyle={{ scale: 0.8 }}
+            bg={focusNote.focusId === note.id ? colors.secondary : 'transparent'}
+            px={10}
+            py={10}
+            o={1}
+            y={0}
+            br={40}
             scale={1}
-            animation="bouncy"
           >
             <SimpleLineIcons name="menu" size={24} color={colors.text} />
           </Stack>
         )}
         {!orderedList && (
           <Stack
-            px={10}
-            py={10}
+            animation="bouncy"
             enterStyle={{
-              opacity: 0,
+              o: 0,
               y: -40,
             }}
-            opacity={1}
-            y={0}
-            borderRadius={40}
-            style={
-              focusNote.focusId === note.id && {
-                backgroundColor: colors.secondary,
-              }
-            }
             pressStyle={{ scale: 0.8 }}
+            px={10}
+            py={10}
+            o={1}
+            y={0}
+            br={40}
+            bg={focusNote.focusId === note.id ? colors.secondary : 'transparent'}
             scale={1}
-            animation="bouncy"
           >
-            <MaterialCommunityIcons
-              name="cursor-pointer"
-              size={24}
-              color={colors.text}
-            />
+            <MaterialCommunityIcons name="cursor-pointer" size={24} color={colors.text} />
           </Stack>
         )}
         <Stack
-          px={10}
-          py={10}
           onPress={() => {
             void (async () => {
               expanded ? fadeIn() : fadeOut();
@@ -355,25 +266,16 @@ export const NoteCard = ({
               );
             })();
           }}
+          px={10}
+          py={10}
         >
           <Stack animation={'bouncy'} {...position}>
-            <SimpleLineIcons
-              name="arrow-up"
-              size={24}
-              color={colors.text}
-              pr={12 - 4 * (note.level + 1)}
-            />
+            <SimpleLineIcons name="arrow-up" size={24} color={colors.text} pr={12 - 4 * (note.level + 1)} />
           </Stack>
         </Stack>
       </XStack>
-      <Animated.View
-        style={[styles.animatedExpandedView, { height: animatedValue }]}
-      >
-        <RichDescriptionDialog
-          ids={ids}
-          note={note}
-          setDescriptionHeight={setDescriptionHeight}
-        />
+      <Animated.View style={[styles.animatedExpandedView, { height: animatedValue }]}>
+        <RichDescriptionDialog ids={ids} note={note} setDescriptionHeight={setDescriptionHeight} />
       </Animated.View>
       <NoteChildCard />
     </Stack>
@@ -385,24 +287,5 @@ const styles = StyleSheet.create({
     overflow: 'scroll',
     paddingHorizontal: 6,
     paddingVertical: 2,
-  },
-  focusBorderNoneStyle: {
-    borderWidth: 0,
-  },
-  focusNoteStyle: {
-    borderRadius: 4,
-    borderStyle: 'dashed',
-    borderWidth: 0.5,
-    mb: 8,
-    ml: 4,
-    mr: 2,
-    paddingTop: 8,
-  },
-  titleTextInputStyle: {
-    alignItems: 'center',
-    flex: 1,
-    fontSize: 18,
-    fontWeight: 'bold',
-    paddingVertical: 4,
   },
 });

@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import DraggableFlatList, {
-  OpacityDecorator,
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
+import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 
 const NUM_ITEMS = 10;
 function getColor(i: number): string {
@@ -44,20 +41,13 @@ const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
 export function MyPage(): JSX.Element {
   const [data, setData] = useState(initialData);
 
-  const renderItem = ({
-    drag,
-    isActive,
-    item,
-  }: RenderItemParams<Item>): JSX.Element => {
+  const renderItem = ({ drag, isActive, item }: RenderItemParams<Item>): JSX.Element => {
     return (
       <OpacityDecorator>
         <TouchableOpacity
           onLongPress={drag}
           disabled={isActive}
-          style={[
-            styles.rowItem,
-            { backgroundColor: isActive ? 'red' : item.backgroundColor },
-          ]}
+          style={[styles.rowItem, { backgroundColor: isActive ? 'red' : item.backgroundColor }]}
         >
           <Text style={styles.text}>{item.label}</Text>
         </TouchableOpacity>
@@ -65,14 +55,7 @@ export function MyPage(): JSX.Element {
     );
   };
 
-  return (
-    <DraggableFlatList
-      data={data}
-      onDragEnd={({ data }) => setData(data)}
-      keyExtractor={(item) => item.key}
-      renderItem={renderItem}
-    />
-  );
+  return <DraggableFlatList data={data} onDragEnd={({ data }) => setData(data)} keyExtractor={(item) => item.key} renderItem={renderItem} />;
 }
 
 const styles = StyleSheet.create({

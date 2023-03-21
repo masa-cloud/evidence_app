@@ -3,10 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '~/navigation/rootStackParamList';
 import { NotFound } from '~/screens_components/NotFound';
 
-type NotFoundScreenNavigationProps = NativeStackNavigationProp<
-  RootStackParamList,
-  'NotFoundScreen'
->;
+type NotFoundScreenNavigationProps = NativeStackNavigationProp<RootStackParamList, 'NotFoundScreen'>;
 
 type Props = {
   navigation: NotFoundScreenNavigationProps;

@@ -1,9 +1,6 @@
 import React, { Suspense, useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
-import DraggableFlatList, {
-  OpacityDecorator,
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
+import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner, Stack, XStack } from 'tamagui';
 
@@ -17,13 +14,7 @@ import { useSideTree } from './hook/useSideTree';
 import { SideTreeItem } from './SideTreeItem';
 
 /** @package */
-export const SideTree = ({
-  notes,
-  onNoteNavigate,
-}: {
-  notes: Note[];
-  onNoteNavigate: (orders: number[]) => void;
-}): JSX.Element => {
+export const SideTree = ({ notes, onNoteNavigate }: { notes: Note[]; onNoteNavigate: (orders: number[]) => void }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { colors } = useColors();
   const { position } = useSelector(selectSideTree);
@@ -35,11 +26,7 @@ export const SideTree = ({
         <Stack>
           <OpacityDecorator>
             <TouchableOpacity onLongPress={drag} disabled={isActive}>
-              <SideTreeItem
-                onNoteNavigate={onNoteNavigate}
-                note={item}
-                ids={[item?.id ?? '']}
-              />
+              <SideTreeItem onNoteNavigate={onNoteNavigate} note={item} ids={[item?.id ?? '']} />
             </TouchableOpacity>
           </OpacityDecorator>
         </Stack>
@@ -52,29 +39,9 @@ export const SideTree = ({
 
   return (
     <Suspense fallback={<Spinner />}>
-      <XStack
-        animation={'bouncy'}
-        h={_HEIGHT}
-        w={width}
-        pos={'absolute'}
-        zIndex="2"
-        {...position}
-      >
-        <Stack
-          h={_HEIGHT}
-          br="$4"
-          pt={30}
-          w={(width / 4) * 1}
-          onPress={() => onPress()}
-        />
-        <Stack
-          bc={colors.primary}
-          h={_HEIGHT}
-          br="$4"
-          pt={30}
-          btrr={0}
-          w={width}
-        >
+      <XStack animation={'bouncy'} h={_HEIGHT} w={width} pos={'absolute'} zIndex="2" {...position}>
+        <Stack h={_HEIGHT} br="$4" pt={30} w={(width / 4) * 1} onPress={() => onPress()} />
+        <Stack bc={colors.primary} h={_HEIGHT} br="$4" pt={30} btrr={0} w={width}>
           <DraggableFlatList
             data={notes}
             activationDistance={10}
@@ -101,9 +68,7 @@ export const SideTree = ({
             }}
             // TODO:不要だったらそれでいい
             // extraData={notes}
-            keyExtractor={(item, index) =>
-              `side-tree-${item?.id ?? index}-${index}`
-            }
+            keyExtractor={(item, index) => `side-tree-${item?.id ?? index}-${index}`}
             // getItemLayout={getItemLayout}
             renderItem={renderItem}
           />

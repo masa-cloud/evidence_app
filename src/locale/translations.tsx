@@ -19,8 +19,7 @@ export const translations: Translations = {
       policy: 'privacy policy',
       reviewRequest: 'Please cooperate with the review',
     },
-    placeholder:
-      'Enter it and tap the button below to enlarge it on the screen.',
+    placeholder: 'Enter it and tap the button below to enlarge it on the screen.',
   },
   ja: {
     drawer: {

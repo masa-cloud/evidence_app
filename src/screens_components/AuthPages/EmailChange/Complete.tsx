@@ -18,9 +18,7 @@ export const Complete: FC<Props> = (props) => {
       description={`メールアドレス変更が完了いたしました。
 トップページに戻ってください。`}
     >
-      <Button onPress={() => props.navigation.navigate(RouteName.HomeScreen)}>
-        トップページに戻る
-      </Button>
+      <Button onPress={() => props.navigation.navigate(RouteName.HomeScreen)}>トップページに戻る</Button>
     </PageContainer>
   );
 };

@@ -26,13 +26,7 @@ export const Button: FC<Props> = (props) => {
       {/* // style={{
         // fontSize: 16,
       // }} */}
-      <SizableText
-        lineHeight="21"
-        letterSpacing="0.5"
-        fontWeight="bold"
-        color={props.isWhite ? colors.primary : colors.text}
-        size="$4"
-      >
+      <SizableText lineHeight="21" letterSpacing="0.5" fontWeight="bold" color={props.isWhite ? colors.primary : colors.text} size="$4">
         {props.children}
       </SizableText>
     </BaseButton>

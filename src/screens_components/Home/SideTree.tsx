@@ -32,7 +32,7 @@ export const SideTree = ({
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
-        <Stack onLayout={(event) => console.log(event.nativeEvent.layout)}>
+        <Stack>
           <OpacityDecorator>
             <TouchableOpacity onLongPress={drag} disabled={isActive}>
               <SideTreeItem
@@ -65,7 +65,7 @@ export const SideTree = ({
           br="$4"
           pt={30}
           w={(width / 4) * 1}
-          onPress={onPress}
+          onPress={() => onPress()}
         />
         <Stack
           bc={colors.primary}

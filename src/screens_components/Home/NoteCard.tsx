@@ -1,17 +1,21 @@
-import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+} from '@expo/vector-icons';
 import React, { useCallback, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   OpacityDecorator,
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from 'rn-emoji-keyboard';
 import { EmojiType } from 'rn-emoji-keyboard/lib/typescript/src/types';
-import { Stack, Text, TextArea, XStack } from 'tamagui';
+import { Stack, Text, XStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
-import { updateFucusId } from '~/slices/focusNoteSlice';
+import { selectFocusNote, updateFucusId } from '~/slices/focusNoteSlice';
 import {
   addAsyncEmoji,
   updateAsyncEmoji,
@@ -24,26 +28,26 @@ import { Note } from '~/types/types';
 import { useAnimeExpand } from './hook/useAnimeExpand';
 import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
 import { RichDescriptionDialog } from './RichDescriptionDialog';
+import { TitleDialog } from './TitleDialog';
 
 export type NoteCardProps = {
-  flatListChildRef: React.MutableRefObject<any>;
   ids: string[];
   note: Note;
+  orderedList: boolean;
   parentExpanded?: boolean;
 };
 
 /** @package */
 export const NoteCard = ({
-  flatListChildRef,
   ids,
   note,
+  orderedList,
   parentExpanded = true,
 }: NoteCardProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   // reducer.
-  // const { focusNote } = useSelector(selectFocusNote);
+  const { focusNote } = useSelector(selectFocusNote);
   // state
-  const [title, setTitle] = useState<string>(note.title);
   const [descriptionHeight, setDescriptionHeight] = useState<number>(48);
   const [emoji, setEmoji] = useState<string | undefined>(note.emoji?.name);
   const [expanded, setExpanded] = useState<boolean>(note.expanded);
@@ -57,10 +61,7 @@ export const NoteCard = ({
   // custom hook
   const { colors } = useColors();
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
-    // descriptionHeight: thisNoteFocus
-    // ? descriptionHeight + 50
-    // : descriptionHeight,
-    descriptionHeight: descriptionHeight + 50,
+    descriptionHeight,
     expanded,
     ids,
     level: note.level,
@@ -71,10 +72,13 @@ export const NoteCard = ({
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <OpacityDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={isActive}>
+          <TouchableOpacity
+            onLongPress={drag}
+            disabled={!orderedList || isActive}
+          >
             <NoteCard
               note={item}
-              flatListChildRef={flatListChildRef}
+              orderedList={orderedList}
               ids={[item.id, ...ids]}
               parentExpanded={expanded}
             />
@@ -82,7 +86,7 @@ export const NoteCard = ({
         </OpacityDecorator>
       );
     },
-    [flatListChildRef, ids, expanded],
+    [ids, expanded, orderedList],
   );
 
   const handlePick = useCallback(
@@ -124,33 +128,71 @@ export const NoteCard = ({
   const Emoji = useCallback((): JSX.Element => {
     return (
       <>
-        <Stack
-          h={28}
-          w={28}
-          borderRadius={4}
-          backgroundColor={colors.text}
-          focusStyle={{ backgroundColor: '#c1d4f0' }}
-          mr={8}
-        >
-          {emoji ? (
-            <Text
-              onPress={() => setIsOpen(true)}
-              textAlign="center"
-              fos={22}
-              lineHeight="28"
+        {focusNote.focusId === note.id ? (
+          <Stack
+            pl={8}
+            enterStyle={
+              emoji
+                ? {}
+                : {
+                    opacity: 0,
+                    x: -40,
+                  }
+            }
+            opacity={1}
+            x={0}
+            animation="bouncy"
+            onPress={() => setIsOpen(true)}
+            h={44}
+            w={44}
+            justifyContent="center"
+          >
+            <Stack
+              h={28}
+              w={28}
+              borderRadius={4}
+              backgroundColor={colors.text}
+              focusStyle={{ backgroundColor: '#c1d4f0' }}
+              mr={8}
             >
-              {emoji}
-            </Text>
-          ) : (
-            <AntDesign
+              {emoji ? (
+                <Text textAlign="center" fos={22} lineHeight="28">
+                  {emoji}
+                </Text>
+              ) : (
+                <AntDesign
+                  name="plus"
+                  size={24}
+                  color={colors.primary}
+                  style={{ lineHeight: 26, textAlign: 'center' }}
+                />
+              )}
+            </Stack>
+          </Stack>
+        ) : (
+          !!emoji && (
+            <Stack
               onPress={() => setIsOpen(true)}
-              name="plus"
-              size={24}
-              color={colors.primary}
-              style={{ lineHeight: 26, textAlign: 'center' }}
-            />
-          )}
-        </Stack>
+              pl={8}
+              h={44}
+              w={44}
+              justifyContent="center"
+            >
+              <Stack
+                h={28}
+                w={28}
+                borderRadius={4}
+                backgroundColor={colors.text}
+                focusStyle={{ backgroundColor: '#c1d4f0' }}
+                mr={8}
+              >
+                <Text textAlign="center" fos={22} lineHeight="28">
+                  {emoji}
+                </Text>
+              </Stack>
+            </Stack>
+          )
+        )}
         <EmojiPicker
           onEmojiSelected={handlePick}
           open={isOpen}
@@ -158,7 +200,15 @@ export const NoteCard = ({
         />
       </>
     );
-  }, [colors.primary, colors.text, emoji, handlePick, isOpen]);
+  }, [
+    focusNote.focusId,
+    note.id,
+    colors.text,
+    colors.primary,
+    emoji,
+    handlePick,
+    isOpen,
+  ]);
 
   const NoteChildCard = useCallback((): JSX.Element => {
     if (note.children !== undefined) {
@@ -166,7 +216,6 @@ export const NoteCard = ({
       return (
         <DraggableFlatList
           data={NoteChild}
-          ref={flatListChildRef}
           onDragEnd={({ data, from, to }) => {
             const id = data[to]?.id;
             if (id !== undefined) {
@@ -202,111 +251,132 @@ export const NoteCard = ({
   }
 
   return (
-    <>
-      <Stack
-        onLayout={(event) => console.log(event.nativeEvent.layout)}
-        focusStyle={styles.focusNoteStyle}
+    <Stack
+      // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
+      onTouchStart={() => {
+        dispatch(
+          updateFucusId({
+            focusChildrenLength: note.children?.length ?? 0,
+            focusId: note.id,
+            ids,
+            level: note.level,
+            orderNumber: note.orderNumber,
+            parentId: note.parentId,
+          }),
+        );
+      }}
+      mt={0}
+      mb={8}
+      ml={8}
+      mr={2}
+      borderWidth={2}
+      borderColor={colors.primary}
+      borderRadius={8}
+    >
+      <XStack
+        position="relative"
+        alignItems="center"
+        justifyContent="space-between"
+        backgroundColor={colors.primary}
+        pt={4}
+        pb={5}
       >
-        <Stack
-          // TODO:入れ子の順番入れ替えできたけど、親と順番交換するのはどうする？なんか境界線超えれるのあったようなDragFlatListに
-          onTouchStart={() => {
-            dispatch(
-              updateFucusId({
-                focusChildrenLength: note.children?.length ?? 0,
-                focusId: note.id,
-                ids,
-                level: note.level,
-                orderNumber: note.orderNumber,
-                parentId: note.parentId,
-              }),
-            );
-          }}
-          mt={0}
-          mb={8}
-          ml={8}
-          mr={2}
-          borderWidth={2}
-          borderColor={colors.primary}
-          borderRadius={8}
-        >
-          <XStack
-            position="relative"
-            alignItems="center"
-            justifyContent="space-between"
-            backgroundColor={colors.primary}
-            px={8}
-            py={4}
+        <XStack alignItems="center" f={1}>
+          {/* TODO:絵文字の箇所型など修正 */}
+          <Emoji />
+          <TitleDialog ids={ids} note={note} />
+        </XStack>
+        {orderedList && (
+          <Stack
+            px={10}
+            py={10}
+            enterStyle={{
+              opacity: 0,
+              y: -40,
+            }}
+            opacity={1}
+            y={0}
+            borderRadius={40}
+            style={
+              focusNote.focusId === note.id && {
+                backgroundColor: colors.secondary,
+              }
+            }
+            pressStyle={{ scale: 0.8 }}
+            scale={1}
+            animation="bouncy"
           >
-            <XStack alignItems="center" f={1}>
-              {/* TODO:絵文字の箇所型など修正 */}
-              <Emoji />
-              <TextArea
-                style={[styles.titleTextInputStyle, { color: colors.text }]}
-                focusStyle={styles.focusBorderNoneStyle}
-                bg={colors.primary}
-                py={10}
-                lineHeight={18}
-                px={4}
-                bw={0}
-                h={36}
-                value={title ?? ''}
-                multiline={true}
-                onChangeText={(title) => setTitle(title)}
-                autoCapitalize="none"
-                onEndEditing={() => {
-                  void (async () => {
-                    // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
-                    await dispatch(
-                      updateAsyncNote({
-                        ids,
-                        updateNoteData: { id: ids[0] ?? '', title },
-                      }),
-                    );
-                  })();
-                }}
-              />
-            </XStack>
-            {/* TODO:Expandedはアニメーション終わったあとにコンポーネント化 */}
-            <Stack boc={colors.primary}>
-              <Stack animation={'bouncy'} {...position}>
-                <SimpleLineIcons
-                  onPress={() => {
-                    void (async () => {
-                      expanded ? fadeIn() : fadeOut();
-                      setExpanded((prevExpanded) => !prevExpanded);
-                      // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん 更新されていそう
-                      await dispatch(
-                        updateAsyncNote({
-                          ids,
-                          updateNoteData: {
-                            id: ids[0] ?? '',
-                            expanded: !expanded,
-                          },
-                        }),
-                      );
-                    })();
-                  }}
-                  name="arrow-up"
-                  size={20}
-                  color={colors.text}
-                  px={12 - 4 * (note.level + 1)}
-                />
-              </Stack>
-            </Stack>
-          </XStack>
-          <Animated.View
-            style={[styles.animatedExpandedView, { height: animatedValue }]}
+            <SimpleLineIcons name="menu" size={24} color={colors.text} />
+          </Stack>
+        )}
+        {!orderedList && (
+          <Stack
+            px={10}
+            py={10}
+            enterStyle={{
+              opacity: 0,
+              y: -40,
+            }}
+            opacity={1}
+            y={0}
+            borderRadius={40}
+            style={
+              focusNote.focusId === note.id && {
+                backgroundColor: colors.secondary,
+              }
+            }
+            pressStyle={{ scale: 0.8 }}
+            scale={1}
+            animation="bouncy"
           >
-            <RichDescriptionDialog
-              ids={ids}
-              note={note}
-              setDescriptionHeight={setDescriptionHeight}
+            <MaterialCommunityIcons
+              name="cursor-pointer"
+              size={24}
+              color={colors.text}
             />
-          </Animated.View>
-          <NoteChildCard />
+          </Stack>
+        )}
+        <Stack
+          px={10}
+          py={10}
+          onPress={() => {
+            void (async () => {
+              expanded ? fadeIn() : fadeOut();
+              setExpanded((prevExpanded) => !prevExpanded);
+              // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん 更新されていそう
+              await dispatch(
+                updateAsyncNote({
+                  ids,
+                  updateNoteData: {
+                    id: ids[0] ?? '',
+                    expanded: !expanded,
+                  },
+                }),
+              );
+            })();
+          }}
+        >
+          <Stack animation={'bouncy'} {...position}>
+            <SimpleLineIcons
+              name="arrow-up"
+              size={24}
+              color={colors.text}
+              pr={12 - 4 * (note.level + 1)}
+            />
+          </Stack>
         </Stack>
-      </Stack>
-    </>
+      </XStack>
+      <Animated.View
+        style={[styles.animatedExpandedView, { height: animatedValue }]}
+      >
+        <RichDescriptionDialog
+          ids={ids}
+          note={note}
+          setDescriptionHeight={setDescriptionHeight}
+        />
+      </Animated.View>
+      <NoteChildCard />
+    </Stack>
   );
 };
 

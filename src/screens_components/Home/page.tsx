@@ -1,6 +1,13 @@
-import { useFocusEffect, useRouter } from 'expo-router';
-import React, { FC, useCallback, useRef } from 'react';
-import { ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
+import React, { FC, useCallback, useRef, useState } from 'react';
+import {
+  ImageBackground,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
 import DraggableFlatList, {
   OpacityDecorator,
   RenderItemParams,
@@ -9,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
+import { useColors } from '~/lib/constants';
 import {
   fetchAsyncNotes,
   selectNote,
@@ -17,17 +25,35 @@ import {
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
-import { HomeHeader } from './HomeHeader';
 import { NoteCard } from './NoteCard';
+import { ScrollDownNoteMenu } from './ScrollDownNoteMenu';
+import { ScrollUpGlobalMenu } from './ScrollUpGlobalMenu';
 import { SideTree } from './SideTree';
 
 /** @package */
 export const Home: FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const router = useRouter();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
-  const flatListChildRef = useRef<any>(undefined);
+  const { colors } = useColors();
+  const [orderedList, setOrderedList] = useState<boolean>(false);
+
+  const [showElement, setShowElement] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+
+  const handleScroll = (
+    event: NativeSyntheticEvent<NativeScrollEvent>,
+  ): void => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+
+    if (currentScrollY < scrollY && !showElement) {
+      setShowElement(true);
+    } else if (currentScrollY > scrollY && showElement) {
+      setShowElement(false);
+    }
+
+    setScrollY(currentScrollY);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -53,22 +79,20 @@ export const Home: FC = () => {
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <OpacityDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={isActive}>
-            <NoteCard
-              note={item}
-              ids={[item.id]}
-              flatListChildRef={flatListChildRef}
-            />
+          <TouchableOpacity
+            onLongPress={drag}
+            disabled={!orderedList || isActive}
+          >
+            <NoteCard note={item} ids={[item.id]} orderedList={orderedList} />
           </TouchableOpacity>
         </OpacityDecorator>
       );
     },
-    [],
+    [orderedList],
   );
 
   // TODO:データが無い時のハンドリング
   // if ( notes.length === 0 ) return <></>
-
   return (
     <SafeAreaView>
       <ImageBackground
@@ -76,16 +100,50 @@ export const Home: FC = () => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%' }}
       >
-        <HomeHeader />
+        <Stack
+          pos="absolute"
+          pressStyle={{ scale: 0.9 }}
+          animation="bouncy"
+          bottom={80}
+          right="8.5%"
+          zIndex={100}
+          onPress={() => setShowElement((prevShowElement) => !prevShowElement)}
+        >
+          <Stack
+            position="absolute"
+            borderRadius={50}
+            backgroundColor={showElement ? colors.text : colors.primary}
+            t={-5}
+            l={-6}
+            h={52}
+            w={52}
+            shadowColor={colors.primary}
+            shadowOffset={{
+              height: 3,
+              width: 0,
+            }}
+            shadowRadius={4}
+          />
+          <Entypo
+            name="cycle"
+            size={40}
+            color={showElement ? colors.primary : colors.text}
+          />
+        </Stack>
+        {showElement ? (
+          <ScrollUpGlobalMenu />
+        ) : (
+          <ScrollDownNoteMenu
+            setOrderedList={setOrderedList}
+            orderedList={orderedList}
+          />
+        )}
         <SideTree notes={notes} onNoteNavigate={onNoteNavigate} />
-        <TouchableOpacity
-          onPress={() => router.push('/MyPageScreen')}
-        ></TouchableOpacity>
-        <Stack h={60} />
-        {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         <DraggableFlatList
           data={notes}
           ref={flatListRef}
+          onScrollEndDrag={handleScroll}
+          onScrollBeginDrag={handleScroll}
           onDragEnd={({ data, from, to }) => {
             const id = data[to]?.id;
             if (id !== undefined) {
@@ -110,8 +168,6 @@ export const Home: FC = () => {
           keyExtractor={(item, index) => `item-${item.id}-${index}`}
           renderItem={renderItem}
         />
-        {/* </TouchableWithoutFeedback> */}
-        {/* </Stack> */}
       </ImageBackground>
     </SafeAreaView>
   );

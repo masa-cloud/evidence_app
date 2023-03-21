@@ -1,63 +1,40 @@
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
-import React, { FC, memo, useCallback, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useState } from 'react';
 import { Keyboard, Platform, StyleSheet } from 'react-native';
-import {
-  actions,
-  RichEditor,
-  RichToolbar,
-} from 'react-native-pell-rich-editor';
-import RenderHTML from 'react-native-render-html';
 import { useDispatch } from 'react-redux';
-import { Adapt, Dialog, Sheet, Stack, Unspaced, XStack, YStack } from 'tamagui';
+import {
+  Adapt,
+  Dialog,
+  Sheet,
+  SizableText,
+  Stack,
+  TextArea,
+  Unspaced,
+  XStack,
+  YStack,
+} from 'tamagui';
 
-import { useColors, width } from '~/lib/constants';
+import { useColors } from '~/lib/constants';
 import { updateFucusId } from '~/slices/focusNoteSlice';
 import { updateAsyncNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
-import { useAnimeRichDescriptionEditor } from './hook/useAnimeRichDescriptionEditor';
-
-type RichDescriptionDialogProps = {
+type TitleDialogProps = {
   ids: string[];
   note: Note;
-  setDescriptionHeight: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export const snapPointHeight: [number, number, number] = [80, 95, 65];
-
-export const actionList = [
-  actions.insertImage,
-  actions.checkboxList,
-  actions.insertBulletsList,
-  actions.insertOrderedList,
-  actions.insertLink,
-  actions.setItalic,
-  actions.setUnderline,
-  actions.undo,
-  actions.redo,
-  actions.keyboard,
-] as string[];
-
-export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
-  (props: RichDescriptionDialogProps) => {
-    const richText = useRef<RichEditor | null>();
+export const TitleDialog: FC<TitleDialogProps> = memo(
+  (props: TitleDialogProps) => {
     const { colors } = useColors();
     const dispatch: AppDispatch = useDispatch();
-    const [draftDescription, setDraftDescription] = useState<string>(
-      props.note.description,
-    );
-    const [snapPointNumber, setSnapPointNumber] = useState<number>(0);
+    const [draftTitle, setDraftTitle] = useState<string>(props.note.title);
     const isAndroid = Platform.OS === 'android';
-    const [savedDescription, setSavedDescription] = useState<string>(
-      props.note.description,
-    );
-    const { position } = useAnimeRichDescriptionEditor(snapPointNumber);
-    // const [saveDoneContentHeight, setSaveDoneContentHeight] = useState<number>(0);
+    const [savedTitle, setSavedTitle] = useState<string>(props.note.title);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
-    const onDone = (): void => {
-      richText.current?.blurContentEditor();
+    const onDone = useCallback((): void => {
       void (async () => {
         // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
         await dispatch(
@@ -65,13 +42,13 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
             ids: props.ids,
             updateNoteData: {
               id: props.ids[0] ?? '',
-              description: draftDescription,
+              title: draftTitle,
             },
           }),
         );
-        setSavedDescription(draftDescription);
+        setSavedTitle(draftTitle);
       })();
-    };
+    }, [dispatch, draftTitle, props.ids]);
     const onKeyboardDidShow = useCallback(
       (e: any): void => {
         let height = Platform.OS === 'android' ? 0 : e.endCoordinates.height;
@@ -124,43 +101,32 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
             );
           }}
         >
-          <Stack
-            minHeight={48}
-            onLayout={(event) =>
-              props.setDescriptionHeight(event.nativeEvent.layout.height)
-            }
+          <SizableText
+            alignItems="center"
+            flex={1}
+            fontSize={18}
+            fontWeight="bold"
+            py={4}
+            lineHeight={24}
+            backgroundColor="trans"
+            px={4}
+            bw={0}
+            minHeight={36}
+            justifyContent="center"
+            color={colors.text}
+            pl={props.note.emoji ? 0 : 8}
           >
-            <RenderHTML
-              source={{
-                html: savedDescription,
-              }}
-              tagsStyles={{
-                code: {
-                  backgroundColor: colors.background,
-                  borderRadius: 4,
-                  color: colors.text,
-                  padding: 4,
-                },
-                div: { fontSize: 18 },
-                html: {
-                  backgroundColor: colors.background,
-                },
-                p: { fontSize: 18 },
-                span: { fontSize: 18 },
-              }}
-              contentWidth={width}
-            />
-          </Stack>
+            {savedTitle}
+          </SizableText>
         </Dialog.Trigger>
 
         <Adapt platform="touch">
           {/* TODO: SnapPointは永続化したほうが使いやすいのでは？ */}
           <Sheet
-            onPositionChange={(snapPoint) => setSnapPointNumber(snapPoint)}
             zIndex={200000}
             modal
             dismissOnSnapToBottom
-            snapPoints={[...snapPointHeight]}
+            snapPoints={[70]}
             disableDrag
           >
             <Sheet.Frame padding="$4" space>
@@ -199,60 +165,31 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
             <YStack
               animation={'bouncy'}
               fullscreen
-              {...position}
               backgroundColor="transparent"
               alignItems="stretch"
             >
-              <Stack
+              <XStack
                 animation={'bouncy'}
                 flexBasis={'auto'}
                 flexGrow={1}
+                mt={40}
                 flexShrink={0}
                 backgroundColor="transparent"
                 w={'100%'}
+                alignItems="center"
               >
-                <RichEditor
-                  ref={(r) => (richText.current = r)}
-                  initialFocus={true}
-                  initialContentHTML={draftDescription ?? ''}
-                  onChange={(description) => {
-                    setDraftDescription(description);
-                  }}
+                <TextArea
+                  multiline={true}
+                  onChangeText={(title) => setDraftTitle(title)}
                   style={styles.richEditor}
-                  editorStyle={{
-                    backgroundColor: 'transparent',
-                    contentCSSText: `
-                      padding-top: 40px;
-                      display: flex;
-                      flex-direction: column;
-                      flex: 1:`,
-                  }}
-                />
-              </Stack>
-              <XStack animation={'bouncy'} h={44} alignItems="center">
-                <RichToolbar
-                  style={styles.richBar}
-                  flatContainerStyle={styles.flatStyle}
-                  editor={richText}
-                  selectedIconTint={'#2095F2'}
-                  disabledIconTint={colors.primary}
-                  unselectedButtonStyle={styles.richToolBarIcon}
-                  selectedButtonStyle={styles.richToolBarIcon}
-                  disabledButtonStyle={styles.richToolBarIcon}
-                  actions={actionList}
-                  // TODO:不要かなー
-                  // actions.checkboxList,
-                  // actions.indent,
-                  // actions.outdent,
-                  // TODO
-                  // actions.insertImage,
-                />
+                  mx={8}
+                  autoCapitalize="none"
+                >
+                  {draftTitle}
+                </TextArea>
                 <Dialog.Close
-                  m={0}
-                  ml={16}
                   displayWhenAdapted
                   asChild
-                  position="relative"
                   onPress={() => onDone()}
                 >
                   <Stack
@@ -260,7 +197,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
                     w={44}
                     backgroundColor={colors.secondary}
                     borderRadius={8}
-                    mr={8}
+                    mx={8}
                     justifyContent={'center'}
                     alignItems={'center'}
                   >
@@ -274,7 +211,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
               <Dialog.Close
                 pos="absolute"
                 top={12}
-                right={12}
+                left={12}
                 asChild
                 m={0}
                 displayWhenAdapted
@@ -294,26 +231,17 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo(
   },
 );
 
-RichDescriptionDialog.displayName = 'RichDescriptionDialog';
+TitleDialog.displayName = 'TitleDialog';
 
 const styles = StyleSheet.create({
-  flatStyle: {
-    paddingHorizontal: 12,
-  },
-  richBar: {
-    backgroundColor: 'transparent',
-    flex: 1,
-  },
   richEditor: {
     backgroundColor: 'transparent',
+    borderRadius: 8,
     flex: 1,
     fontSize: 14,
     margin: 0,
+    marginLeft: 8,
     padding: 0,
     width: '100%',
-  },
-  richToolBarIcon: {
-    fontSize: 28,
-    width: 40,
   },
 });

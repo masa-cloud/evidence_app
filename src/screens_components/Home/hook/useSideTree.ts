@@ -51,11 +51,11 @@ export const useSideTree = (): useSideTreeReturn => {
 
 const positions = [
   {
-    x: 0,
+    x: width,
     y: 0,
   },
   {
-    x: width,
+    x: 0,
     y: 0,
   },
 ];

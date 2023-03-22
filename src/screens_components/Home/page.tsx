@@ -111,6 +111,7 @@ export const Home: FC = () => {
           ref={flatListRef}
           onScrollEndDrag={handleScroll}
           onScrollBeginDrag={handleScroll}
+          ListFooterComponent={<Stack h={80} />}
           onDragEnd={({ data, from, to }) => {
             const id = data[to]?.id;
             if (id !== undefined) {

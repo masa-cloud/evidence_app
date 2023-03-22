@@ -197,6 +197,10 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
           }),
         );
       }}
+      animation="bouncy"
+      enterStyle={{ scale: 0.9, y: -50 }}
+      scale={1}
+      y={0}
       mt={0}
       mb={8}
       ml={8}

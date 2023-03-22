@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
+
 import { _HEIGHT } from '~/lib/constants';
 
 type useAnimeRichDescriptionEditorReturn = {
   position:
     | {
-        scaleY: number;
+        height: number;
       }
     | undefined;
 };

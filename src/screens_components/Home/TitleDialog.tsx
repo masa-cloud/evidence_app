@@ -5,7 +5,7 @@ import { Keyboard, Platform, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { Adapt, Dialog, Sheet, SizableText, Stack, TextArea, Unspaced, XStack, YStack } from 'tamagui';
 
-import { useColors } from '~/lib/constants';
+import { _HEIGHT, useColors } from '~/lib/constants';
 import { updateFucusId } from '~/slices/focusNoteSlice';
 import { updateAsyncNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
@@ -23,6 +23,7 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
   const isAndroid = Platform.OS === 'android';
   const [savedTitle, setSavedTitle] = useState<string>(props.note.title);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+
   const onDone = useCallback((): void => {
     void (async () => {
       // TODO idsが無い時のハンドリング ここのasync awaitの書き方どうなん
@@ -38,6 +39,7 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
       setSavedTitle(draftTitle);
     })();
   }, [dispatch, draftTitle, props.ids]);
+
   const onKeyboardDidShow = useCallback(
     (e: any): void => {
       let height = Platform.OS === 'android' ? 0 : e.endCoordinates.height;
@@ -52,16 +54,11 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
     [isAndroid],
   );
 
-  const onKeyboardDidHide = useCallback((): void => {
-    setKeyboardHeight(0);
-  }, []);
   useFocusEffect(
     useCallback(() => {
       const didShowSubscription = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
-      const didHideSubscription = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
       return () => {
         didShowSubscription.remove();
-        didHideSubscription.remove();
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
@@ -91,7 +88,7 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
           fow="bold"
           py={4}
           lh={24}
-          bg="trans"
+          bg="transparent"
           px={4}
           bw={0}
           mih={36}
@@ -104,8 +101,7 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
       </Dialog.Trigger>
 
       <Adapt platform="touch">
-        {/* TODO: SnapPointは永続化したほうが使いやすいのでは？ */}
-        <Sheet zIndex={200000} modal dismissOnSnapToBottom snapPoints={[70]} disableDrag>
+        <Sheet zIndex={200000} modal dismissOnSnapToBottom snapPoints={[55]} disableDrag>
           <Sheet.Frame padding="$4" space>
             <Sheet.Handle h={12} bc={colors.primary} />
             <Adapt.Contents />
@@ -133,13 +129,19 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
           space
           f={1}
         >
-          <YStack animation={'bouncy'} fullscreen backgroundColor="transparent" alignItems="stretch">
-            <XStack animation={'bouncy'} fb={'auto'} f={1} mt={40} fs={0} bg="transparent" w={'100%'} ai="center">
-              <TextArea multiline={true} onChangeText={(title) => setDraftTitle(title)} style={styles.richEditor} mx={8} autoCapitalize="none">
+          <YStack animation={'bouncy'} fullscreen h={_HEIGHT * 0.55} bg="transparent" ai="stretch">
+            <XStack animation={'bouncy'} fb={'auto'} f={1} mt={40} fg={1} fs={0} w={'100%'} bg="transparent" ai="center" mx={8}>
+              <TextArea
+                autoFocus={true}
+                multiline={true}
+                onChangeText={(title) => setDraftTitle(title)}
+                style={styles.richEditor}
+                autoCapitalize="none"
+              >
                 {draftTitle}
               </TextArea>
-              <Dialog.Close displayWhenAdapted asChild onPress={() => onDone()}>
-                <Stack h={44} w={44} bg={colors.secondary} borderRadius={8} mx={8} jc={'center'} ai={'center'}>
+              <Dialog.Close displayWhenAdapted asChild onPress={() => onDone()} ml={8} mr={16}>
+                <Stack h={44} w={44} bg={colors.secondary} br={8} jc={'center'} ai={'center'}>
                   <Ionicons name="pencil" size={24} color={colors.text} />
                 </Stack>
               </Dialog.Close>
@@ -149,7 +151,7 @@ export const TitleDialog: FC<TitleDialogProps> = memo((props: TitleDialogProps) 
           <Unspaced>
             <Dialog.Close pos="absolute" t={12} l={12} asChild m={0} displayWhenAdapted>
               <FontAwesome5
-                size="24"
+                size={24}
                 name="times"
                 // TODO:色変更
                 color={colors.primary}

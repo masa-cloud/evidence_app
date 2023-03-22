@@ -45,7 +45,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo((props
   const isAndroid = Platform.OS === 'android';
   const [savedDescription, setSavedDescription] = useState<string>(props.note.description);
   const { position } = useAnimeRichDescriptionEditor(snapPointNumber);
-  // const [saveDoneContentHeight, setSaveDoneContentHeight] = useState<number>(0);
+
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const onDone = (): void => {
     richText.current?.blurContentEditor();
@@ -185,7 +185,10 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo((props
                   contentCSSText: `
                       padding-top: 40px;
                       display: flex;
+                      overflow-y: scroll;
                       flex-direction: column;
+                      position: absolute;
+                      top: 0; right: 0; bottom: 0; left: 0;
                       flex: 1:`,
                 }}
               />
@@ -209,7 +212,7 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo((props
                 // actions.insertImage,
               />
               <Dialog.Close m={0} ml={16} displayWhenAdapted asChild pos="relative" onPress={() => onDone()}>
-                <Stack h={44} w={44} bg={colors.secondary} br={8} mr={8} justifyContent={'center'} ai={'center'}>
+                <Stack h={44} w={44} bg={colors.secondary} br={8} mr={8} jc={'center'} ai={'center'}>
                   <Ionicons name="pencil" size={24} color={colors.text} />
                 </Stack>
               </Dialog.Close>
@@ -219,10 +222,10 @@ export const RichDescriptionDialog: FC<RichDescriptionDialogProps> = memo((props
           <Unspaced>
             <Dialog.Close pos="absolute" t={12} r={12} asChild m={0} displayWhenAdapted>
               <FontAwesome5
-                size="24"
+                size={24}
                 name="times"
                 // TODO:色変更
-                col={colors.primary}
+                color={colors.primary}
               />
             </Dialog.Close>
           </Unspaced>
@@ -247,6 +250,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     margin: 0,
+    overflowY: 'scroll',
     padding: 0,
     width: '100%',
   },

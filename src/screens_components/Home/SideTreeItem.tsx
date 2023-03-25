@@ -89,7 +89,7 @@ export const SideTreeItem = ({ ids, note, onNoteNavigate, orderNumbers, parentEx
       <>
         <Stack h={24} w={24} br={4} bg={note.emoji !== undefined ? colors.text : 'transparent'} mr={4}>
           {note.emoji?.name.length ? (
-            <Text ta="center" fos={'lg'} lh={24}>
+            <Text ta="center" fos={20} lh={24}>
               {note.emoji?.name}
             </Text>
           ) : (

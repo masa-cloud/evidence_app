@@ -1,5 +1,5 @@
 import { AntDesign, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,6 +37,7 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // custom hook
   const { colors } = useColors();
+  const flatListRef = useRef<any>(undefined);
   const { animatedValue, fadeIn, fadeOut } = useAnimeExpand({
     descriptionHeight,
     expanded,
@@ -148,6 +149,9 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
       return (
         <DraggableFlatList
           data={NoteChild}
+          ref={flatListRef}
+          // TODO:スクロールが上手く行かない
+          // scrollEnabled={focusNote.level - 1 === note.level}
           onDragEnd={({ data, from, to }) => {
             const id = data[to]?.id;
             if (id !== undefined) {

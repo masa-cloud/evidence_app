@@ -8,6 +8,7 @@ import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
 import { useColors } from '~/lib/constants';
+import { selectFocusNote } from '~/slices/focusNoteSlice';
 import { fetchAsyncNotes, selectNote, updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
@@ -24,7 +25,7 @@ export const Home: FC = () => {
   const flatListRef = useRef<any>(undefined);
   const { colors } = useColors();
   const [orderedList, setOrderedList] = useState<boolean>(false);
-
+  const { focusNote } = useSelector(selectFocusNote);
   const [showElement, setShowElement] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
@@ -109,6 +110,7 @@ export const Home: FC = () => {
         <DraggableFlatList
           data={notes}
           ref={flatListRef}
+          scrollEnabled={focusNote.level === 0}
           onScrollEndDrag={handleScroll}
           onScrollBeginDrag={handleScroll}
           ListFooterComponent={<Stack h={80} />}

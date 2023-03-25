@@ -58,10 +58,10 @@ export const LoginDialog: FC<Props> = (props) => {
       <ValidationTextInput control={control} type="email" />
       <ValidationPasswordInput control={control} type="password" />
       {error}
-      <Text color={colors.text} fontSize="18">
+      <Text col={colors.text} fos={18}>
         メールアドレス:scs_lo_ol_728@icloud.com
       </Text>
-      <Text color={colors.text} fontSize="18">
+      <Text col={colors.text} fos={18}>
         パスワード:12345678
       </Text>
       <Button

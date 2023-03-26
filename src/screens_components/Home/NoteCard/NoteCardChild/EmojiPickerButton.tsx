@@ -27,7 +27,6 @@ export const EmojiPickerButton: FC<EmojiPickerButtonProps> = (props) => {
 
   const handlePick = useCallback(
     (emojiObject: EmojiType): void => {
-      // setEmoji(emojiObject.emoji)
       if (emoji) {
         const updateEmoji = async (): Promise<void> => {
           try {
@@ -83,7 +82,7 @@ export const EmojiPickerButton: FC<EmojiPickerButtonProps> = (props) => {
         >
           <Stack focusStyle={{ bg: '#c1d4f0' }} h={28} w={28} br={4} bg={colors.text} mr={8}>
             {emoji ? (
-              <Text ta="center" fos={22} lh="28">
+              <Text ta="center" fos={22} lh={28}>
                 {emoji}
               </Text>
             ) : (
@@ -95,7 +94,7 @@ export const EmojiPickerButton: FC<EmojiPickerButtonProps> = (props) => {
         !!emoji && (
           <Stack onPress={() => setIsOpen(true)} pl={8} h={44} w={44} justifyContent="center">
             <Stack focusStyle={{ bg: '#c1d4f0' }} h={28} w={28} br={4} bg={colors.text} mr={8}>
-              <Text ta="center" fos={22} lh="28">
+              <Text ta="center" fos={22} lh={28}>
                 {emoji}
               </Text>
             </Stack>

@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
 import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch } from 'react-redux';
 
@@ -13,6 +12,8 @@ import { useAnimeExpandedRotate } from '../hook/useAnimeExpandedRotate';
 import { EmojiPickerButton, NoteHeader, NoteWrapper, RichDescriptionDialog } from './NoteCardChild';
 
 export type NoteCardProps = {
+  drag: () => void;
+  dragDisabled: boolean;
   ids: string[];
   note: Note;
   orderedList: boolean;
@@ -20,7 +21,7 @@ export type NoteCardProps = {
 };
 
 /** @package */
-export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: NoteCardProps): JSX.Element => {
+export const NoteCard = ({ drag, dragDisabled, ids, note, orderedList, parentExpanded = true }: NoteCardProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   // state
   const [descriptionHeight, setDescriptionHeight] = useState<number>(48);
@@ -39,9 +40,14 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <OpacityDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={!orderedList || isActive}>
-            <NoteCard note={item} orderedList={orderedList} ids={[item.id, ...ids]} parentExpanded={expanded} />
-          </TouchableOpacity>
+          <NoteCard
+            dragDisabled={!orderedList || isActive}
+            drag={drag}
+            note={item}
+            orderedList={orderedList}
+            ids={[item.id, ...ids]}
+            parentExpanded={expanded}
+          />
         </OpacityDecorator>
       );
     },
@@ -56,7 +62,6 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
           data={NoteChild}
           ref={flatListRef}
           // TODO:スクロールが上手く行かない
-          // scrollEnabled={focusNote.level - 1 === note.level}
           onDragEnd={({ data, from, to }) => {
             const id = data[to]?.id;
             if (id !== undefined) {
@@ -113,10 +118,12 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
         expanded={expanded}
         fadeIn={fadeIn}
         fadeOut={fadeOut}
+        drag={drag}
         ids={ids}
         note={note}
         orderedList={orderedList}
         position={position}
+        dragDisabled={dragDisabled}
       >
         <EmojiPickerButton ids={ids} noteEmoji={note.emoji} noteId={note.id} />
       </NoteHeader>

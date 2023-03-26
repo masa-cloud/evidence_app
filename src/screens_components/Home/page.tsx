@@ -1,6 +1,6 @@
 import { useFocusEffect } from 'expo-router';
 import React, { FC, useCallback, useRef, useState } from 'react';
-import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, TouchableOpacity } from 'react-native';
+import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView } from 'react-native';
 import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
@@ -61,54 +61,59 @@ export const Home: FC = () => {
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
       return (
         <OpacityDecorator>
-          <TouchableOpacity onLongPress={drag} disabled={!orderedList || isActive}>
-            <NoteCard note={item} ids={[item.id]} orderedList={orderedList} />
-          </TouchableOpacity>
+          <NoteCard note={item} dragDisabled={!orderedList || isActive} drag={drag} ids={[item.id]} orderedList={orderedList} />
         </OpacityDecorator>
       );
     },
     [orderedList],
   );
 
+  const NoteFlatList = useCallback(() => {
+    return (
+      <DraggableFlatList
+        data={notes}
+        ref={flatListRef}
+        scrollEnabled={focusNote.level === 0}
+        onScrollEndDrag={handleScroll}
+        onScrollBeginDrag={handleScroll}
+        ListFooterComponent={<Stack h={80} />}
+        onDragEnd={({ data, from, to }) => {
+          const id = data[to]?.id;
+          if (id !== undefined) {
+            const updateOrder = async (): Promise<void> => {
+              try {
+                await dispatch(
+                  updateAsyncNoteOrder({
+                    ids: [id],
+                    isIncreased: from > to,
+                    parentId: data[to]?.parentId,
+                    targetOrderNumber: to,
+                  }),
+                );
+              } catch (e) {
+                console.log({ e });
+                // Handle error
+              }
+            };
+            void updateOrder();
+          }
+        }}
+        keyExtractor={(item, index) => `item-${item.id}-${index}`}
+        renderItem={renderItem}
+      />
+    );
+  }, [dispatch, renderItem]);
+
   // TODO:データが無い時のハンドリング
-  // if ( notes.length === 0 ) return <></>
+  if (notes.length === 0) return <></>;
+
   return (
     <SafeAreaView>
       <ImageBackground source={Images.background} resizeMode="cover" style={{ height: '100%', width: '100%' }}>
         <ToggleMenuButton showElement={showElement} setShowElement={setShowElement} />
         {showElement ? <ScrollUpGlobalMenu /> : <ScrollDownNoteMenu setOrderedList={setOrderedList} orderedList={orderedList} />}
         <SideTree notes={notes} onNoteNavigate={onNoteNavigate} />
-        <DraggableFlatList
-          data={notes}
-          ref={flatListRef}
-          scrollEnabled={focusNote.level === 0}
-          onScrollEndDrag={handleScroll}
-          onScrollBeginDrag={handleScroll}
-          ListFooterComponent={<Stack h={80} />}
-          onDragEnd={({ data, from, to }) => {
-            const id = data[to]?.id;
-            if (id !== undefined) {
-              const updateOrder = async (): Promise<void> => {
-                try {
-                  await dispatch(
-                    updateAsyncNoteOrder({
-                      ids: [id],
-                      isIncreased: from > to,
-                      parentId: data[to]?.parentId,
-                      targetOrderNumber: to,
-                    }),
-                  );
-                } catch (e) {
-                  console.log({ e });
-                  // Handle error
-                }
-              };
-              void updateOrder();
-            }
-          }}
-          keyExtractor={(item, index) => `item-${item.id}-${index}`}
-          renderItem={renderItem}
-        />
+        <NoteFlatList />
       </ImageBackground>
     </SafeAreaView>
   );

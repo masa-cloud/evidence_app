@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import React, { FC, ReactNode, useCallback } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Stack, XStack } from 'tamagui';
 
@@ -13,6 +14,8 @@ import { TitleDialog } from './TitleDialog';
 
 type NoteHeaderProps = {
   children: ReactNode;
+  drag: () => void;
+  dragDisabled: boolean;
   expanded: boolean;
   fadeIn: () => void;
   fadeOut: () => void;
@@ -55,23 +58,24 @@ export const NoteHeader: FC<NoteHeaderProps> = (props) => {
         <TitleDialog ids={props.ids} note={props.note} />
       </XStack>
       {props.orderedList && (
-        <Stack
-          animation="bouncy"
-          enterStyle={{
-            o: 0,
-            y: -40,
-          }}
-          pressStyle={{ scale: 0.8 }}
-          bg={focusNote.focusId === props.note.id ? colors.secondary : 'transparent'}
-          px={10}
-          py={10}
-          o={1}
-          y={0}
-          br={40}
-          scale={1}
-        >
-          <SimpleLineIcons name="menu" size={24} color={colors.text} />
-        </Stack>
+        <TouchableOpacity onLongPress={props.drag} disabled={false}>
+          <Stack
+            animation="bouncy"
+            enterStyle={{
+              o: 0,
+              y: -40,
+            }}
+            bg={focusNote.focusId === props.note.id ? colors.secondary : 'transparent'}
+            px={10}
+            py={10}
+            o={1}
+            y={0}
+            br={40}
+            scale={1}
+          >
+            <SimpleLineIcons name="menu" size={24} color={colors.text} />
+          </Stack>
+        </TouchableOpacity>
       )}
       {!props.orderedList && (
         <Stack

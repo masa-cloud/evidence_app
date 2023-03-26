@@ -4,7 +4,7 @@ import DraggableFlatList, { OpacityDecorator, RenderItemParams } from 'react-nat
 import { useDispatch } from 'react-redux';
 
 import { updateFucusId } from '~/slices/focusNoteSlice';
-import { updateAsyncNote, updateAsyncNoteOrder } from '~/slices/noteSlice';
+import { updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
@@ -34,20 +34,6 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
     level: note.level,
   });
   const { position } = useAnimeExpandedRotate(expanded);
-
-  const handleExpand = useCallback(async () => {
-    expanded ? fadeIn() : fadeOut();
-    setExpanded((prevExpanded) => !prevExpanded);
-    await dispatch(
-      updateAsyncNote({
-        ids,
-        updateNoteData: {
-          id: ids[0] ?? '',
-          expanded: !expanded,
-        },
-      }),
-    );
-  }, [expanded, fadeIn, fadeOut, dispatch, ids]);
 
   const renderItem = useCallback(
     ({ drag, isActive, item }: RenderItemParams<Note>): JSX.Element => {
@@ -122,7 +108,16 @@ export const NoteCard = ({ ids, note, orderedList, parentExpanded = true }: Note
       }}
     >
       {/* TODO:絵文字の箇所型など修正 */}
-      <NoteHeader handleExpand={handleExpand} ids={ids} note={note} orderedList={orderedList} position={position}>
+      <NoteHeader
+        setExpanded={setExpanded}
+        expanded={expanded}
+        fadeIn={fadeIn}
+        fadeOut={fadeOut}
+        ids={ids}
+        note={note}
+        orderedList={orderedList}
+        position={position}
+      >
         <EmojiPickerButton ids={ids} noteEmoji={note.emoji} noteId={note.id} />
       </NoteHeader>
       <RichDescriptionDialog ids={ids} note={note} setDescriptionHeight={setDescriptionHeight} animatedValue={animatedValue} />

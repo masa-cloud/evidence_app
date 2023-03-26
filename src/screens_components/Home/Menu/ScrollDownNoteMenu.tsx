@@ -1,5 +1,5 @@
 import { Ionicons, MaterialIcons, Octicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { FC } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AlertDialog, Button, Image, Stack, XStack, YStack } from 'tamagui';
@@ -10,14 +10,13 @@ import { selectFocusNote } from '~/slices/focusNoteSlice';
 import { addAsyncBrotherNote, addAsyncChildNote, deleteAsyncNote } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 
-/** @package */
-export const ScrollDownNoteMenu = ({
-  orderedList,
-  setOrderedList,
-}: {
+type ScrollDownNoteMenuProps = {
   orderedList: boolean;
   setOrderedList: React.Dispatch<React.SetStateAction<boolean>>;
-}): JSX.Element => {
+};
+
+/** @package */
+export const ScrollDownNoteMenu: FC<ScrollDownNoteMenuProps> = (props) => {
   const { colors } = useColors();
   const { focusNote } = useSelector(selectFocusNote);
   const dispatch: AppDispatch = useDispatch();
@@ -119,14 +118,14 @@ export const ScrollDownNoteMenu = ({
           </AlertDialog.Portal>
         </AlertDialog>
         <Stack
-          style={orderedList && { backgroundColor: colors.secondary }}
+          style={props.orderedList && { backgroundColor: colors.secondary }}
           br={40}
           h={44}
           w={44}
           ai="center"
           jc="center"
           rotate="90deg"
-          onPress={() => (orderedList ? setOrderedList(false) : setOrderedList(true))}
+          onPress={() => (props.orderedList ? props.setOrderedList(false) : props.setOrderedList(true))}
         >
           <Octicons name="arrow-switch" size={36} color={colors.text} />
         </Stack>

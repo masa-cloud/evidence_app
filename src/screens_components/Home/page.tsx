@@ -1,4 +1,3 @@
-import { Entypo } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, TouchableOpacity } from 'react-native';
@@ -7,13 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'tamagui';
 
 import { Images } from '~/assets/images';
-import { useColors } from '~/lib/constants';
 import { selectFocusNote } from '~/slices/focusNoteSlice';
 import { fetchAsyncNotes, selectNote, updateAsyncNoteOrder } from '~/slices/noteSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
-import { ScrollDownNoteMenu, ScrollUpGlobalMenu } from './Menu';
+import { ScrollDownNoteMenu, ScrollUpGlobalMenu, ToggleMenuButton } from './Menu';
 import { NoteCard } from './NoteCard';
 import { SideTree } from './SideTree';
 
@@ -22,7 +20,6 @@ export const Home: FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { notes } = useSelector(selectNote);
   const flatListRef = useRef<any>(undefined);
-  const { colors } = useColors();
   const [orderedList, setOrderedList] = useState<boolean>(false);
   const { focusNote } = useSelector(selectFocusNote);
   const [showElement, setShowElement] = useState(false);
@@ -78,32 +75,7 @@ export const Home: FC = () => {
   return (
     <SafeAreaView>
       <ImageBackground source={Images.background} resizeMode="cover" style={{ height: '100%', width: '100%' }}>
-        <Stack
-          animation="bouncy"
-          pressStyle={{ scale: 0.9 }}
-          onPress={() => setShowElement((prevShowElement) => !prevShowElement)}
-          pos="absolute"
-          b={80}
-          r="8.5%"
-          zi={100}
-        >
-          <Stack
-            pos="absolute"
-            br={50}
-            bg={showElement ? colors.text : colors.primary}
-            t={-5}
-            l={-6}
-            h={52}
-            w={52}
-            shac={colors.primary}
-            shof={{
-              height: 3,
-              width: 0,
-            }}
-            shar={4}
-          />
-          <Entypo name="cycle" size={40} color={showElement ? colors.primary : colors.text} />
-        </Stack>
+        <ToggleMenuButton showElement={showElement} setShowElement={setShowElement} />
         {showElement ? <ScrollUpGlobalMenu /> : <ScrollDownNoteMenu setOrderedList={setOrderedList} orderedList={orderedList} />}
         <SideTree notes={notes} onNoteNavigate={onNoteNavigate} />
         <DraggableFlatList

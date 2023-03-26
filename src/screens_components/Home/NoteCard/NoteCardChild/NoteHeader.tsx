@@ -1,17 +1,21 @@
 import { MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
-import React, { FC, ReactNode } from 'react';
-import { useSelector } from 'react-redux';
+import React, { FC, ReactNode, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Stack, XStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
 import { selectFocusNote } from '~/slices/focusNoteSlice';
+import { updateAsyncNote } from '~/slices/noteSlice';
+import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
 import { TitleDialog } from './TitleDialog';
 
 type NoteHeaderProps = {
   children: ReactNode;
-  handleExpand: () => Promise<void>;
+  expanded: boolean;
+  fadeIn: () => void;
+  fadeOut: () => void;
   ids: string[];
   note: Note;
   orderedList: boolean;
@@ -20,12 +24,28 @@ type NoteHeaderProps = {
         rotate: string;
       }
     | undefined;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 /** @package */
 export const NoteHeader: FC<NoteHeaderProps> = (props) => {
   const { colors } = useColors();
+  const dispatch: AppDispatch = useDispatch();
   const { focusNote } = useSelector(selectFocusNote);
+
+  const handleExpand = useCallback(async () => {
+    props.expanded ? props.fadeIn() : props.fadeOut();
+    props.setExpanded((prevExpanded) => !prevExpanded);
+    await dispatch(
+      updateAsyncNote({
+        ids: props.ids,
+        updateNoteData: {
+          id: props.ids[0] ?? '',
+          expanded: !props.expanded,
+        },
+      }),
+    );
+  }, [dispatch, props]);
 
   return (
     <XStack pos="relative" ai="center" jc="space-between" bg={colors.primary} pt={4} pb={5}>
@@ -74,7 +94,7 @@ export const NoteHeader: FC<NoteHeaderProps> = (props) => {
       )}
       <Stack
         onPress={() => {
-          void props.handleExpand();
+          void handleExpand();
         }}
         px={10}
         py={10}

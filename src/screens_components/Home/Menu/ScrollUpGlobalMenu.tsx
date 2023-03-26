@@ -1,5 +1,5 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
+import React, { FC } from 'react';
 import { Stack, XStack, YStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
@@ -7,7 +7,7 @@ import { useColors } from '~/lib/constants';
 import { useSideTree } from '../hook/useSideTree';
 
 /** @package */
-export const ScrollUpGlobalMenu = (): JSX.Element => {
+export const ScrollUpGlobalMenu: FC = () => {
   const { colors } = useColors();
   const { onPress } = useSideTree();
 

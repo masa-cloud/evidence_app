@@ -91,6 +91,16 @@ export const createBrotherNoteApi = async (focusNote: {
       query: createNote,
       variables: { input: noteDetails },
     })) as { data: { createNote: Note } };
+    if (focusNote.parentId) {
+      const childrenIdDetail: CreateChildrenIdInput = {
+        childrenId: newNote.data.createNote.id,
+        noteChildrenIdsId: focusNote.parentId,
+      };
+      await API.graphql({
+        query: createChildrenId,
+        variables: { input: childrenIdDetail },
+      });
+    }
     return {
       ids: focusNote.ids,
       newNote: newNote.data.createNote,

@@ -10,8 +10,8 @@ import { selectSideTree } from '~/slices/sideTreeSlice';
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
-import { useSideTree } from './hook/useSideTree';
-import { SideTreeItem } from './SideTreeItem';
+import { useSideTree } from '../hook/useSideTree';
+import { SideTreeItem } from './SideTreeChild';
 
 /** @package */
 export const SideTree = ({ notes, onNoteNavigate }: { notes: Note[]; onNoteNavigate: (orders: number[]) => void }): JSX.Element => {

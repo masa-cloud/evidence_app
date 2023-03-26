@@ -4,7 +4,7 @@ import { Stack, XStack, YStack } from 'tamagui';
 
 import { useColors } from '~/lib/constants';
 
-import { useSideTree } from './hook/useSideTree';
+import { useSideTree } from '../hook/useSideTree';
 
 /** @package */
 export const ScrollUpGlobalMenu = (): JSX.Element => {

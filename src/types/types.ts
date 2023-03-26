@@ -14,7 +14,7 @@ export type FetchNote = FirstOfUnion<DeepOmit<Exclude<GetNoteQuery['getNote'], n
 // TODO:どうハンドリングするか悩ましい
 export type PickedNote = Pick<Note, 'title' | 'id' | 'emoji' | 'childrenIds' | 'parentId' | 'noteEmojiId' | 'noteEmojiId' | 'children'>;
 
-export type NoteChildren = { children?: Note[] | PickedNote[] };
+export type NoteChildren = { children?: Note[] };
 
 export type Note = NoteChildren & FetchNote;
 

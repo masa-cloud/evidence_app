@@ -13,9 +13,8 @@ import { fetchAsyncNotes, selectNote, updateAsyncNoteOrder } from '~/slices/note
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
+import { ScrollDownNoteMenu, ScrollUpGlobalMenu } from './Menu';
 import { NoteCard } from './NoteCard';
-import { ScrollDownNoteMenu } from './ScrollDownNoteMenu';
-import { ScrollUpGlobalMenu } from './ScrollUpGlobalMenu';
 import { SideTree } from './SideTree';
 
 /** @package */

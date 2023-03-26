@@ -39,7 +39,7 @@ export const useSideTree = (): useSideTreeReturn => {
 
   useEffect(() => {
     dispatch(updatePosition({ position }));
-  }, [position]);
+  }, [dispatch, position]);
 
   return {
     onPress,

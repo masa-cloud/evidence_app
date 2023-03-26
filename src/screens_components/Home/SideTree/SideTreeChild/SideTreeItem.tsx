@@ -10,7 +10,7 @@ import { selectNote, updateAsyncNote, updateAsyncNoteOrder } from '~/slices/note
 import { AppDispatch } from '~/store';
 import { Note } from '~/types/types';
 
-import { useAnimeExpandedRotate } from './hook/useAnimeExpandedRotate';
+import { useAnimeExpandedRotate } from '../../hook/useAnimeExpandedRotate';
 
 export type SieTreeItemProps = {
   ids: string[];
